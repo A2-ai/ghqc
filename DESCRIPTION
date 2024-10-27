@@ -1,0 +1,36 @@
+Package: ghqc
+Title: Manage QC via GitHub Issues using Shiny Apps
+Version: 0.1.0
+Authors@R: c(
+    person("Anne", "Zheng", email = "anne@a2-ai.com", role = c("aut")),
+    person("Jenna", "Johnson", email = "jenna@a2-ai.com", role = c("aut")),
+    person("Janelle", "Lennie", email = "janelle.l.lennie@gsk.com", role = c("ctb")),
+    person("Devin", "Pastoor", email = "devin@a2-ai.com", role = c("aut")),
+    person("Wes", "Cummings", email = "wes@a2-ai.com", role = c("aut", "cre")))
+Description: This package launches 3 ghqc applications as background jobs to 
+  aid the QC process through the use of shiny apps. It also contains aides to 
+  maintain the proper setup of the ecosystem. Namely, it will aide in the 
+  installation of ghqc.apps and its dependendencies into an isolated directory as
+  to not interfere with the project being QC'ed.
+License: GPL (>= 3) + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports: 
+    httpuv (>= 1.6.11),
+    rstudioapi,
+    withr (>= 2.5.0),
+    glue (>= 1.2.0),
+    processx (>= 3.5.0),
+    rlang,
+    cli,
+    fs,
+    yaml
+Suggests:
+    gert (>= 1.5.0),
+    pak
+Depends: 
+    R (>= 2.10)
+Config/Needs/website:
+    sessioninfo
+URL: https://a2-ai.github.io/ghqc

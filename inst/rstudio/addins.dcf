@@ -1,0 +1,14 @@
+Name: Assign file(s) for QC
+Description: Initialize QC for one or more files on Github.
+Binding: ghqc_assign_app
+Interactive: true
+
+Name: Resolve QC finding(s)
+Description: Post a comment to a changed file's Issue, including the new commit and an optional description of changes.
+Binding: ghqc_resolve_app
+Interactive: true
+
+Name: Generate QC Record
+Description: Generate a Record for one or more Milestones.
+Binding: ghqc_record_app
+Interactive: true
