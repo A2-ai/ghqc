@@ -2,16 +2,13 @@
 % Please edit documentation in R/utils.R
 \name{ghqc_libpath}
 \alias{ghqc_libpath}
-\title{The default install location for the ghqc package and its dependency. If it does not exist, it will be created}
+\title{The default install location for the ghqc package and its dependencies. If it does not exist, it will be created.}
 \usage{
 ghqc_libpath()
 }
 \value{
-string containing the default lib path for the ghqc package and its dependencies
+string containing the default lib path for the ghqc package and its dependencies (~/.local/share/ghqc/rpkgs)
 }
 \description{
-The default install location for the ghqc package and its dependency. If it does not exist, it will be created
-}
-\examples{
-ghqc_libpath()
+The default install location for the ghqc package and its dependencies. If it does not exist, it will be created.
 }

@@ -12,12 +12,6 @@
 #' @importFrom withr with_options
 #'
 #' @export
-#'
-#'
-#' @examples
-#' \dontrun{
-#' install_ghqcapp_dependencies()
-#' }
 install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
                                       pkgs = ghqc_depends,
                                       use_pak = TRUE) {
