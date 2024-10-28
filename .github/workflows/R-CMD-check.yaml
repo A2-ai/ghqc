@@ -25,7 +25,6 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
-      GHQC_INFO_REPO: "https://github.com/A2-ai/ghqc.a2ai.git"
 
     steps:
       - uses: actions/checkout@v4
@@ -37,6 +36,9 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
+
+      - name: Set up .Rprofile
+        run: echo 'Sys.setenv(GHQC_INFO_REPO="https://github.com/A2-ai/ghqc.a2ai.git")' >> ~/.Rprofile
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
