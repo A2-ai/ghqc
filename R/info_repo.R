@@ -161,7 +161,7 @@ info_files_desc <- function(info_path) {
   }
 
   if (fs::file_exists(repo_files[3])) {
-    if (length(fs::dir_ls(repo_files[3])) == 0) {
+    if (length(fs::dir_ls(file.path(info_path, "checklists"), regexp = "(.*?).yaml")) == 0) {
       cli::cli_alert_danger("Checklists directory is empty")
     } else {
       checklists_found(info_path)
