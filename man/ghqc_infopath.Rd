@@ -12,6 +12,3 @@ string containing the default path to the ghqc information repository
 \description{
 The default install location for the ghqc customizing information repository
 }
-\examples{
-ghqc_infopath()
-}

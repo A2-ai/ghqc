@@ -6,7 +6,6 @@
 #' @importFrom fs dir_create
 #'
 #' @export
-#' @examples ghqc_libpath()
 ghqc_libpath <- function() {
   lib_path <- "~/.local/share/ghqc/rpkgs"
   if (!fs::dir_exists(lib_path)) fs::dir_create(lib_path, recurse = TRUE)
@@ -17,7 +16,6 @@ ghqc_libpath <- function() {
 #'
 #' @return string containing the default path to the ghqc information repository
 #' @export
-#' @examples ghqc_infopath()
 ghqc_infopath <- function() {
   file.path("~/.local/share/ghqc", info_repo_name())
 }

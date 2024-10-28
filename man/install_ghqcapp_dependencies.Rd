@@ -20,8 +20,3 @@ install_ghqcapp_dependencies(
 \description{
 install ghqc.app's dependencies into an isolated library
 }
-\examples{
-\dontrun{
-install_ghqcapp_dependencies()
-}
-}

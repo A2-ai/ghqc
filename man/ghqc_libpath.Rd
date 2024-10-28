@@ -12,6 +12,3 @@ string containing the default lib path for the ghqc package and its dependencies
 \description{
 The default install location for the ghqc package and its dependency. If it does not exist, it will be created
 }
-\examples{
-ghqc_libpath()
-}
