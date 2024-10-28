@@ -7,7 +7,7 @@
 ghqc_infopath()
 }
 \value{
-string containing the default path to the ghqc information repository
+string containing the default path to the ghqc information repository (~/.local/share/ghqc/<info repo name here>
 }
 \description{
 The default install location for the ghqc customizing information repository
