@@ -13,8 +13,6 @@ permissions: read-all
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
-    env:
-      GHQC_INFO_REPO: "https://github.com/A2-ai/ghqc.a2ai.git"
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
@@ -27,6 +25,7 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
+      GHQC_INFO_REPO: "https://github.com/A2-ai/ghqc.a2ai.git"
 
     steps:
       - uses: actions/checkout@v4
