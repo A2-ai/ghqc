@@ -76,7 +76,7 @@ prompt_repo_clone <- function(info_path) {
   if (yN == "y") {
     repo_clone(info_path)
   } else {
-    cli::cli_alert_danger("Run 'ghqc::download_info_repo() before running any of the ghqc ecosystem apps")
+    cli::cli_alert_danger("Run {.code ghqc::download_ghqc_configuration()} before running any of the ghqc ecosystem apps")
   }
 }
 
@@ -85,11 +85,11 @@ prompt_repo_clone <- function(info_path) {
 #' @importFrom cli cli_alert_danger
 prompt_repo_update <- function(info_path) {
   cli::cli_alert_warning(sprintf("Info repository %s was found locally, but is not the most recent version", basename(info_path)))
-  yN <- readline(prompt = "Would you like to update the repository. This will delete all local changes to {info_path} (y/N)? ")
+  yN <- readline(prompt = glue::glue("Would you like to update the repository. This will delete all local changes to {info_path} (y/N)? "))
   if (yN == "y") {
     repo_clone(info_path)
   } else {
-    cli::cli_alert_danger("Run 'ghqc::download_info_repo()' before running any of the ghqc ecosystem apps")
+    cli::cli_alert_danger("Run {.code ghqc::download_ghqc_configuration()} before running any of the ghqc ecosystem apps")
   }
 }
 
