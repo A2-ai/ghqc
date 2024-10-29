@@ -23,7 +23,7 @@ renviron_text <- function() {
 #' @importFrom cli cli_alert_danger
 #' @importFrom cli cli_alert_info
 renviron_edit <- function(var_name, input_val, renv_text) {
-  if (length(renv_text) == 0 || any(!nzchar(renv_text))) {
+  if (length(renv_text) == 0) {
     cli::cli_alert_success("{var_name} was successfully updated to {input_val} in ~/.Renviron")
     return(invisible(var_write(var_name, input_val)))
   }
@@ -60,21 +60,16 @@ not_set_msg <- function(var_name) {
 }
 
 parse_renviron <- function(var_name, renv_text) {
-  index <- which(grepl(paste0("^", var_name), renv_text))
-  if (length(index) == 0) {
-    return(list(index = NA, val = ""))
-  }
-  if (length(index) != 1) {
-    cli::cli_abort("{var_name} found multiple times in ~/.Renvirion at index {paste0(index, collapse = ',')}. Please ensure only one occurance of the variable occurs in your ~/.Renviron")
-  }
-  else {
-    val <- renviron_extract(renv_text[index], var_name)
-  }
-  list(index = index, val = val)
-}
-
-renviron_extract <- function(var_str, var_name) {
-  regmatches(var_str, regexec(paste0(var_name, '=\\\"(.*?)\\\"'), var_str))[[1]][2]
+  x <- gsub(" ", "",
+            gsub('"', "", renv_text))
+  # based on Sys.getenv
+  m <- regexpr("=", x, fixed = TRUE)
+  n <- substring(x, 1L, m - 1L)
+  v <- substring(x, m + 1L)
+  if (!(var_name %in% n)) return(list(index = NA, val = ""))
+  if (anyDuplicated(n[n == var_name]) != 0) cli::cli_abort("{var_name} found multiple times in ~/.Renvirion. Please ensure only one occurance of the variable occurs in your ~/.Renviron")
+  index <- which(var_name == n)
+  list(index = index, val = v[index])
 }
 
 var_write <- function(name, val) {
