@@ -58,7 +58,7 @@ elements are:
 
 An example structure of the configuration information repository can be
 found at
-[github.com/a2-ai/ghqc.a2ai](https://github.com/a2-ai/ghqc.a2ai)
+[github.com/A2-ai/ghqc.example_info_repo](https://github.com/A2-ai/ghqc.example_info_repo)
 
 ## ghqc Setup
 
@@ -80,6 +80,74 @@ Within this package, a function `ghqc::setup_ghqc()` aids in this setup.
 ghqc::setup_ghqc()
 ```
 
+1.  **Renviron Setup**
+
+Enter the url of the configuration information repository described
+above
+
 ![](man/figures/renviron_setup.png)
+
+2.  **Configuration Information Download and Verification**
+
+The configuration information will default to installing to
+“~/.local/share/ghqc/<repo_name>”. To download to the default location,
+which is highly recommended, hit `ENTER`. Otherwise, type in the path in
+which to download the repository.
+
+In addition to downloading the repository, or remote updates if the
+repository was previously downloaded, the structure of the repository
+and the checklist yamls are verified.
+
+![](man/figures/info_repo_download.png)
+
+3.  **Shiny App Dependency Installation**
+
+Select whether to install the dependency packages or symlink to
+previously a previously installed package library.
+
+- INSTALL PACKAGES
+
+  - NOTE: The install option is currently only available to linux
+    systems supported by Posit Package Manager (PPM) and will install
+    from
+    [PPM@2024-03-01](https://packagemanager.posit.co/cran/2024-03-01).
+
+  - The dependency packages are installed by default to
+    “~/.local/share/ghqc/rpkgs”. To install to the default location,
+    which is highly recommended, hit `ENTER`. Otherwise, type in the
+    path in which to install the dependency packages to.
+
+  ![](man/figures/install_depends.png)
+
+- SYMLINK PACKAGES
+
+  - NOTE: The link option requires all packages be installed in the same
+    `link_path` AND they meet the requirements listed in the imports
+
+  - Provide the path to the previously installed package library
+
+  - The dependency packages are symlinked by default to
+    “~/.local/share/ghqc/rpkgs”. To symlink to the default location,
+    which is highly recommended, hit `ENTER`. Otherwise, type in the
+    path in which to download the repository.
+
+  ![](man/figures/link_depends.png)
+
+#### ghqc.app installation
+
+You can install the development version of ghqc.app from
+[GitHub](https://github.com/) with:
+
+``` r
+# install.packages("pak")
+pak::pak("a2-ai/ghqc.app")
+```
+
+## ghqc shiny app launching
+
+ghqc will start a background job to launch an app from the ghqc
+ecosystem into the “Viewer” pane of your RStudio session. For technical
+information regarding these apps, refer to
+[ghqc.app](https://github.com/a2-ai/ghqc.app).
 
 …
