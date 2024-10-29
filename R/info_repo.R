@@ -18,10 +18,11 @@ check_ghqc_configuration <- function(info_path = ghqc_infopath()) {
 #' Download the customizing information repository as set in environmental variable `GHQC_INFO_REPO`
 #'
 #' @param info_path *(optional)* path in which the repository, set in environmental variable `GHQC_INFO_REPO`, is, or should be, downloaded to. Defaults to `~/.local/share/ghqc/{repo_name}`
+#' @param .force *(optional)* option to force a new download of the ghqc configuration information repository
 #' @export
-download_ghqc_configuration <- function(info_path = ghqc_infopath()) {
+download_ghqc_configuration <- function(info_path = ghqc_infopath(), .force = FALSE) {
   check_ghqc_info_repo_exists()
-  switch(info_repo_status(info_path),
+  switch(info_repo_status(info_path, .force),
          "clone" = repo_clone(info_path),
          "update" = repo_clone(info_path),
          "none" = no_updates(info_path),
@@ -54,7 +55,8 @@ remove_ghqc_configuration <- function(info_path = ghqc_infopath()) {
 # local status check #
 #' @importFrom fs file_exists
 #' @importFrom rlang is_installed
-info_repo_status <- function(info_path) {
+info_repo_status <- function(info_path, .force = FALSE) {
+  if (.force) return("clone")
   if (!fs::file_exists(info_path)) return("clone")
   if (!rlang::is_installed("gert")) return("gert")
   if (remote_repo_updates(info_path)) return("update")
@@ -159,7 +161,7 @@ info_files_desc <- function(info_path) {
   }
 
   if (fs::file_exists(repo_files[3])) {
-    if (length(repo_files[3]) == 0) {
+    if (length(fs::dir_ls(file.path(info_path, "checklists"), regexp = "(.*?).yaml")) == 0) {
       cli::cli_alert_danger("Checklists directory is empty")
     } else {
       checklists_found(info_path)

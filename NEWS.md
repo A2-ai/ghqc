@@ -1,7 +1,7 @@
-# ghqc (development version)
+# ghqc
 
-# ghqc 0.0.0.9001
+# ghqc 0.1.1
 
 ## Changes
 
--   Adds additional log messages providing information on state of session prior and after running ghqc.
+-   Bug fixes related to empty checklist folders and parsing GHQC_INFO_REPO out of the ~/.Renviron

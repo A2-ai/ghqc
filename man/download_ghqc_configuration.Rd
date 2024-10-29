@@ -4,10 +4,12 @@
 \alias{download_ghqc_configuration}
 \title{Download the customizing information repository as set in environmental variable \code{GHQC_INFO_REPO}}
 \usage{
-download_ghqc_configuration(info_path = ghqc_infopath())
+download_ghqc_configuration(info_path = ghqc_infopath(), .force = FALSE)
 }
 \arguments{
 \item{info_path}{\emph{(optional)} path in which the repository, set in environmental variable \code{GHQC_INFO_REPO}, is, or should be, downloaded to. Defaults to \verb{~/.local/share/ghqc/\{repo_name\}}}
+
+\item{.force}{\emph{(optional)} option to force a new download of the ghqc configuration information repository}
 }
 \description{
 Download the customizing information repository as set in environmental variable \code{GHQC_INFO_REPO}
