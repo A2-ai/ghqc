@@ -75,7 +75,7 @@ interactive_info_download <- function() {
   if (info_path == "") info_path <- ghqc_infopath()
 
   cli::cli_inform(" ")
-  download_ghqc_configuration(info_path = info_path)
+  check_ghqc_configuration(info_path = info_path)
 }
 
 #' @importFrom cli cli_h1
