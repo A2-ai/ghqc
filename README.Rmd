@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/A2-ai/ghqc/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/A2-ai/ghqc/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of the ghqc ecosystem is to simplify, standardize, and improve traceability of the QC process through the use of shiny apps which create GitHub Issues and Milestones for your project. The ghqc package is a lightweight wrapper to be installed along side project packages and has three primary functionalities:
+The goal of the ghqc ecosystem is to simplify, standardize, and improve traceability of the QC process through the use of shiny apps which create GitHub Issues and Milestones for your project. The ghqc package is a lightweight wrapper to be installed alongside project packages and has three primary functionalities:
 
 - **Isolating Package Dependency**: Installs, or symlinks, the high dependency burden of the ghqc shiny app ecosystem to an isolated directory to ensure no interference with any project work.
 
@@ -52,7 +52,7 @@ The ghqc ecosystem has been developed with the intent organizations can customiz
 
 - **Prepended Note**: A note to prepend to all checklists named "note" *(optional)*
 
-- **Logo**: A logo to be included in the header of the resultant record's header named as "logo.png"
+- **Logo**: A logo to be included in the header of the resultant record's header named as "logo.png" *(required)*
 
 
 An example structure of the configuration information repository can be found at [github.com/A2-ai/ghqc.example_info_repo](https://github.com/A2-ai/ghqc.example_info_repo)
@@ -83,9 +83,13 @@ Enter the url of the configuration information repository described above
 
 The configuration information will default to installing to "~/.local/share/ghqc/<repo_name>". To download to the default location, which is highly recommended, hit `ENTER`. Otherwise, type in the path in which to download the repository.
 
-In addition to downloading the repository, or remote updates if the repository was previously downloaded, the structure of the repository and the checklist yamls are verified.
+In addition to downloading the repository, the structure of the repository and the checklist yamls are verified.
 
 ![](man/figures/info_repo_download.png)
+
+In the case the configuration information repository has already been downloaded to the specified path and their are remote changes to the repository, the user will be warned and provided the option to download the new update.
+
+![NOTE: This will remove all local changes to the repository and hard reset to the content in the remote](man/figures/info_repo_update.png)
 
 3. **Shiny App Dependency Installation**
 
@@ -95,7 +99,7 @@ Select whether to install the dependency packages or symlink to previously a pre
 
   - NOTE: The install option is currently only available to linux systems supported by Posit Package Manager (PPM) and will install from [PPM@2024-03-01](https://packagemanager.posit.co/cran/2024-03-01). 
   
-  - The dependency packages are installed by default to "~/.local/share/ghqc/rpkgs". To install to the default location, which is highly recommended, hit `ENTER`. Otherwise, type in the path in which to install the dependency packages to.
+  - The dependency packages are installed by default to "~/.local/share/ghqc/rpkgs". To install to the default location, which is highly recommended, hit `ENTER`. Otherwise, type in the path in which to install the dependency packages.
   
   ![](man/figures/install_depends.png)
 
@@ -111,6 +115,8 @@ Select whether to install the dependency packages or symlink to previously a pre
 
 #### ghqc.app installation
 
+NOTE: `ghqc::ghqc_setup()` does not install the `ghqc.app` package as the distribution method and/or required version may change based on organization needs.
+
 You can install the development version of ghqc.app from [GitHub](https://github.com/) with:
 
 ``` r
@@ -121,8 +127,6 @@ pak::pak("a2-ai/ghqc.app")
 ## ghqc shiny app launching
 
 ghqc will start a background job to launch an app from the ghqc ecosystem into the "Viewer" pane of your RStudio session. For technical information regarding these apps, refer to [ghqc.app](https://github.com/a2-ai/ghqc.app).
-
-
 
 
 ...

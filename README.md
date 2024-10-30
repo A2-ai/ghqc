@@ -11,7 +11,7 @@
 The goal of the ghqc ecosystem is to simplify, standardize, and improve
 traceability of the QC process through the use of shiny apps which
 create GitHub Issues and Milestones for your project. The ghqc package
-is a lightweight wrapper to be installed along side project packages and
+is a lightweight wrapper to be installed alongside project packages and
 has three primary functionalities:
 
 - **Isolating Package Dependency**: Installs, or symlinks, the high
@@ -54,7 +54,7 @@ elements are:
   *(optional)*
 
 - **Logo**: A logo to be included in the header of the resultant
-  record’s header named as “logo.png”
+  record’s header named as “logo.png” *(required)*
 
 An example structure of the configuration information repository can be
 found at
@@ -94,11 +94,23 @@ The configuration information will default to installing to
 which is highly recommended, hit `ENTER`. Otherwise, type in the path in
 which to download the repository.
 
-In addition to downloading the repository, or remote updates if the
-repository was previously downloaded, the structure of the repository
-and the checklist yamls are verified.
+In addition to downloading the repository, the structure of the
+repository and the checklist yamls are verified.
 
 ![](man/figures/info_repo_download.png)
+
+In the case the configuration information repository has already been
+downloaded to the specified path and their are remote changes to the
+repository, the user will be warned and provided the option to download
+the new update.
+
+<figure>
+<img src="man/figures/info_repo_update.png"
+alt="NOTE: This will remove all local changes to the repository and hard reset to the content in the remote" />
+<figcaption aria-hidden="true">NOTE: This will remove all local changes
+to the repository and hard reset to the content in the
+remote</figcaption>
+</figure>
 
 3.  **Shiny App Dependency Installation**
 
@@ -115,7 +127,7 @@ previously a previously installed package library.
   - The dependency packages are installed by default to
     “~/.local/share/ghqc/rpkgs”. To install to the default location,
     which is highly recommended, hit `ENTER`. Otherwise, type in the
-    path in which to install the dependency packages to.
+    path in which to install the dependency packages.
 
   ![](man/figures/install_depends.png)
 
@@ -134,6 +146,10 @@ previously a previously installed package library.
   ![](man/figures/link_depends.png)
 
 #### ghqc.app installation
+
+NOTE: `ghqc::ghqc_setup()` does not install the `ghqc.app` package as
+the distribution method and/or required version may change based on
+organization needs.
 
 You can install the development version of ghqc.app from
 [GitHub](https://github.com/) with:
