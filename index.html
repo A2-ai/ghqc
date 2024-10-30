@@ -13,6 +13,7 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Manage QC via GitHub Issues using Shiny Apps">
 <meta name="description" content="This package launches 3 ghqc applications as background jobs to aid the QC process through the use of shiny apps. It also contains aides to maintain the proper setup of the ecosystem. Namely, it will aide in the installation of ghqc.apps and its dependendencies into an isolated directory as to not interfere with the project being QC'ed.">
 <meta property="og:description" content="This package launches 3 ghqc applications as background jobs to aid the QC process through the use of shiny apps. It also contains aides to maintain the proper setup of the ecosystem. Namely, it will aide in the installation of ghqc.apps and its dependendencies into an isolated directory as to not interfere with the project being QC'ed.">
+<meta property="og:image" content="https://a2-ai.github.io/ghqc/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -46,11 +47,19 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="ghqc">ghqc<a class="anchor" aria-label="anchor" href="#ghqc"></a>
-</h1></div>
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="ghqc-">ghqc 
+<a class="anchor" aria-label="anchor" href="#ghqc-"></a>
+</h1>
+</div>
 <!-- badges: start -->
 
-<p>The goal of ghqc is to …</p>
+<p>The goal of the ghqc ecosystem is to simplify, standardize, and improve traceability of the QC process through the use of shiny apps which create GitHub Issues and Milestones for your project. The ghqc package is a lightweight wrapper to be installed alongside project packages and has three primary functionalities:</p>
+<ul>
+<li><p><strong>Isolating Package Dependency</strong>: Installs, or symlinks, the high dependency burden of the ghqc shiny app ecosystem to an isolated directory to ensure no interference with any project work.</p></li>
+<li><p><strong>Launching Shiny Apps</strong>: Launches the ghqc shiny apps as background jobs to allow for continued use of the R Console.</p></li>
+<li><p><strong>Verifying Configuring Information</strong>: Aids in the installation and structure verification of the organization specific configuring information, such as checklists and logos.</p></li>
+</ul>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -60,8 +69,85 @@
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"a2-ai/ghqc"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="short-tour">Short Tour<a class="anchor" aria-label="anchor" href="#short-tour"></a>
+<h2 id="interacting-with-ghqc">Interacting with ghqc<a class="anchor" aria-label="anchor" href="#interacting-with-ghqc"></a>
 </h2>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://a2-ai.github.io/ghqc">ghqc</a></span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="configuration-information-repository">Configuration Information Repository<a class="anchor" aria-label="anchor" href="#configuration-information-repository"></a>
+</h2>
+<p>The ghqc ecosystem has been developed with the intent organizations can customize elements of the QC process. Currently, the customizable elements are:</p>
+<ul>
+<li><p><strong>Checklists</strong>: yaml files contained within a directory named “checklist” <em>(required)</em></p></li>
+<li><p><strong>Prepended Note</strong>: A note to prepend to all checklists named “note” <em>(optional)</em></p></li>
+<li><p><strong>Logo</strong>: A logo to be included in the header of the resultant record’s header named as “logo.png” <em>(required)</em></p></li>
+</ul>
+<p>An example structure of the configuration information repository can be found at <a href="https://github.com/A2-ai/ghqc.example_info_repo" class="external-link">github.com/A2-ai/ghqc.example_info_repo</a>.</p>
+</div>
+<div class="section level2">
+<h2 id="ghqc-setup">ghqc Setup<a class="anchor" aria-label="anchor" href="#ghqc-setup"></a>
+</h2>
+<p>ghqc has 3 main requirements that must be met before running any of the ghqc ecosystem apps:</p>
+<ol style="list-style-type: decimal">
+<li><p>An environmental variable, <code>GHQC_INFO_REPO</code>, must be set to the configuration information repository url in “~/.Renviron”.</p></li>
+<li><p>The configuration information repository must be downloaded to a local location.</p></li>
+<li><p>All of the dependency packages for the ghqc shiny apps, including <code>ghqc.app</code> must be located in the same directory.</p></li>
+</ol>
+<p>Within this package, a function <code><a href="reference/setup_ghqc.html">ghqc::setup_ghqc()</a></code> aids in this setup:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">ghqc</span><span class="fu">::</span><span class="fu"><a href="reference/setup_ghqc.html">setup_ghqc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<ol style="list-style-type: decimal">
+<li><strong>Renviron Setup</strong></li>
+</ol>
+<p>Enter the url of the configuration information repository described above.</p>
+<p><img src="reference/figures/renviron_setup.png"></p>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Configuration Information Download and Verification</strong></li>
+</ol>
+<p>The configuration information will default to installing to “~/.local/share/ghqc/<repo_name>”. To download to the default location, which is highly recommended, hit <code>ENTER</code>. Otherwise, type in the path in which to download the repository.</repo_name></p>
+<p>In addition to downloading the repository, the structure of the repository and the checklist yamls are verified.</p>
+<p><img src="reference/figures/info_repo_download.png"></p>
+<p>In the case the configuration information repository has already been downloaded to the specified path and their are remote changes to the repository, the user will be warned and provided the option to download the new update.</p>
+<figure><img src="reference/figures/info_repo_update.png" alt="NOTE: This will remove all local changes to the repository and hard reset to the content in the remote"><figcaption aria-hidden="true">
+NOTE: This will remove all local changes to the repository and hard reset to the content in the remote.
+</figcaption></figure><ol start="3" style="list-style-type: decimal">
+<li><strong>Shiny App Dependency Installation</strong></li>
+</ol>
+<p>Select whether to install the dependency packages or symlink to previously a previously installed package library.</p>
+<ul>
+<li>
+<p>INSTALL PACKAGES</p>
+<ul>
+<li><p>NOTE: The install option is currently only available to linux systems supported by Posit Package Manager (PPM) and will install from <a href="https://packagemanager.posit.co/cran/2024-03-01" class="external-link">PPM@2024-03-01</a>.</p></li>
+<li><p>The dependency packages are installed by default to “~/.local/share/ghqc/rpkgs”. To install to the default location, which is highly recommended, hit <code>ENTER</code>. Otherwise, type in the path in which to install the dependency packages.</p></li>
+</ul>
+<p><img src="reference/figures/install_depends.png"></p>
+</li>
+<li>
+<p>SYMLINK PACKAGES</p>
+<ul>
+<li><p>NOTE: The link option requires all packages be installed in the same <code>link_path</code> AND they meet the requirements listed in the imports.</p></li>
+<li><p>Provide the path to the previously installed package library.</p></li>
+<li><p>The dependency packages are symlinked by default to “~/.local/share/ghqc/rpkgs”. To symlink to the default location, which is highly recommended, hit <code>ENTER</code>. Otherwise, type in the path in which to download the repository.</p></li>
+</ul>
+<p><img src="reference/figures/link_depends.png"></p>
+</li>
+</ul>
+<div class="section level4">
+<h4 id="ghqcapp-installation">ghqc.app installation<a class="anchor" aria-label="anchor" href="#ghqcapp-installation"></a>
+</h4>
+<p>NOTE: <code>ghqc::ghqc_setup()</code> does not install the <code>ghqc.app</code> package as the distribution method and/or required version may change based on organization needs.</p>
+<p>You can install the development version of ghqc.app from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"a2-ai/ghqc.app"</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="ghqc-shiny-app-launching">ghqc shiny app launching<a class="anchor" aria-label="anchor" href="#ghqc-shiny-app-launching"></a>
+</h2>
+<p>ghqc will start a background job to launch an app from the ghqc ecosystem into the “Viewer” pane of your RStudio session. For technical information regarding these apps, refer to <a href="https://github.com/a2-ai/ghqc.app" class="external-link">ghqc.app</a>.</p>
 <p>…</p>
 </div>
 </div>
@@ -95,7 +181,7 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="https://github.com/A2-ai/ghqc/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/A2-ai/ghqc/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 </ul>
 </div>
 
