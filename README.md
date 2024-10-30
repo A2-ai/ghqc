@@ -19,7 +19,7 @@ has three primary functionalities:
   directory to ensure no interference with any project work.
 
 - **Launching Shiny Apps**: Launches the ghqc shiny apps as background
-  jobs to allow for continued use of the R Console
+  jobs to allow for continued use of the R Console.
 
 - **Verifying Configuring Information**: Aids in the installation and
   structure verification of the organization specific configuring
@@ -58,7 +58,7 @@ elements are:
 
 An example structure of the configuration information repository can be
 found at
-[github.com/A2-ai/ghqc.example_info_repo](https://github.com/A2-ai/ghqc.example_info_repo)
+[github.com/A2-ai/ghqc.example_info_repo](https://github.com/A2-ai/ghqc.example_info_repo).
 
 ## ghqc Setup
 
@@ -74,7 +74,7 @@ ghqc ecosystem apps:
 3.  All of the dependency packages for the ghqc shiny apps, including
     `ghqc.app` must be located in the same directory.
 
-Within this package, a function `ghqc::setup_ghqc()` aids in this setup.
+Within this package, a function `ghqc::setup_ghqc()` aids in this setup:
 
 ``` r
 ghqc::setup_ghqc()
@@ -83,7 +83,7 @@ ghqc::setup_ghqc()
 1.  **Renviron Setup**
 
 Enter the url of the configuration information repository described
-above
+above.
 
 ![](man/figures/renviron_setup.png)
 
@@ -109,8 +109,9 @@ the new update.
 alt="NOTE: This will remove all local changes to the repository and hard reset to the content in the remote" />
 <figcaption aria-hidden="true">NOTE: This will remove all local changes
 to the repository and hard reset to the content in the
-remote</figcaption>
+remote.</figcaption>
 </figure>
+
 
 3.  **Shiny App Dependency Installation**
 
@@ -134,9 +135,9 @@ previously a previously installed package library.
 - SYMLINK PACKAGES
 
   - NOTE: The link option requires all packages be installed in the same
-    `link_path` AND they meet the requirements listed in the imports
+    `link_path` AND they meet the requirements listed in the imports.
 
-  - Provide the path to the previously installed package library
+  - Provide the path to the previously installed package library.
 
   - The dependency packages are symlinked by default to
     “~/.local/share/ghqc/rpkgs”. To symlink to the default location,
