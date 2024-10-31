@@ -4,9 +4,16 @@
 
 - language change in `remove_ghqc_configuration` from "customizing information" to "custom configuration"
 
+# ghqc 0.1.4
+
+- Changes `install_dev_ghqc` to `install_dev_ghqcapp`
+- Changes default remote in `install_dev_ghqcapp` to a2-ai/ghqc.app
+- Changes language in `install_ghqcapp_dependencies` to be clearer (the function does not install ghqc or ghqc.app)
+
 # ghqc 0.1.3
 
 - Fixes typos in output messages for `remove_ghqc_configuration` and `repo_clone`
+
 
 # ghqc 0.1.2
 
