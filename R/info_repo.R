@@ -115,7 +115,7 @@ repo_clone <- function(info_path) {
     cli::cli_h2("{basename(info_path)} Local Content")
     info_files_desc(info_path)
   }, error = function(e) {
-    cli::cli_abort(message = c(sprintf("Clone of %s was not succesful", info_repo_name()),
+    cli::cli_abort(message = c(sprintf("Clone of %s was not successful", info_repo_name()),
                                "x" = sprintf("Error is due to: %s", e$message)))
   })
 }
