@@ -42,12 +42,12 @@ download_ghqc_configuration <- function(info_path = ghqc_infopath(), .force = FA
 #'
 #' @export
 remove_ghqc_configuration <- function(info_path = ghqc_infopath()) {
-  cli::cli_inform("Removing downloaded customizing information in {info_path}...")
+  cli::cli_inform("Removing downloaded custom configuration in {info_path}...")
   tryCatch({
     if (fs::dir_exists(info_path)) fs::dir_delete(info_path)
-    cli::cli_alert_success("Customizing information in {info_path} successfully removed")
+    cli::cli_alert_success("Custom configuration in {info_path} successfully removed")
   }, error = function(e) {
-    cli::cli_abort("Customizing information in {info_path} not removed due to {e$message}")
+    cli::cli_abort("Custom configuration in {info_path} not removed due to {e$message}")
   })
   info_path
 }

@@ -1,5 +1,9 @@
 # ghqc
 
+# ghqc 0.1.5
+
+- language change in `remove_ghqc_configuration` from "customizing information" to "custom configuration"
+
 # ghqc 0.1.4
 
 - Changes `install_dev_ghqc` to `install_dev_ghqcapp`
