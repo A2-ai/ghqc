@@ -1,5 +1,9 @@
 # ghqc
 
+# ghqc 0.1.5
+
+- language change in `remove_ghqc_configuration` from "customizing information" to "custom configuration"
+
 # ghqc 0.1.3
 
 - Fixes typos in output messages for `remove_ghqc_configuration` and `repo_clone`
