@@ -18,7 +18,7 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
 
   tryCatch({
     start_time <- Sys.time()
-    cli::cli_inform("Installing ghqc and its dependency packages...")
+    cli::cli_inform("Installing ghqc.app package dependencies...")
     if (!fs::dir_exists(lib_path)) fs::dir_create(lib_path)
     if (!rlang::is_installed("pak") && use_pak) rlang::abort("pak is not installed. Install pak for better performance. If pak cannot be installed, set `use_pak` = FALSE in `install_depends()` function call")
 
