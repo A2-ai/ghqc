@@ -18,9 +18,9 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
 
   tryCatch({
     start_time <- Sys.time()
-    cli::cli_inform("Installing ghqc and its dependency packages...")
+    cli::cli_inform("Installing ghqc.app package dependencies...")
     if (!fs::dir_exists(lib_path)) fs::dir_create(lib_path)
-    if (!rlang::is_installed("pak") && use_pak) rlang::abort("pak is not installed. Install pak for better performance. If pak cannot be installed, set `use_pak` = FALSE in `install_depends()` function call")
+    if (!rlang::is_installed("pak") && use_pak) rlang::abort("pak is not installed. Install pak for better performance. If pak cannot be installed, set `use_pak` = FALSE in `install_ghqcapp_dependencies()` function call")
 
     if (use_pak) {
       res <- withr::with_options(list("pkg.sysreqs" = FALSE, repos = setup_rpsm_url(ghqc_depends_snapshot_date)),
@@ -31,7 +31,7 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
       res <- install.packages(pkgs, lib = lib_path, repos = setup_rpsm_url(ghqc_depends_snapshot_date))
     }
     dT <- difftime(Sys.time(), start_time)
-    cli::cli_alert_success(sprintf("Installation of the ghqc shiny app dependency packages completed in %0.2f %s", dT, units(dT)))
+    cli::cli_alert_success(sprintf("Installation of ghqc.app package dependencies completed in %0.2f %s", dT, units(dT)))
     if (is.null(ghqcapp_pkg_status(lib_path))) cli::cli_alert_warning("NOTE: ghqc.app is not installed in {lib_path}. Please install before running any ghqc apps")
     invisible(res)
   }, error = function(e) {
@@ -109,7 +109,7 @@ setup_rpsm_url <- function(snapshot_date) {
 
 #' @importFrom rlang is_installed
 #' @importFrom rlang abort
-install_dev_ghqc <- function(remote_path = "a2-ai-tech-training/ghqc.app",
+install_dev_ghqcapp <- function(remote_path = "a2-ai/ghqc.app",
                              lib_path = ghqc_libpath(),
                              .local = FALSE) {
   if (.local) {
