@@ -27,7 +27,7 @@ Imports:
     fs,
     yaml
 Suggests:
-    gert,
+    gert (>= 1.5.0),
     pak
 Depends: 
     R (>= 2.10)
