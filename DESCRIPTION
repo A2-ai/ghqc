@@ -17,17 +17,17 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports: 
-    httpuv (>= 1.6.11),
+    httpuv,
     rstudioapi,
-    withr (>= 2.5.0),
-    glue (>= 1.2.0),
-    processx (>= 3.5.0),
+    withr,
+    glue,
+    processx,
     rlang,
     cli,
     fs,
     yaml
 Suggests:
-    gert (>= 1.5.0),
+    gert,
     pak
 Depends: 
     R (>= 2.10)
