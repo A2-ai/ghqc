@@ -139,9 +139,7 @@ NOTE: This will remove all local changes to the repository and hard reset to the
 </h4>
 <p>NOTE: <code>ghqc::ghqc_setup()</code> does not install the <code>ghqc.app</code> package as the distribution method and/or required version may change based on organization needs.</p>
 <p>You can install the development version of ghqc.app from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
-<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"a2-ai/ghqc.app"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>withr<span class="sc">::</span><span class="fu">with_options</span>(<span class="fu">list</span>(<span class="at">repos =</span> <span class="st">"https://a2-ai.r-universe.dev"</span>), pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="st">"ghqc.app"</span>, <span class="at">lib =</span> ghqc<span class="sc">::</span><span class="fu">ghqc_libpath</span>()))​</span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
