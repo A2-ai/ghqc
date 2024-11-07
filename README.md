@@ -156,8 +156,7 @@ You can install the development version of ghqc.app from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("pak")
-pak::pak("a2-ai/ghqc.app")
+withr::with_options(list(repos = "https://a2-ai.r-universe.dev"), pak::pkg_install("ghqc.app", lib = ghqc::ghqc_libpath()))​
 ```
 
 ## ghqc shiny app launching
