@@ -32,7 +32,7 @@ interactive_info <- function(renv_text) {
     cli::cli_inform(c(" ", "GHQC_INFO_REPO is not set in your ~/.Renviron"))
     info_read <- readline("Provide the URL to the configuring information repository: ")
   } else {
-    cli::cli_inform(c(" ", "GITHUB_INFO_REPO is set to {info$val} in your ~/.Renviron"))
+    cli::cli_inform(c(" ", "GHQC_INFO_REPO is set to {info$val} in your ~/.Renviron"))
     info_read <- readline(glue::glue("Customizing Information Repository ({info$val}) "))
     if (info_read == "") info_read <- info$val
   }

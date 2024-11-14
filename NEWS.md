@@ -1,3 +1,7 @@
+# ghqc 0.1.7
+
+- typo found in `setup_ghqc` related to the info repo global variable. No performance change
+
 # ghqc 0.1.6
 
 - remove version limits for dependencies. Tested version limits down to snapshot date of 2022-08-31
