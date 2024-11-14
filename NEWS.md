@@ -1,3 +1,7 @@
+# ghqc 0.1.8
+
+- The logic for rejecting `gert` install as part of `setup_ghqc` was incorrect. Updating to allow for rejection
+
 # ghqc 0.1.7
 
 - typo found in `setup_ghqc` related to the info repo global variable. No performance change
