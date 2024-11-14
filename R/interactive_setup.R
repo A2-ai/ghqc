@@ -63,7 +63,7 @@ interactive_info_download <- function() {
     cli::cli_inform(c("!" = "Package {.code gert} is not found in your project package library",
                       " " = "The configuration information repository cannot be downloaded unless this package is present"))
     yN <- gsub('\"', "", readline("Would you like to install `gert` to continue? (y/N) "))
-    if (yN != "y" && yN == "") {
+    if (yN != "y" || yN == "") {
       cli::cli_alert_danger("`gert` is not installed. Configuring information repository cannot be checked or downloaded using this package")
       return(invisible())
     }
