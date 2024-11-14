@@ -1,8 +1,3 @@
-# ghqc 0.1.6
-
-- remove version limits for dependencies. Tested version limits down to snapshot date of 2022-08-31
-- when using the `use_pak = FALSE` flag in `install_ghqcapp_dependencies`, forcing `utils::install.packages` to remove potential renv issues
-
 # ghqc 0.1.7
 
 - typo found in `setup_ghqc` related to the info repo global variable. No performance change
