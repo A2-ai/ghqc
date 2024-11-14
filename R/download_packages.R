@@ -10,6 +10,7 @@
 #' @importFrom rlang is_installed
 #' @importFrom rlang abort
 #' @importFrom withr with_options
+#' @importFrom utils install.packages
 #'
 #' @export
 install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
@@ -28,7 +29,7 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
 
     } else {
       if (rlang::is_installed("pak")) cli::cli_alert_warning("pak is installed, but input `use_pak` was set to FALSE. Set `use_pak` to TRUE for better performance.")
-      res <- install.packages(pkgs, lib = lib_path, repos = setup_rpsm_url(ghqc_depends_snapshot_date))
+      res <- utils::install.packages(pkgs, lib = lib_path, repos = setup_rpsm_url(ghqc_depends_snapshot_date))
     }
     dT <- difftime(Sys.time(), start_time)
     cli::cli_alert_success(sprintf("Installation of ghqc.app package dependencies completed in %0.2f %s", dT, units(dT)))
