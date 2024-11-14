@@ -1,5 +1,9 @@
 # ghqc
 
+# ghqc 0.1.6
+
+- typo found in `setup_ghqc` related to the info repo global variable. No performance change
+
 # ghqc 0.1.5
 
 - language change in `remove_ghqc_configuration` from "customizing information" to "custom configuration"
