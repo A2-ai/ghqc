@@ -147,47 +147,80 @@ no_gert_found <- function(info_path) {
 info_files_desc <- function(info_path) {
   repo_files <- info_repo_files(info_path)
   if (fs::file_exists(repo_files[1])) {
-    cli::cli_alert_success("logo.png successfully found")
+    cli::cli_alert_success(paste0(cli::col_blue("logo.png"), " successfully found"))
   } else {
-    cli::cli_alert_danger("logo.png not found")
+    cli::cli_alert_danger(paste0(cli::col_blue("logo.png"), " not found"))
   }
   cli::cli_inform(" ")
 
   if (fs::file_exists(repo_files[2])) {
-    note_found(repo_files[2])
+    custom_options_found(repo_files[2])
   } else {
-    cli::cli_alert_info("'note' not found. This file is not required")
-    cli::cli_inform(" ")
+    cli::cli_alert_info(paste0(cli::col_blue("custom_options.yaml"), " not found"))
   }
+  cli::cli_inform("")
 
   if (fs::file_exists(repo_files[3])) {
     if (length(fs::dir_ls(file.path(info_path, "checklists"), regexp = "(.*?).yaml")) == 0) {
-      cli::cli_alert_danger("Checklists directory is empty")
+      cli::cli_alert_danger(paste0(cli::col_blue("Checklist directory"), " is empty"))
     } else {
       checklists_found(info_path)
     }
   } else {
-    cli::cli_alert_danger("Checklists directory not found")
+    cli::cli_alert_danger(paste0(cli::col_blue("Checklist directory"), " not found"))
   }
 }
 
 info_repo_files <- function(info_path) {
-  file.path(info_path, c("logo.png", "note", "checklists"))
+  file.path(info_path, c("logo.png", "custom_options.yaml", "checklists"))
 }
 
 #' @importFrom cli cli_alert_success
 #' @importFrom cli cli_blockquote
-note_found <- function(note_path) {
-  cli::cli_alert_success("'note' successfully found")
-  cli::cli_blockquote(readLines(note_path))
+custom_options_found <- function(yaml_path) {
+  content <- tryCatch({
+    unlist(yaml::yaml.load_file(yaml_path))
+  }, error = function(e) {
+    NULL
+  })
+  if (is.null(content)) {
+    cli::cli_alert_danger(paste0(cli::col_blue("{basename(yaml_path)}"), " could not be read"))
+    return()
+  }
+
+  if (all(!(c("prependend_checklist_note", "checklist_display_name_var") %in% names(content)))) {
+    cli::cli_alert_warning(paste0("No accepted custom options found in ", cli::col_blue("{basename(yaml_path)}")))
+    return()
+  }
+
+  cli::cli_div(theme = list(ul = list(`margin-left` = 4, before = "")))
+  cli::cli_alert_success(paste0(cli::col_blue("{basename(yaml_path)}"), " successfully found"))
+  ul <- cli::cli_ul()
+  sapply(names(content), function(x) switch(x,
+                                     "prepended_checklist_note" = note_found(content[x]),
+                                     "checklist_display_name_var" = checklist_display_name_found(content[x]),
+                                     cli::cli_alert_info("{x} is not an accepted custom option.")))
+  cli::cli_end(ul)
+}
+
+note_found <- function(note_content) {
+  cli::cli_alert_success("{names(note_content)}:")
+  cli::cli_blockquote(note_content)
+}
+
+checklist_display_name_found <- function(checklist_disp_name) {
+  cli::cli_alert_success("{names(checklist_disp_name)}: {checklist_disp_name}")
+  cli::cli_inform("")
 }
 
 #' @importFrom cli cli_alert_success
 #' @importFrom cli cli_h3
 checklists_found <- function(info_path) {
-  cli::cli_alert_success("Checklists directory successfully found")
-  cli::cli_h3("Checklist directory content")
+  cli::cli_div(theme = list(ul = list(`margin-left` = 4, before = "")))
+  cli::cli_alert_success(paste0(cli::col_blue("Checklist directory"), " successfully found"))
+  ul <- cli::cli_ul()
   print_checklists(info_path)
+  cli::cli_end(ul)
 }
 
 # Checking and setting repo name and url #
@@ -215,4 +248,14 @@ info_repo_url <- function() {
 #' @importFrom cli cli_abort
 info_repo_not_found <- function() {
   cli::cli_abort(message = "GHQC_INFO_REPO not found. Please set in ~/.Renviron")
+}
+
+f <- function() {
+  cli::cli_div(theme = list(ul = list(`margin-left` = 2, before = "")))
+  cli::cli_alert_success("logo.png successfully found")
+  ul <- cli::cli_ul()
+  cli::cli_alert_success("a")
+  cli::cli_blockquote("asdfasdfasdf")
+  cli::cli_alert_success("b")
+  cli::cli_end(ul)
 }
