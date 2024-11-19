@@ -17,5 +17,5 @@ ghqc_libpath <- function() {
 #' @return string containing the default path to the ghqc custom configuration repository (~/.local/share/ghqc/&lt;config repo name here&gt;
 #' @export
 ghqc_config_path <- function() {
-  file.path("~/.local/share/ghqc", info_repo_name())
+  file.path("~/.local/share/ghqc", config_repo_name())
 }

@@ -2,7 +2,7 @@
 #'
 #' @param ... options to expand output. Current option is only "pkgs" to expand list of dependencies
 #' @param lib_path the path to the ghqc package and its dependencies
-#' @param config_path the path to the ghqc customizing information
+#' @param config_path the path to the ghqc custom configuration
 #'
 #' @return This function is primarily used for its printed output, not a returned output
 #'
@@ -25,16 +25,16 @@ ghqc_sitrep <- function(...,
   cli::cli_h1("Renviron Settings")
   sitrep_renviron_check()
 
-  info_repo_section = FALSE
+  config_repo_section = FALSE
   tryCatch({
     config_path
-    info_repo_section = TRUE
+    config_repo_section = TRUE
   }, error = function(e) {
-    info_repo_section = FALSE
-  }) # if config_path not self set AND GHQC_CONFIG_REPO not set, section will be ommitted
-  if (info_repo_section){
-    cli::cli_h1("Information Repository")
-    sitrep_info_check(config_path)
+    config_repo_section = FALSE
+  }) # if config_path not self set AND GHQC_CONFIG_REPO not set, section will be omitted
+  if (config_repo_section){
+    cli::cli_h1("Custom configuration Repository")
+    sitrep_config_check(config_path)
   }
 }
 
@@ -120,11 +120,11 @@ sitrep_read_renviron <- function() {
   }
 }
 
-### Information Repo ###
+### Custom configuration Repo ###
 #' @importFrom cli cli_alert_danger
-sitrep_info_check <- function(config_path) {
-  switch(info_repo_status(config_path),
-         "clone" = cli::cli_alert_danger(sprintf("%s cannot be found locally", info_repo_name())),
+sitrep_config_check <- function(config_path) {
+  switch(config_repo_status(config_path),
+         "clone" = cli::cli_alert_danger(sprintf("%s cannot be found locally", config_repo_name())),
          "update" = sitrep_repo_update(config_path),
          "none" = sitrep_repo_none(config_path),
          "gert" = sitrep_repo_gert(config_path)
@@ -133,27 +133,27 @@ sitrep_info_check <- function(config_path) {
 
 #' @importFrom cli cli_alert_warning
 sitrep_repo_update <- function(config_path) {
-  cli::cli_alert_warning(sprintf("%s was found locally but needs to be updated", info_repo_name()))
+  cli::cli_alert_warning(sprintf("%s was found locally but needs to be updated", config_repo_name()))
   print_local_content(config_path)
 }
 
 #' @importFrom cli cli_alert_success
 sitrep_repo_none <- function(config_path) {
-  cli::cli_alert_success(sprintf("%s was successfully found locally", info_repo_name()))
+  cli::cli_alert_success(sprintf("%s was successfully found locally", config_repo_name()))
   print_local_content(config_path)
 }
 
 #' @importFrom cli cli_alert_warning
 sitrep_repo_gert <- function(config_path) {
   sitrep_repo_none(config_path)
-  cli::cli_alert_warning("Package 'gert' (>= 1.5.0) was not installed to check if information repository is up to date")
+  cli::cli_alert_warning("Package 'gert' (>= 1.5.0) was not installed to check if custom configuration repository is up to date")
 }
 
 #' @importFrom cli cli_inform
 #' @importFrom cli cli_h2
 print_local_content <- function(config_path) {
   cli::cli_inform(sprintf("    Local Directory: %s", config_path))
-  cli::cli_h2(sprintf("%s Local Content", info_repo_name()))
-  info_files_desc(config_path)
+  cli::cli_h2(sprintf("%s Local Content", config_repo_name()))
+  config_files_desc(config_path)
 }
 

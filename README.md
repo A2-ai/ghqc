@@ -41,7 +41,7 @@ pak::pak("a2-ai/ghqc")
 library(ghqc)
 ```
 
-## Configuration Information Repository
+## Custom Configuration Repository
 
 The ghqc ecosystem has been developed with the intent organizations can
 customize elements of the QC process. Currently, the customizable
@@ -56,7 +56,7 @@ elements are:
 - **Logo**: A logo to be included in the header of the resultant
   record’s header named as “logo.png” *(required)*
 
-An example structure of the configuration information repository can be
+An example structure of the custom configuration repository can be
 found at
 [github.com/A2-ai/ghqc.example_info_repo](https://github.com/A2-ai/ghqc.example_info_repo).
 
@@ -65,10 +65,10 @@ found at
 ghqc has 3 main requirements that must be met before running any of the
 ghqc ecosystem apps:
 
-1.  An environmental variable, `GHQC_INFO_REPO`, must be set to the
-    configuration information repository url in “~/.Renviron”.
+1.  An environmental variable, `GHQC_CONFIG_REPO`, must be set to the
+    custom configuration repository url in “~/.Renviron”.
 
-2.  The configuration information repository must be downloaded to a
+2.  The custom configuration repository must be downloaded to a
     local location.
 
 3.  All of the dependency packages for the ghqc shiny apps, including
@@ -82,14 +82,14 @@ ghqc::setup_ghqc()
 
 1.  **Renviron Setup**
 
-Enter the url of the configuration information repository described
+Enter the url of the custom configuration repository described
 above.
 
 ![](man/figures/renviron_setup.png)
 
-2.  **Configuration Information Download and Verification**
+2.  **Custom Configuration Download and Verification**
 
-The configuration information will default to installing to
+The custom configuration will default to installing to
 “~/.local/share/ghqc/<repo_name>”. To download to the default location,
 which is highly recommended, hit `ENTER`. Otherwise, type in the path in
 which to download the repository.
@@ -99,7 +99,7 @@ repository and the checklist yamls are verified.
 
 ![](man/figures/info_repo_download.png)
 
-In the case the configuration information repository has already been
+In the case the custom configuration repository has already been
 downloaded to the specified path and their are remote changes to the
 repository, the user will be warned and provided the option to download
 the new update.

@@ -78,7 +78,7 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
       'cat(paste0("Output from .libPaths():\n", lib_paths_indexed))',
       'cat(paste0("Output from sessionInfo():"))',
       'print(sessionInfo())',
-      paste0('ghqc.app::ghqc_set_info_repo("', config_path, '")'),
+      paste0('ghqc.app::ghqc_set_config_repo("', config_path, '")'),
       paste0("withr::with_dir(", "'", qc_dir, "',", "{",
         'ghqc.app::', app_name, '()',
       "})"),

@@ -1,4 +1,4 @@
-#' Interactive function to set up the ghqc environment, including writing to the .Renviron, configuration information repository download, and ghqc.app dependency installation/linking, for use of the ghqc application suite
+#' Interactive function to set up the ghqc environment, including writing to the .Renviron, custom configuration repository download, and ghqc.app dependency installation/linking, for use of the ghqc application suite
 #'
 #' @importFrom cli cli_abort
 #'
@@ -10,7 +10,7 @@ setup_ghqc <- function() {
   }
 
   renv_text <- interactive_renviron()
-  interactive_info_download()
+  interactive_config_download()
   check_res <- interactive_depends()
 }
 
@@ -27,24 +27,24 @@ interactive_renviron <- function() {
 #' @importFrom cli cli_inform
 #' @importFrom glue glue
 interactive_info <- function(renv_text) {
-  info <- parse_renviron("GHQC_CONFIG_REPO", renv_text)
-  if (info$val == "") {
+  config <- parse_renviron("GHQC_CONFIG_REPO", renv_text)
+  if (config$val == "") {
     cli::cli_inform(c(" ", "GHQC_CONFIG_REPO is not set in your ~/.Renviron"))
-    info_read <- readline("Provide the URL to the custom configuration repository: ")
+    config_read <- readline("Provide the URL to the custom configuration repository: ")
   } else {
-    cli::cli_inform(c(" ", "GHQC_CONFIG_REPO is set to {info$val} in your ~/.Renviron"))
-    info_read <- readline(glue::glue("Custom Configuration Repository ({info$val}) "))
-    if (info_read == "") info_read <- info$val
+    cli::cli_inform(c(" ", "GHQC_CONFIG_REPO is set to {config$val} in your ~/.Renviron"))
+    config_read <- readline(glue::glue("Custom Configuration Repository ({config$val}) "))
+    if (config_read == "") config_read <- config$val
   }
   repeat {
-    info_read <- gsub('\"', "", info_read)
-    if (grepl("^https:", info_read)) {
-      info$val <- info_read
+    config_read <- gsub('\"', "", config_read)
+    if (grepl("^https:", config_read)) {
+      config$val <- config_read
       break
     }
-    info_read <- readline(glue::glue("GHQC_CONFIG_REPO does not start with 'https:'. Please provide a valid URL: "))
+    config_read <- readline(glue::glue("GHQC_CONFIG_REPO does not start with 'https:'. Please provide a valid URL: "))
   }
-  renviron_edit("GHQC_CONFIG_REPO", info$val, renv_text)
+  renviron_edit("GHQC_CONFIG_REPO", config$val, renv_text)
 }
 
 write_renv_text <- function(renv_text, val, var_name) {
@@ -57,14 +57,14 @@ write_renv_text <- function(renv_text, val, var_name) {
 #' @importFrom cli cli_inform
 #' @importFrom cli cli_alert_danger
 #' @importFrom glue glue
-interactive_info_download <- function() {
+interactive_config_download <- function() {
   cli::cli_h1("CUSTOM CONFIGURATION REPOSITORY")
   if (!rlang::is_installed("gert")) {
     cli::cli_inform(c("!" = "Package {.code gert} is not found in your project package library",
                       " " = "The custom configuration repository cannot be downloaded unless this package is present"))
     yN <- gsub('\"', "", readline("Would you like to install `gert` to continue? (y/N) "))
     if (yN != "y" || yN == "") {
-      cli::cli_alert_danger("`gert` is not installed. Configuring information repository cannot be checked or downloaded using this package")
+      cli::cli_alert_danger("`gert` is not installed. Custom configuration repository cannot be checked or downloaded using this package")
       return(invisible())
     }
     install.packages("gert")
@@ -97,7 +97,7 @@ interactive_depends <- function() {
   }
 
   if (inst_method == "3") {
-    cli::cli_alert_warning("Ensure the ghqc and its dependencies are installed into an isolated ghqc package library path before using any of the ghqc ecosystem apps.")
+    cli::cli_alert_warning("Ensure that ghqc.app and its dependencies are installed into an isolated ghqc package library path before using any of the ghqc ecosystem apps.")
     return(invisible())
   }
 

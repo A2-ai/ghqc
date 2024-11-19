@@ -1,6 +1,6 @@
 #' helper function to setup/write Renviron file for ghqc
 #'
-#' @param GHQC_CONFIG_REPO Repository URL to the customizing information repository
+#' @param GHQC_CONFIG_REPO Repository URL to the custom configuration repository
 #'
 #' @return This function is used primarly to write to the ~/.Renviron file. It will return the text contained in ~/.Renviron
 #' @export

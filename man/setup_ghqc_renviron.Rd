@@ -7,7 +7,7 @@
 setup_ghqc_renviron(GHQC_CONFIG_REPO)
 }
 \arguments{
-\item{GHQC_CONFIG_REPO}{Repository URL to the customizing information repository}
+\item{GHQC_CONFIG_REPO}{Repository URL to the custom configuration repository}
 }
 \value{
 This function is used primarly to write to the ~/.Renviron file. It will return the text contained in ~/.Renviron

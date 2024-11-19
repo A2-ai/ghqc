@@ -11,7 +11,7 @@ ghqc_sitrep(..., lib_path = ghqc_libpath(), config_path = ghqc_config_path())
 
 \item{lib_path}{the path to the ghqc package and its dependencies}
 
-\item{config_path}{the path to the ghqc customizing information}
+\item{config_path}{the path to the ghqc custom configuration}
 }
 \value{
 This function is primarily used for its printed output, not a returned output
