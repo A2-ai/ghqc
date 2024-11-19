@@ -157,8 +157,8 @@ info_files_desc <- function(info_path) {
     custom_options_found(repo_files[2])
   } else {
     cli::cli_alert_info(paste0(cli::col_blue("custom_options.yaml"), " not found"))
+    cli::cli_inform("")
   }
-  cli::cli_inform("")
 
   if (fs::file_exists(repo_files[3])) {
     if (length(fs::dir_ls(file.path(info_path, "checklists"), regexp = "(.*?).yaml")) == 0) {
@@ -188,9 +188,14 @@ custom_options_found <- function(yaml_path) {
     return()
   }
 
-  if (all(!(c("prependend_checklist_note", "checklist_display_name_var") %in% names(content)))) {
-    cli::cli_alert_warning(paste0("No accepted custom options found in ", cli::col_blue("{basename(yaml_path)}")))
+  if (all(!(c("prepended_checklist_note", "checklist_display_name_var") %in% names(content)))) {
+    cli::cli_alert_warning(paste0("No recognized custom options found in ", cli::col_blue("{basename(yaml_path)}")))
     return()
+  }
+
+  if ("prepended_checklist_note" %in% names(content)) {
+    pcn_idx <- which("prepended_checklist_note" == names(content))
+    content <- append(content[-pcn_idx], content[pcn_idx])
   }
 
   cli::cli_div(theme = list(ul = list(`margin-left` = 4, before = "")))
@@ -199,8 +204,9 @@ custom_options_found <- function(yaml_path) {
   sapply(names(content), function(x) switch(x,
                                      "prepended_checklist_note" = note_found(content[x]),
                                      "checklist_display_name_var" = checklist_display_name_found(content[x]),
-                                     cli::cli_alert_info("{x} is not an accepted custom option.")))
+                                     cli::cli_alert_info("{x} is not a recognized custom option.")))
   cli::cli_end(ul)
+  if (!("prepended_checklist_note" %in% names(content))) cli::cli_inform("")
 }
 
 note_found <- function(note_content) {
@@ -210,7 +216,6 @@ note_found <- function(note_content) {
 
 checklist_display_name_found <- function(checklist_disp_name) {
   cli::cli_alert_success("{names(checklist_disp_name)}: {checklist_disp_name}")
-  cli::cli_inform("")
 }
 
 #' @importFrom cli cli_alert_success
