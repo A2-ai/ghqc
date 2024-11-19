@@ -1,10 +1,10 @@
 #' Check the content of the downloaded ghqc configuration information repository and download any updates needed
 #'
-#' @param info_path *(optional)* path in which the repository, set in environmental variable `GHQC_INFO_REPO`, is, or should be, downloaded to. Defaults to `~/.local/share/ghqc/{repo_name}`
+#' @param info_path *(optional)* path in which the repository, set in environmental variable `GHQC_CONFIG_REPO`, is, or should be, downloaded to. Defaults to `~/.local/share/ghqc/{repo_name}`
 #'
 #' @importFrom cli cli_abort
 #' @export
-check_ghqc_configuration <- function(info_path = ghqc_infopath()) {
+check_ghqc_configuration <- function(info_path = ghqc_config_path()) {
   if (!interactive()) cli::cli_abort("Attempting to run in non-interactive function. Use {.code download_ghqc_configuration()} in non-interactive sections")
   check_ghqc_info_repo_exists()
   switch(info_repo_status(info_path),
@@ -15,12 +15,12 @@ check_ghqc_configuration <- function(info_path = ghqc_infopath()) {
   )
 }
 
-#' Download the customizing information repository as set in environmental variable `GHQC_INFO_REPO`
+#' Download the customizing information repository as set in environmental variable `GHQC_CONFIG_REPO`
 #'
-#' @param info_path *(optional)* path in which the repository, set in environmental variable `GHQC_INFO_REPO`, is, or should be, downloaded to. Defaults to `~/.local/share/ghqc/{repo_name}`
+#' @param info_path *(optional)* path in which the repository, set in environmental variable `GHQC_CONFIG_REPO`, is, or should be, downloaded to. Defaults to `~/.local/share/ghqc/{repo_name}`
 #' @param .force *(optional)* option to force a new download of the ghqc configuration information repository
 #' @export
-download_ghqc_configuration <- function(info_path = ghqc_infopath(), .force = FALSE) {
+download_ghqc_configuration <- function(info_path = ghqc_config_path(), .force = FALSE) {
   check_ghqc_info_repo_exists()
   switch(info_repo_status(info_path, .force),
          "clone" = repo_clone(info_path),
@@ -30,7 +30,7 @@ download_ghqc_configuration <- function(info_path = ghqc_infopath(), .force = FA
   )
 }
 #' Remove the downloaded customizing information repository from `info_path`
-#' @param info_path *(optional)* path in which the repository, set in environmental variable `GHQC_INFO_REPO`, is, or should be, downloaded to. Defaults to `~/.local/share/ghqc/{repo_name}`
+#' @param info_path *(optional)* path in which the repository, set in environmental variable `GHQC_CONFIG_REPO`, is, or should be, downloaded to. Defaults to `~/.local/share/ghqc/{repo_name}`
 #'
 #' @return this function is used for its effects, but will return the removed `info_path`
 #'
@@ -41,7 +41,7 @@ download_ghqc_configuration <- function(info_path = ghqc_infopath(), .force = FA
 #' @importFrom fs dir_delete
 #'
 #' @export
-remove_ghqc_configuration <- function(info_path = ghqc_infopath()) {
+remove_ghqc_configuration <- function(info_path = ghqc_config_path()) {
   cli::cli_inform("Removing downloaded custom configuration in {info_path}...")
   tryCatch({
     if (fs::dir_exists(info_path)) fs::dir_delete(info_path)
@@ -71,7 +71,7 @@ remote_repo_updates <- function(info_path) {
 
 #' @importFrom cli cli_alert_danger
 prompt_repo_clone <- function(info_path) {
-  cli::cli_alert_danger(sprintf("Info repository %s is not found locally", basename(info_path)))
+  cli::cli_alert_danger(sprintf("Custom configuration repository %s is not found locally", basename(info_path)))
   yN <- readline(prompt = "Would you like to download the repository (y/N)? ")
   if (yN == "y") {
     repo_clone(info_path)
@@ -84,7 +84,7 @@ prompt_repo_clone <- function(info_path) {
 #' @importFrom cli cli_alert_warning
 #' @importFrom cli cli_alert_danger
 prompt_repo_update <- function(info_path) {
-  cli::cli_alert_warning(sprintf("Info repository %s was found locally, but is not the most recent version", basename(info_path)))
+  cli::cli_alert_warning(sprintf("Custom configuration repository %s was found locally, but is not the most recent version", basename(info_path)))
   yN <- readline(prompt = glue::glue("Would you like to update the repository. This will delete all local changes to {info_path} (y/N)? "))
   if (yN == "y") {
     repo_clone(info_path)
@@ -123,7 +123,7 @@ repo_clone <- function(info_path) {
 #' @importFrom cli cli_inform
 no_updates <- function(info_path) {
   invalidate_checklists(info_path)
-  cli::cli_inform("Configuration Information Repository found up to date at {info_path}")
+  cli::cli_inform("Custom Configuration Repository found up to date at {info_path}")
   info_files_desc(info_path)
 }
 
@@ -132,13 +132,13 @@ no_updates <- function(info_path) {
 #' @importFrom cli cli_inform
 #' @importFrom cli cli_alert_warning
 no_gert_found <- function(info_path) {
-  cli::cli_inform("Configuration Information Repository at {info_path}")
+  cli::cli_inform("Custom configuration Repository at {info_path}")
   info_files_desc(info_path)
   cli::cli_inform("")
-  cli::cli_alert_warning("Package 'gert' (>= 1.5.0) was not installed to check if information repository is up to date")
+  cli::cli_alert_warning("Package 'gert' (>= 1.5.0) was not installed to check if custom configuration repository is up to date")
 }
 
-# info repo description #
+# Custom configuration repo description #
 #' @importFrom fs file_exists
 #' @importFrom cli cli_alert_success
 #' @importFrom cli cli_alert_danger
@@ -156,7 +156,7 @@ info_files_desc <- function(info_path) {
   if (fs::file_exists(repo_files[2])) {
     custom_options_found(repo_files[2])
   } else {
-    cli::cli_alert_info(paste0(cli::col_blue("custom_options.yaml"), " not found"))
+    cli::cli_alert_info(paste0(cli::col_blue("custom_options.yaml"), " not found. This file is not required."))
     cli::cli_inform("")
   }
 
@@ -234,10 +234,10 @@ checklists_found <- function(info_path) {
 check_ghqc_info_repo_exists <- function() {
   if (!fs::file_exists("~/.Renviron")) info_repo_not_found()
   readRenviron("~/.Renviron")
-  info_repo <- Sys.getenv("GHQC_INFO_REPO")
+  info_repo <- Sys.getenv("GHQC_CONFIG_REPO")
   if (info_repo == "") info_repo_not_found()
   if (substr(info_repo, 1, 8) != "https://") {
-    cli::cli_abort("GHQC_INFO_REPO ({info_repo}) does not start with 'https://'")
+    cli::cli_abort("GHQC_CONFIG_REPO ({info_repo}) does not start with 'https://'")
   }
 }
 
@@ -247,20 +247,10 @@ info_repo_name <- function() {
 
 info_repo_url <- function() {
   check_ghqc_info_repo_exists()
-  Sys.getenv("GHQC_INFO_REPO")
+  Sys.getenv("GHQC_CONFIG_REPO")
 }
 
 #' @importFrom cli cli_abort
 info_repo_not_found <- function() {
-  cli::cli_abort(message = "GHQC_INFO_REPO not found. Please set in ~/.Renviron")
-}
-
-f <- function() {
-  cli::cli_div(theme = list(ul = list(`margin-left` = 2, before = "")))
-  cli::cli_alert_success("logo.png successfully found")
-  ul <- cli::cli_ul()
-  cli::cli_alert_success("a")
-  cli::cli_blockquote("asdfasdfasdf")
-  cli::cli_alert_success("b")
-  cli::cli_end(ul)
+  cli::cli_abort(message = "GHQC_CONFIG_REPO not found. Please set in ~/.Renviron")
 }

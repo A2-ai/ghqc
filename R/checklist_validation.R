@@ -1,5 +1,5 @@
 #' @importFrom fs dir_ls
-validate_checklists <- function(info_path = ghqc_infopath()) {
+validate_checklists <- function(info_path = ghqc_config_path()) {
   if (!fs::dir_exists(file.path(info_path, "checklists"))) return(invisible())
   checklist_ls <- fs::dir_ls(file.path(info_path, "checklists"), regexp = "(.*?).yaml")
   lapply(checklist_ls, function(x) val_checklist(x))
@@ -21,7 +21,7 @@ val_checklist <- function(checklist) {
   list(valid = TRUE, reason = NA)
 }
 
-invalidate_checklists <- function(info_path = ghqc_infopath()) {
+invalidate_checklists <- function(info_path = ghqc_config_path()) {
   check_structure <- validate_checklists(info_path)
   sapply(names(check_structure), function(x) invalid_checklist_rename(x, check_structure[[x]]$valid))
 }

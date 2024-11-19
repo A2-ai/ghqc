@@ -1,3 +1,9 @@
+# ghqc 0.2.0
+
+- Updated the custom configuration options repository (now `GHQC_OPTIONS_REPO`) check to reflect the following changes:
+  - The "note" file within the custom configuration repository is now `prepended_checklist_note` within "custom_options.yaml"
+  - `checklist_display_name_var` in "custom_options.yaml" provides option to change the name in which the QC checklists are referred to as.
+
 # ghqc 0.1.8
 
 - The logic for rejecting `gert` install as part of `setup_ghqc` was incorrect. Updating to allow for rejection

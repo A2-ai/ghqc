@@ -12,7 +12,7 @@
 #' @export
 ghqc_sitrep <- function(...,
                         lib_path = ghqc_libpath(),
-                        info_path = ghqc_infopath()){
+                        info_path = ghqc_config_path()){
   inputs <- c(...)
 
   cli::cli_h1("Package Dependencies")
@@ -31,7 +31,7 @@ ghqc_sitrep <- function(...,
     info_repo_section = TRUE
   }, error = function(e) {
     info_repo_section = FALSE
-  }) # if info_path not self set AND GHQC_INFO_REPO not set, section will be ommitted
+  }) # if info_path not self set AND GHQC_CONFIG_REPO not set, section will be ommitted
   if (info_repo_section){
     cli::cli_h1("Information Repository")
     sitrep_info_check(info_path)
@@ -105,8 +105,8 @@ ghqcapp_pkg_status <- function(lib_path) {
 sitrep_renviron_check <- function() {
   sysenv <- sitrep_read_renviron()
   ifelse(sysenv == "",
-         cli::cli_alert_danger("GHQC_INFO_REPO is not set in ~/.Renviron"),
-         cli::cli_alert_success("GHQC_INFO_REPO is set to {sysenv}"))
+         cli::cli_alert_danger("GHQC_CONFIG_REPO is not set in ~/.Renviron"),
+         cli::cli_alert_success("GHQC_CONFIG_REPO is set to {sysenv}"))
   invisible(NA)
 }
 
@@ -114,7 +114,7 @@ sitrep_renviron_check <- function() {
 sitrep_read_renviron <- function() {
   if (fs::file_exists("~/.Renviron")) {
     readRenviron("~/.Renviron")
-    Sys.getenv("GHQC_INFO_REPO")
+    Sys.getenv("GHQC_CONFIG_REPO")
   } else {
     ""
   }

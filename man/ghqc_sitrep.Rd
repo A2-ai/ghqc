@@ -4,7 +4,7 @@
 \alias{ghqc_sitrep}
 \title{Situation report for ghqc set-up}
 \usage{
-ghqc_sitrep(..., lib_path = ghqc_libpath(), info_path = ghqc_infopath())
+ghqc_sitrep(..., lib_path = ghqc_libpath(), info_path = ghqc_config_path())
 }
 \arguments{
 \item{...}{options to expand output. Current option is only "pkgs" to expand list of dependencies}

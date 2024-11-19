@@ -4,10 +4,10 @@
 \alias{check_ghqc_configuration}
 \title{Check the content of the downloaded ghqc configuration information repository and download any updates needed}
 \usage{
-check_ghqc_configuration(info_path = ghqc_infopath())
+check_ghqc_configuration(info_path = ghqc_config_path())
 }
 \arguments{
-\item{info_path}{\emph{(optional)} path in which the repository, set in environmental variable \code{GHQC_INFO_REPO}, is, or should be, downloaded to. Defaults to \verb{~/.local/share/ghqc/\{repo_name\}}}
+\item{info_path}{\emph{(optional)} path in which the repository, set in environmental variable \code{GHQC_CONFIG_REPO}, is, or should be, downloaded to. Defaults to \verb{~/.local/share/ghqc/\{repo_name\}}}
 }
 \description{
 Check the content of the downloaded ghqc configuration information repository and download any updates needed

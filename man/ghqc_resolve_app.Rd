@@ -8,7 +8,7 @@ ghqc_resolve_app(
   app_name = "ghqc_resolve_app",
   qc_dir = getwd(),
   lib_path = ghqc_libpath(),
-  info_path = ghqc_infopath()
+  info_path = ghqc_config_path()
 )
 }
 \arguments{
