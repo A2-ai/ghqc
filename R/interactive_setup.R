@@ -71,11 +71,11 @@ interactive_info_download <- function() {
   }
 
   cli::cli_inform(" ")
-  info_path <- gsub('\"', "", readline(glue::glue("Path to download the custom configuration repository ({ghqc_config_path()}) ")))
-  if (info_path == "") info_path <- ghqc_config_path()
+  config_path <- gsub('\"', "", readline(glue::glue("Path to download the custom configuration repository ({ghqc_config_path()}) ")))
+  if (config_path == "") config_path <- ghqc_config_path()
 
   cli::cli_inform(" ")
-  check_ghqc_configuration(info_path = info_path)
+  check_ghqc_configuration(config_path = config_path)
 }
 
 #' @importFrom cli cli_h1

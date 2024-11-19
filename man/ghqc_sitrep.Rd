@@ -4,14 +4,14 @@
 \alias{ghqc_sitrep}
 \title{Situation report for ghqc set-up}
 \usage{
-ghqc_sitrep(..., lib_path = ghqc_libpath(), info_path = ghqc_config_path())
+ghqc_sitrep(..., lib_path = ghqc_libpath(), config_path = ghqc_config_path())
 }
 \arguments{
 \item{...}{options to expand output. Current option is only "pkgs" to expand list of dependencies}
 
 \item{lib_path}{the path to the ghqc package and its dependencies}
 
-\item{info_path}{the path to the ghqc customizing information}
+\item{config_path}{the path to the ghqc customizing information}
 }
 \value{
 This function is primarily used for its printed output, not a returned output

@@ -2,16 +2,16 @@
 % Please edit documentation in R/info_repo.R
 \name{remove_ghqc_configuration}
 \alias{remove_ghqc_configuration}
-\title{Remove the downloaded customizing information repository from \code{info_path}}
+\title{Remove the downloaded customizing information repository from \code{config_path}}
 \usage{
-remove_ghqc_configuration(info_path = ghqc_config_path())
+remove_ghqc_configuration(config_path = ghqc_config_path())
 }
 \arguments{
-\item{info_path}{\emph{(optional)} path in which the repository, set in environmental variable \code{GHQC_CONFIG_REPO}, is, or should be, downloaded to. Defaults to \verb{~/.local/share/ghqc/\{repo_name\}}}
+\item{config_path}{\emph{(optional)} path in which the repository, set in environmental variable \code{GHQC_CONFIG_REPO}, is, or should be, downloaded to. Defaults to \verb{~/.local/share/ghqc/\{repo_name\}}}
 }
 \value{
-this function is used for its effects, but will return the removed \code{info_path}
+this function is used for its effects, but will return the removed \code{config_path}
 }
 \description{
-Remove the downloaded customizing information repository from \code{info_path}
+Remove the downloaded customizing information repository from \code{config_path}
 }

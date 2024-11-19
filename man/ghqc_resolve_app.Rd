@@ -8,7 +8,7 @@ ghqc_resolve_app(
   app_name = "ghqc_resolve_app",
   qc_dir = getwd(),
   lib_path = ghqc_libpath(),
-  info_path = ghqc_config_path()
+  config_path = ghqc_config_path()
 )
 }
 \arguments{
@@ -18,7 +18,7 @@ ghqc_resolve_app(
 
 \item{lib_path}{the path to the ghqc package and its dependencies}
 
-\item{info_path}{the path to the ghqc configuring information}
+\item{config_path}{the path to the ghqc configuring information}
 }
 \description{
 This function allows a user to insert a comment into a ghqc GitHub Issue that displays changes
