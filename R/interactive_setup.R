@@ -1,3 +1,5 @@
+.pe <- new.env()
+
 #' Interactive function to set up the ghqc environment, including writing to the .Renviron, custom configuration repository download, and ghqc.app dependency installation/linking, for use of the ghqc application suite
 #'
 #' @importFrom cli cli_abort
@@ -73,6 +75,7 @@ interactive_config_download <- function() {
   cli::cli_inform(" ")
   config_path <- gsub('\"', "", readline(glue::glue("Path to download the custom configuration repository ({ghqc_config_path()}) ")))
   if (config_path == "") config_path <- ghqc_config_path()
+  assign("config_path", config_path, .pe)
 
   cli::cli_inform(" ")
   check_ghqc_configuration(config_path = config_path)
@@ -101,8 +104,19 @@ interactive_depends <- function() {
     return(invisible())
   }
 
-  if (inst_method == "1") return(interactive_install())
-  if (inst_method == "2") return(interactive_link())
+  if (inst_method == "1") res <- c("install_results" = interactive_install())
+  if (inst_method == "2") res <- c("link_results" = interactive_link())
+  append(res, "ghqcapp_results" = interactive_ghqcapp_install())
+}
+
+interactive_use_pak <- function() {
+  use_pak <- TRUE
+  if (!rlang::is_installed("pak")) {
+    cli::cli_inform(" ")
+    yN <- gsub('\"', "", readline("Package `pak` is not found in your project package library. To improve performance, would you like to install pak? (y/N) "))
+    if (yN == "y" || yN == "") utils::install.packages("pak") else use_pak <- FALSE
+  }
+  use_pak
 }
 
 #' @importFrom rlang is_installed
@@ -111,17 +125,14 @@ interactive_depends <- function() {
 #' @importFrom fs file_exists
 #' @importFrom fs dir_create
 interactive_install <- function() {
-  use_pak <- TRUE
-  if (!rlang::is_installed("pak")) {
-    cli::cli_inform(" ")
-    yN <- gsub('\"', "", readline("Package `pak` is not found in your project package library. To improve performance, would you like to install pak? (y/N) "))
-    if (yN == "y" || yN == "") utils::install.packages("pak") else use_pak <- FALSE
-  }
+  use_pak <- interactive_use_pak()
+  assign("use_pak", use_pak, .pe)
 
   cli::cli_inform(" ")
   lib_path <- gsub('\"', "", readline("Path to install the ghqc.app dependencies (~/.local/share/ghqc/rpkgs) "))
   if (lib_path == "") lib_path <- ghqc_libpath()
   if (!fs::file_exists(lib_path)) fs::dir_create(lib_path)
+  assign("lib_path", lib_path, .pe)
 
   cli::cli_inform(" ")
   check_ghqcapp_dependencies(lib_path = lib_path, use_pak = use_pak)
@@ -145,7 +156,29 @@ interactive_link <- function() {
   lib_path <- gsub('\"', "", readline("Path to link the ghqc.app dependencies (~/.local/share/ghqc/rpkgs) "))
   if (lib_path == "") lib_path <- ghqc_libpath()
   if (!fs::file_exists(lib_path)) fs::dir_create(lib_path)
+  assign("lib_path", lib_path, .pe)
 
   cli::cli_inform(" ")
   link_ghqcapp_dependencies(link_path = link_path, lib_path = lib_path)
+}
+
+interactive_ghqcapp_install <- function() {
+  #FOR DEV
+  # assign("lib_path", ghqc_libpath(), .pe)
+  # assign("config_path", ghqc_config_path(), .pe)
+
+  cli::cli_h1("GHQC.APP INSTALLATION")
+  repo <- ghqcapp_repo(config_path = .pe$config_path)
+  specified <- NULL
+  if (!repo$unset) specified <- "specified "
+  cli::cli_inform("ghqc.app will install from {specified}repository: {repo$url}")
+  yN <- tolower(readline(glue::glue("Would you like to install ghqc.app to {.pe$lib_path} (y/N)? ")))
+
+  if (yN == "n") {
+    cli::cli_alert_danger("Please install ghqc.app to {.pe$lib_path} before running any ghqc apps")
+    return(invisible())
+  }
+
+  if (!exists("use_pak", envir = .pe)) assign("use_pak", interactive_use_pak(), .pe)
+  install_ghqcapp(lib_path = .pe$lib_path, repo = repo$url, use_pak = .pe$use_pak)
 }

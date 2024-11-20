@@ -25,7 +25,7 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
 
     if (use_pak) {
       res <- withr::with_options(list("pkg.sysreqs" = FALSE, repos = setup_rpsm_url(ghqc_depends_snapshot_date)),
-                                 pak::pkg_install(pkgs, lib = lib_path, upgrade = TRUE, ask = FALSE)) #blow cache, run this, check description file
+                                 pak::pkg_install(pkgs, lib = lib_path, upgrade = TRUE, ask = FALSE))
 
     } else {
       if (rlang::is_installed("pak")) cli::cli_alert_warning("pak is installed, but input `use_pak` was set to FALSE. Set `use_pak` to TRUE for better performance.")
@@ -87,11 +87,11 @@ setup_rpsm_url <- function(snapshot_date) {
       system_info <- processx::run(cmd$cmd, args = cmd$args)$stdout
       system_info <- gsub(" ", replacement = "_", system_info)
       ubuntu_codename <- regmatches(system_info, regexec("\nCodename:\t(.*?)\n", system_info))[[1]][2]
+      repo <- file.path("https://packagemanager.posit.co/cran/__linux__", tolower(ubuntu_codename),snapshot_date)
     }, error = function(e) {
-      cli::cli_abort(message = "Failed to detect codename via lsb_release")
+      repo <- file.path("https://packagemanager.posit.co/cran", snapshot_date)
     }
   )
-  repo <- file.path("https://packagemanager.posit.co/cran/__linux__", tolower(ubuntu_codename),snapshot_date)
   if (rlang::is_installed("pak")) {
     repo_status <- withr::with_options(list(repos = repo), pak::repo_status(bioc = FALSE, cran_mirror = repo))$ok
   } else {
@@ -102,9 +102,33 @@ setup_rpsm_url <- function(snapshot_date) {
       repo_status = FALSE
     })
   }
-  if (!repo_status) cli::cli_abort(message = sprintf("Posit package manager for snapshot date %s and os %s is not available", snapshot_date, ubuntu_codename))
+  if (!repo_status) cli::cli_abort(message = "{repo} is not available. Verify snapshot date and/or operating system is valid.")
 
   c("CRAN" = repo)
+}
+
+install_ghqcapp <- function(lib_path = ghqc_libpath(),
+                            repo = ghqcapp_repo()$url,
+                            use_pak = TRUE) {
+  if (!(all(ghqc_depends %in% utils::installed.packages(lib_path)))) cli::cli_abort("All package dependencies for ghqc.app are not found in {lib_path}. Run `check_ghqcapp_dependencies` before continuing.")
+
+  if (!rlang::is_installed("pak") && use_pak) rlang::abort("pak is not installed. Install pak for better performance. If pak cannot be installed, set `use_pak` = FALSE in `install_ghqcapp_dependencies()` function call")
+
+  cli::cli_inform("Installing ghqc.app...")
+  tryCatch({
+    if (use_pak) {
+      res <- withr::with_options(list("pkg.sysreqs" = FALSE, repos = repo),
+                                 pak::pkg_install("ghqc.app", lib = lib_path, dependencies = FALSE, ask = FALSE))
+
+    } else {
+      if (rlang::is_installed("pak")) cli::cli_alert_warning("pak is installed, but input `use_pak` was set to FALSE. Set `use_pak` to TRUE for better performance.")
+      res <- utils::install.packages("ghqc.app", lib = lib_path, repos = repo, dependencies = FALSE)
+    }
+    cli::cli_alert_success("ghqc.app successfully installed")
+  }, error = function(e) {
+    cli::cli_alert_danger(c("ghqc.app did not install. Failure due to: ", e$message))
+  })
+  invisible(res)
 }
 
 

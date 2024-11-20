@@ -175,14 +175,28 @@ config_repo_files <- function(config_path) {
   file.path(config_path, c("logo.png", "options.yaml", "checklists"))
 }
 
-#' @importFrom cli cli_alert_success
-#' @importFrom cli cli_blockquote
-custom_options_found <- function(yaml_path) {
-  content <- tryCatch({
+ghqcapp_repo <- function(config_path = ghqc_config_path()) {
+  if (!fs::dir_exists(config_path)) cli::cli_abort("Custom configuration repository is not found locally at {config_path}. The repository from which to install ghqc.app cannot be determined without the repository downloaded.")
+  yaml_path <- file.path(config_path, "options.yaml")
+  if (!fs::file_exists(yaml_path)) return(list("unset" = TRUE, "url"="https://a2-ai.r-universe.dev"))
+  options <- read_custom_options(yaml_path)
+  if (is.null(options)) cli::cli_abort("{yaml_path} could not be read. Please verify proper structure.")
+  if (!("ghqc.app_repository" %in% names(options))) return(list("unset" = TRUE, "url"="https://a2-ai.r-universe.dev"))
+  list("unset" = FALSE, "url" = options["ghqc.app_repository"])
+}
+
+read_custom_options <- function(yaml_path) {
+  tryCatch({
     unlist(yaml::yaml.load_file(yaml_path))
   }, error = function(e) {
     NULL
   })
+}
+
+#' @importFrom cli cli_alert_success
+#' @importFrom cli cli_blockquote
+custom_options_found <- function(yaml_path) {
+  content <- read_custom_options(yaml_path)
   if (is.null(content)) {
     cli::cli_alert_danger(paste0(cli::col_blue("{basename(yaml_path)}"), " could not be read"))
     return()
@@ -204,6 +218,7 @@ custom_options_found <- function(yaml_path) {
   sapply(names(content), function(x) switch(x,
                                      "prepended_checklist_note" = note_found(content[x]),
                                      "checklist_display_name_var" = checklist_display_name_found(content[x]),
+                                     "ghqc.app_repository" = ghqcapp_repository_found(content[x]),
                                      cli::cli_alert_info("{x} is not a recognized custom option.")))
   cli::cli_end(ul)
   if (!("prepended_checklist_note" %in% names(content))) cli::cli_inform("")
@@ -216,6 +231,10 @@ note_found <- function(note_content) {
 
 checklist_display_name_found <- function(checklist_disp_name) {
   cli::cli_alert_success("{names(checklist_disp_name)}: {checklist_disp_name}")
+}
+
+ghqcapp_repository_found <- function(repo_url) {
+  cli::cli_alert_success("{names(repo_url)}: {repo_url}")
 }
 
 #' @importFrom cli cli_alert_success
