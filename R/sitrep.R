@@ -2,7 +2,7 @@
 #'
 #' @param ... options to expand output. Current option is only "pkgs" to expand list of dependencies
 #' @param lib_path the path to the ghqc package and its dependencies
-#' @param info_path the path to the ghqc customizing information
+#' @param config_path the path to the ghqc custom configuration
 #'
 #' @return This function is primarily used for its printed output, not a returned output
 #'
@@ -12,7 +12,7 @@
 #' @export
 ghqc_sitrep <- function(...,
                         lib_path = ghqc_libpath(),
-                        info_path = ghqc_infopath()){
+                        config_path = ghqc_config_path()){
   inputs <- c(...)
 
   cli::cli_h1("Package Dependencies")
@@ -25,16 +25,16 @@ ghqc_sitrep <- function(...,
   cli::cli_h1("Renviron Settings")
   sitrep_renviron_check()
 
-  info_repo_section = FALSE
+  config_repo_section = FALSE
   tryCatch({
-    info_path
-    info_repo_section = TRUE
+    config_path
+    config_repo_section = TRUE
   }, error = function(e) {
-    info_repo_section = FALSE
-  }) # if info_path not self set AND GHQC_INFO_REPO not set, section will be ommitted
-  if (info_repo_section){
-    cli::cli_h1("Information Repository")
-    sitrep_info_check(info_path)
+    config_repo_section = FALSE
+  }) # if config_path not self set AND GHQC_CONFIG_REPO not set, section will be omitted
+  if (config_repo_section){
+    cli::cli_h1("Custom configuration Repository")
+    sitrep_config_check(config_path)
   }
 }
 
@@ -105,8 +105,8 @@ ghqcapp_pkg_status <- function(lib_path) {
 sitrep_renviron_check <- function() {
   sysenv <- sitrep_read_renviron()
   ifelse(sysenv == "",
-         cli::cli_alert_danger("GHQC_INFO_REPO is not set in ~/.Renviron"),
-         cli::cli_alert_success("GHQC_INFO_REPO is set to {sysenv}"))
+         cli::cli_alert_danger("GHQC_CONFIG_REPO is not set in ~/.Renviron"),
+         cli::cli_alert_success("GHQC_CONFIG_REPO is set to {sysenv}"))
   invisible(NA)
 }
 
@@ -114,46 +114,46 @@ sitrep_renviron_check <- function() {
 sitrep_read_renviron <- function() {
   if (fs::file_exists("~/.Renviron")) {
     readRenviron("~/.Renviron")
-    Sys.getenv("GHQC_INFO_REPO")
+    Sys.getenv("GHQC_CONFIG_REPO")
   } else {
     ""
   }
 }
 
-### Information Repo ###
+### Custom configuration Repo ###
 #' @importFrom cli cli_alert_danger
-sitrep_info_check <- function(info_path) {
-  switch(info_repo_status(info_path),
-         "clone" = cli::cli_alert_danger(sprintf("%s cannot be found locally", info_repo_name())),
-         "update" = sitrep_repo_update(info_path),
-         "none" = sitrep_repo_none(info_path),
-         "gert" = sitrep_repo_gert(info_path)
+sitrep_config_check <- function(config_path) {
+  switch(config_repo_status(config_path),
+         "clone" = cli::cli_alert_danger(sprintf("%s cannot be found locally", config_repo_name())),
+         "update" = sitrep_repo_update(config_path),
+         "none" = sitrep_repo_none(config_path),
+         "gert" = sitrep_repo_gert(config_path)
          )
 }
 
 #' @importFrom cli cli_alert_warning
-sitrep_repo_update <- function(info_path) {
-  cli::cli_alert_warning(sprintf("%s was found locally but needs to be updated", info_repo_name()))
-  print_local_content(info_path)
+sitrep_repo_update <- function(config_path) {
+  cli::cli_alert_warning(sprintf("%s was found locally but needs to be updated", config_repo_name()))
+  print_local_content(config_path)
 }
 
 #' @importFrom cli cli_alert_success
-sitrep_repo_none <- function(info_path) {
-  cli::cli_alert_success(sprintf("%s was successfully found locally", info_repo_name()))
-  print_local_content(info_path)
+sitrep_repo_none <- function(config_path) {
+  cli::cli_alert_success(sprintf("%s was successfully found locally", config_repo_name()))
+  print_local_content(config_path)
 }
 
 #' @importFrom cli cli_alert_warning
-sitrep_repo_gert <- function(info_path) {
-  sitrep_repo_none(info_path)
-  cli::cli_alert_warning("Package 'gert' (>= 1.5.0) was not installed to check if information repository is up to date")
+sitrep_repo_gert <- function(config_path) {
+  sitrep_repo_none(config_path)
+  cli::cli_alert_warning("Package 'gert' (>= 1.5.0) was not installed to check if custom configuration repository is up to date")
 }
 
 #' @importFrom cli cli_inform
 #' @importFrom cli cli_h2
-print_local_content <- function(info_path) {
-  cli::cli_inform(sprintf("    Local Directory: %s", info_path))
-  cli::cli_h2(sprintf("%s Local Content", info_repo_name()))
-  info_files_desc(info_path)
+print_local_content <- function(config_path) {
+  cli::cli_inform(sprintf("    Local Directory: %s", config_path))
+  cli::cli_h2(sprintf("%s Local Content", config_repo_name()))
+  config_files_desc(config_path)
 }
 

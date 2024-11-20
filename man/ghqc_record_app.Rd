@@ -8,7 +8,7 @@ ghqc_record_app(
   app_name = "ghqc_record_app",
   qc_dir = getwd(),
   lib_path = ghqc_libpath(),
-  info_path = ghqc_infopath()
+  config_path = ghqc_config_path()
 )
 }
 \arguments{
@@ -18,7 +18,7 @@ ghqc_record_app(
 
 \item{lib_path}{the path to the ghqc package and its dependencies}
 
-\item{info_path}{the path to the ghqc configuring information}
+\item{config_path}{the path to the ghqc configuring information}
 }
 \description{
 This function allows the user to generate a QC Record for one or more Milestones created with \link{ghqc_assign_app}.

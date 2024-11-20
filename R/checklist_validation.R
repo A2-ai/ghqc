@@ -1,7 +1,7 @@
 #' @importFrom fs dir_ls
-validate_checklists <- function(info_path = ghqc_infopath()) {
-  if (!fs::dir_exists(file.path(info_path, "checklists"))) return(invisible())
-  checklist_ls <- fs::dir_ls(file.path(info_path, "checklists"), regexp = "(.*?).yaml")
+validate_checklists <- function(config_path = ghqc_config_path()) {
+  if (!fs::dir_exists(file.path(config_path, "checklists"))) return(invisible())
+  checklist_ls <- fs::dir_ls(file.path(config_path, "checklists"), regexp = "(.*?).yaml")
   lapply(checklist_ls, function(x) val_checklist(x))
 }
 
@@ -21,8 +21,8 @@ val_checklist <- function(checklist) {
   list(valid = TRUE, reason = NA)
 }
 
-invalidate_checklists <- function(info_path = ghqc_infopath()) {
-  check_structure <- validate_checklists(info_path)
+invalidate_checklists <- function(config_path = ghqc_config_path()) {
+  check_structure <- validate_checklists(config_path)
   sapply(names(check_structure), function(x) invalid_checklist_rename(x, check_structure[[x]]$valid))
 }
 
@@ -38,8 +38,8 @@ invalid_checklist_rename <- function(checklist, check_structure) {
 #' @importFrom cli cli_bullets
 #' @importFrom cli cli_inform
 #' @importFrom cli cli_alert_info
-print_checklists <- function(info_path) {
-  res <- validate_checklists(info_path = info_path)
+print_checklists <- function(config_path) {
+  res <- validate_checklists(config_path = config_path)
   print_check <- as.data.frame(sapply(names(res), function(x) {
     elem <- gsub("INVALID - ", "", basename(x))
     bullet <- "v"

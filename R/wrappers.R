@@ -24,7 +24,7 @@
 #' @param app_name the name of the app to run in the background
 #' @param qc_dir the directory in which the app is run
 #' @param lib_path the path to the ghqc package and its dependencies
-#' @param info_path the path to the ghqc configuring information
+#' @param config_path the path to the ghqc configuring information
 #'
 #' @seealso \link{ghqc_resolve_app} and \link{ghqc_record_app}
 #'
@@ -32,11 +32,11 @@
 ghqc_assign_app <- function(app_name = "ghqc_assign_app",
                                 qc_dir = getwd(),
                                 lib_path = ghqc_libpath(),
-                                info_path = ghqc_infopath()) {
+                                config_path = ghqc_config_path()) {
   run_app(app_name = app_name,
           qc_dir = qc_dir,
           lib_path = lib_path,
-          info_path = info_path)
+          config_path = config_path)
 }
 
 
@@ -66,7 +66,7 @@ ghqc_assign_app <- function(app_name = "ghqc_assign_app",
 #' @param app_name the name of the app to run in the background
 #' @param qc_dir the directory in which the app is run
 #' @param lib_path the path to the ghqc package and its dependencies
-#' @param info_path the path to the ghqc configuring information
+#' @param config_path the path to the ghqc configuring information
 #'
 #' @seealso \link{ghqc_assign_app} and \link{ghqc_record_app}
 #'
@@ -74,11 +74,11 @@ ghqc_assign_app <- function(app_name = "ghqc_assign_app",
 ghqc_resolve_app <- function(app_name = "ghqc_resolve_app",
                          qc_dir = getwd(),
                          lib_path = ghqc_libpath(),
-                         info_path = ghqc_infopath()) {
+                         config_path = ghqc_config_path()) {
   run_app(app_name = app_name,
           qc_dir = qc_dir,
           lib_path = lib_path,
-          info_path = info_path)
+          config_path = config_path)
 }
 
 #' @title Generate a QC Record for one or more Milestones
@@ -109,7 +109,7 @@ ghqc_resolve_app <- function(app_name = "ghqc_resolve_app",
 #' @param app_name the name of the app to run in the background
 #' @param qc_dir the directory in which the app is run
 #' @param lib_path the path to the ghqc package and its dependencies
-#' @param info_path the path to the ghqc configuring information
+#' @param config_path the path to the ghqc configuring information
 #'
 #' @seealso \link{ghqc_assign_app} and \link{ghqc_resolve_app}
 #'
@@ -117,10 +117,10 @@ ghqc_resolve_app <- function(app_name = "ghqc_resolve_app",
 ghqc_record_app <- function(app_name = "ghqc_record_app",
                                 qc_dir = getwd(),
                                 lib_path = ghqc_libpath(),
-                        info_path = ghqc_infopath()) {
+                        config_path = ghqc_config_path()) {
   run_app(app_name = app_name,
           qc_dir = qc_dir,
           lib_path = lib_path,
-          info_path = info_path)
+          config_path = config_path)
 }
 

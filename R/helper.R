@@ -5,11 +5,11 @@ delete_bgj_script <- function(script) {
 
 #' @importFrom fs dir_exists
 #' @importFrom cli cli_abort
-error_checks <- function(app_name, qc_dir, lib_path, info_path) {
+error_checks <- function(app_name, qc_dir, lib_path, config_path) {
   if(!fs::dir_exists(qc_dir)) cli::cli_abort(paste(qc_dir, "does not exist."))
   if(!fs::dir_exists(lib_path)) cli::cli_abort(paste(lib_path, "does not exist. Refer to installation guide and check library path is set to correct location."))
   if(!(app_name) %in% c("ghqc_assign_app", "ghqc_resolve_app", "ghqc_record_app")) cli::cli_abort(paste(app_name, "not found in ghqc package."))
-  if(!fs::dir_exists(info_path)) cli::cli_abort(c("{info_path} does not exist.", "Run {.code ghqc::check_ghqc_configuration(info_path = '{info_path}')} to verify proper setup."))
+  if(!fs::dir_exists(config_path)) cli::cli_abort(c("{config_path} does not exist.", "Run {.code ghqc::check_ghqc_configuration(config_path = '{config_path}')} to verify proper setup."))
 }
 
 
@@ -46,11 +46,11 @@ is_shiny_ready <- function(url) {
 #' @importFrom rstudioapi viewer
 #' @importFrom fs file_exists
 #' @importFrom withr defer
-run_app <- function(app_name, qc_dir, lib_path, info_path) {
+run_app <- function(app_name, qc_dir, lib_path, config_path) {
  error_checks(app_name = app_name,
               qc_dir = qc_dir,
               lib_path = lib_path,
-              info_path = info_path
+              config_path = config_path
               )
   #browser()
 
@@ -78,7 +78,7 @@ run_app <- function(app_name, qc_dir, lib_path, info_path) {
       'cat(paste0("Output from .libPaths():\n", lib_paths_indexed))',
       'cat(paste0("Output from sessionInfo():"))',
       'print(sessionInfo())',
-      paste0('ghqc.app::ghqc_set_info_repo("', info_path, '")'),
+      paste0('ghqc.app::ghqc_set_config_repo("', config_path, '")'),
       paste0("withr::with_dir(", "'", qc_dir, "',", "{",
         'ghqc.app::', app_name, '()',
       "})"),
