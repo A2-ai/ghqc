@@ -12,7 +12,7 @@ setup_ghqc <- function() {
   }
 
   renv_text <- interactive_renviron()
-  interactive_config_download()
+  if (!exists("no_config_repo", envir = .pe)) interactive_config_download()
   check_res <- interactive_depends()
 }
 
@@ -30,23 +30,57 @@ interactive_renviron <- function() {
 #' @importFrom glue glue
 interactive_info <- function(renv_text) {
   config <- parse_renviron("GHQC_CONFIG_REPO", renv_text)
-  if (config$val == "") {
-    cli::cli_inform(c(" ", "GHQC_CONFIG_REPO is not set in your ~/.Renviron"))
-    config_read <- readline("Provide the URL to the custom configuration repository: ")
-  } else {
-    cli::cli_inform(c(" ", "GHQC_CONFIG_REPO is set to {config$val} in your ~/.Renviron"))
-    config_read <- readline(glue::glue("Custom Configuration Repository ({config$val}) "))
-    if (config_read == "") config_read <- config$val
+  val <- if (config$val == "") renviron_not_set() else renviron_set(config$val)
+  if (!exists("no_config_repo", envir = .pe)) renv_text <- renviron_edit("GHQC_CONFIG_REPO", val, renv_text)
+  renv_text
+}
+
+renviron_set <- function(config_url) {
+  cli::cli_inform(c(" ", "GHQC_CONFIG_REPO is set to {config_url} in your ~/.Renviron. Would you like to: ",
+                    " " = "1. Proceed",
+                    " " = "2. Replace",
+                    # " " = "3. Delete", Potentially add later
+                    " " = "3. Abort with error"))
+  input <- readline_and_verify("Input: ", 1:3)
+  if (input == "3") cli::cli_abort("GHQC_CONFIG_REPO is set in ~/.Renviron. Aborting...")
+  if (input == "2") return(readline_and_verify_config())
+  if (input == "1") return(config_url)
+}
+
+renviron_not_set <- function() {
+  cli::cli_inform(c(" ", "GHQC_CONFIG_REPO is not set in your ~/.Renviron. Would you like to: ",
+                    " " = "1. Set value",
+                    " " = "2. Proceed without setting",
+                    " " = "3. Abort with error"))
+  input <- readline_and_verify("Input: ", 1:3)
+  if (input == "3") cli::cli_abort("GHQC_CONFIG_REPO not set in ~/.Renviron. Aborting...")
+  if (input == "2") {
+    cli::cli_alert_danger("GHQC_CONFIG_REPO not set in ~/.Renviron. The ghqc shiny apps will not function.")
+    assign("no_config_repo", FALSE, .pe)
   }
+  if (input == "1") readline_and_verify_config()
+}
+
+readline_and_verify_config <- function() {
+  input <- readline("Provide the URL to the custom configuration repository: ")
   repeat {
-    config_read <- gsub('\"', "", config_read)
-    if (grepl("^https:", config_read)) {
-      config$val <- config_read
-      break
-    }
-    config_read <- readline(glue::glue("GHQC_CONFIG_REPO does not start with 'https:'. Please provide a valid URL: "))
+    input <- gsub('\"', "", input)
+    if (grepl("^https://", input)) break
+    input <- readline(glue::glue("'{input}' does not start with 'https://'. Please provide a valid URL: "))
   }
-  renviron_edit("GHQC_CONFIG_REPO", config$val, renv_text)
+  input
+}
+
+readline_and_verify <- function(message, input_options) {
+  if (!is.character(input_options)) input_options <- as.character(input_options)
+  input <- readline(message)
+  repeat {
+    input <- gsub('\"', "", input)
+    if (input %in% input_options) break
+    io_str <- paste0(paste0(input_options[-length(input_options)], collapse = ", "), ", or ", input_options[length(input_options)])
+    input <- readline(glue::glue("Input value of '{input}' is not valid. Please enter {io_str}: "))
+  }
+  input
 }
 
 write_renv_text <- function(renv_text, val, var_name) {
@@ -72,13 +106,40 @@ interactive_config_download <- function() {
     install.packages("gert")
   }
 
-  cli::cli_inform(" ")
-  config_path <- gsub('\"', "", readline(glue::glue("Path to download the custom configuration repository ({ghqc_config_path()}) ")))
-  if (config_path == "") config_path <- ghqc_config_path()
-  assign("config_path", config_path, .pe)
+  determine_ghqc_config_download()
+}
 
-  cli::cli_inform(" ")
-  check_ghqc_configuration(config_path = config_path)
+determine_ghqc_config_download <- function() {
+  cli::cli_inform(c(" ", "Would you like to download the custom configuration repository to the default location ({ghqc_config_path()})? ",
+                    " " = "1. yes, absolutely!",
+                    " " = "2. can I check the contents in the default location first?",
+                    " " = "3. no, I have other plans and want to specify a different location",
+                    " " = "4. no, I don't want to download right now",
+                    " " = "5. Abort with error"))
+  input <- readline_and_verify("Input: ", 1:5)
+  if (input == "5") cli::cli_abort("Custom configuration repository is not downloaded. Aborting...")
+  if (input == "4") {
+    cli::cli_alert_danger("Cannot verify custom configuration repository is downloaded. Please ensure before running any ghqc shiny apps")
+    assign("no_config_repo", TRUE, .pe)
+  }
+  if (input == "3") {
+    cli::cli_alert_warning("NOTE: This is a non-standard option. Please ensure you have an understanding of the effects before continuing.")
+    yN <- readline_and_verify("Would you like to continue (y/N)? ", c("y", "N"))
+    if (yN == "N") {
+      determine_ghqc_config_download()
+      return(invisible())
+    }
+    path <- gsub('\"', "", readline("Provide the path to install the custom configuration repository: "))
+    assign("config_path", path, .pe)
+    download_ghqc_configuration(config_path = path, .force = TRUE)
+  }
+  assign("config_path", ghqc_config_path(), .pe)
+  if (input == "2") {
+    check_ghqc_configuration()
+  }
+  if (input == "1") {
+    download_ghqc_configuration()
+  }
 }
 
 #' @importFrom cli cli_h1
@@ -91,22 +152,20 @@ interactive_depends <- function() {
                     "1. INSTALL",
                     "2. LINK",
                     "3. Neither"))
-  inst_method <- readline("Input: ")
-
-  repeat {
-    inst_method <- gsub('\"', "", inst_method)
-    if ((inst_method %in% c("1", "2", "3"))) break
-    inst_method <- readline(glue::glue("Input of {inst_method} is not a valid input. Please enter 1, 2, or 3: "))
-  }
+  inst_method <- readline_and_verify("Input: ", 1:3)
 
   if (inst_method == "3") {
     cli::cli_alert_warning("Ensure that ghqc.app and its dependencies are installed into an isolated ghqc package library path before using any of the ghqc ecosystem apps.")
     return(invisible())
   }
 
-  if (inst_method == "1") res <- c("install_results" = interactive_install())
-  if (inst_method == "2") res <- c("link_results" = interactive_link())
-  append(res, "ghqcapp_results" = interactive_ghqcapp_install())
+  if (inst_method == "1") res <- list("install_results" = interactive_install())
+  if (inst_method == "2") res <- list("link_results" = interactive_link())
+  if (!exists("no_config_repo", envir = .pe)) {
+    list(res, "ghqcapp_results" = interactive_ghqcapp_install())
+  } else {
+    cli::cli_alert_warning("The repository from which to install ghqc.app cannot be determined without the custom configuration repository being downloaded.")
+  }
 }
 
 interactive_use_pak <- function() {
@@ -128,14 +187,32 @@ interactive_install <- function() {
   use_pak <- interactive_use_pak()
   assign("use_pak", use_pak, .pe)
 
-  cli::cli_inform(" ")
-  lib_path <- gsub('\"', "", readline("Path to install the ghqc.app dependencies (~/.local/share/ghqc/rpkgs) "))
-  if (lib_path == "") lib_path <- ghqc_libpath()
-  if (!fs::file_exists(lib_path)) fs::dir_create(lib_path)
-  assign("lib_path", lib_path, .pe)
+  cli::cli_inform(c(" ", "Would you like to install the ghqc.app dependencies to the default location ({ghqc_libpath()})?",
+                    " " = "1. yes, absolutely!",
+                    " " = "2. can I check the contents in the default location first?",
+                    " " = "3. no, I have other plans and want to specify a different location",
+                    " " = "4. Abort with error"))
+  input <- readline_and_verify("Input: ", 1:4)
 
-  cli::cli_inform(" ")
-  check_ghqcapp_dependencies(lib_path = lib_path, use_pak = use_pak)
+  if (input == "4") cli::cli_abort("Dependency packages not installed. Aborting...")
+  if (input == "3") {
+    cli::cli_alert_warning("NOTE: This is a non-standard option. Please ensure you have an understanding of the effects before continuing.")
+    yN <- readline_and_verify("Would you like to continue (y/N)? ", c("y", "N"))
+    if (yN == "N") {
+      interactive_install()
+      return(invisible())
+    }
+    path <- gsub('\"', "", readline("Provide the path to install the dependency packages: "))
+    assign("lib_path", path, .pe)
+    install_ghqcapp_dependencies(lib_path = path, use_pak = use_pak)
+  }
+  assign("lib_path", ghqc_libpath(), .pe)
+  if (input == "2") {
+    check_ghqcapp_dependencies()
+  }
+  if (input == "1") {
+    install_ghqcapp_dependencies()
+  }
 }
 
 #' @importFrom cli cli_inform
@@ -153,13 +230,24 @@ interactive_link <- function() {
     return(invisible())
   })
 
-  lib_path <- gsub('\"', "", readline("Path to link the ghqc.app dependencies (~/.local/share/ghqc/rpkgs) "))
-  if (lib_path == "") lib_path <- ghqc_libpath()
-  if (!fs::file_exists(lib_path)) fs::dir_create(lib_path)
-  assign("lib_path", lib_path, .pe)
-
-  cli::cli_inform(" ")
-  link_ghqcapp_dependencies(link_path = link_path, lib_path = lib_path)
+  cli::cli_inform(c(" ", "Would you like to link the ghqc.app dependencies to the default location ({ghqc_libpath()})?",
+                  " " = "1. yes, absolutely!",
+                  " " = "2. no, I have other plans and want to specify a different location",
+                  " " = "3. Abort with error"))
+  input <- readline_and_verify("Input: ", 1:3)
+  if (input == 3) cli::cli_abort("Dependency packages not symlinked. Aborting...")
+  if (input == 2) {
+    cli::cli_alert_warning("NOTE: This is a non-standard option. Please ensure you have an understanding of the effects before continuing.")
+    yN <- readline_and_verify("Would you like to continue (y/N)? ", c("y", "N"))
+    if (yN == "N") {
+      interactive_install()
+      return(invisible())
+    }
+    path <- gsub('\"', "", readline("Provide the path to symlink the dependency packages to: "))
+  }
+  if (input == 1) path <- ghqc_libpath()
+  assign("lib_path", path, .pe)
+  link_ghqcapp_dependencies(link_path, path)
 }
 
 interactive_ghqcapp_install <- function() {
@@ -172,7 +260,7 @@ interactive_ghqcapp_install <- function() {
   specified <- NULL
   if (!repo$unset) specified <- "specified "
   cli::cli_inform("ghqc.app will install from {specified}repository: {repo$url}")
-  yN <- tolower(readline(glue::glue("Would you like to install ghqc.app to {.pe$lib_path} (y/N)? ")))
+  yN <- tolower(readline(glue::glue("Would you like to install ghqc.app to {(.pe$lib_path)} (y/N)? ")))
 
   if (yN == "n") {
     cli::cli_alert_danger("Please install ghqc.app to {.pe$lib_path} before running any ghqc apps")
