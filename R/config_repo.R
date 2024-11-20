@@ -149,7 +149,7 @@ config_files_desc <- function(config_path) {
   if (fs::file_exists(repo_files[1])) {
     cli::cli_alert_success(paste0(cli::col_blue("logo.png"), " successfully found"))
   } else {
-    cli::cli_alert_danger(paste0(cli::col_blue("logo.png"), " not found"))
+    cli::cli_alert_info(paste0(cli::col_blue("logo.png"), " not found. This file is not required."))
   }
   cli::cli_inform(" ")
 
