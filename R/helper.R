@@ -100,7 +100,7 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
 
     cli::cli_inform("Waiting for shiny app to start...")
     counter <- 1
-    while(counter < 20) {
+    while(counter < 35) {
       if (is_shiny_ready(url)) {
         cli::cli_inform("Shiny app started")
         break
@@ -109,7 +109,7 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
       counter <- counter + 1
       Sys.sleep(1)
     }
-    if (counter > 35) cli::cli_alert_danger("Shiny app could not be started due to timeout or error")
+    if (counter > 34) cli::cli_alert_danger("Shiny app could not be started due to timeout or error")
 
 
     rstudioapi::viewer(url)
