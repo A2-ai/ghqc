@@ -96,6 +96,16 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
     url <- sprintf("http://127.0.0.1:%s", port)
 
 
+    new_rstudioapi <- {
+      version_diff <- compareVersion(packageDescription("rstudioapi", fields = "Version"), "0.16-0")
+      if (version_diff < 0) {
+        FALSE
+      }
+      else {
+        TRUE
+      }
+    }
+
 
     sp1 <- cli::make_spinner()
     cli::cli_inform("Waiting for shiny app to start...")
@@ -113,7 +123,7 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
       }
 
       # if rstudioapi is >= 0.16.0, can check if there's been an error in the bgj
-      if (packageVersion("rstudioapi") >= "0.16.0") {
+      if (new_rstudioapi) {
         if (rstudioapi::jobGetState(job_id) == "failed") {
           sp1$finish()
           cli::cli_alert_danger("Shiny app could not be started due to error (see Background Jobs panel)")
@@ -129,7 +139,7 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
     # check if there was a timeout
     if (counter > iterations) {
       # if rstudio api is newer, it caught it eariler in the case of an error, so it's definitely a timeout
-      if (packageVersion("rstudioapi") >= "0.16.0") {
+      if (new_rstudioapi) {
         sp1$finish()
         cli::cli_alert_danger("Shiny app could not be started due to timeout")
       }
