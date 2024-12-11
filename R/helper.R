@@ -42,8 +42,7 @@ is_shiny_ready <- function(url) {
 } # is_shiny_ready
 
 #' @importFrom httpuv randomPort
-#' @importFrom rstudioapi jobRunScript
-#' @importFrom rstudioapi viewer
+#' @importFrom rstudioapi jobRunScript jobGetState viewer
 #' @importFrom fs file_exists
 #' @importFrom withr defer
 run_app <- function(app_name, qc_dir, lib_path, config_path) {
@@ -52,7 +51,6 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
               lib_path = lib_path,
               config_path = config_path
               )
-  #browser()
 
   # needed a way to create a temp file that would ran in a background job in the qc dir
   # the script needed to point towards the ghqc libpaths, load the package, and run the app
@@ -98,8 +96,10 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
     url <- sprintf("http://127.0.0.1:%s", port)
 
 
+
+    sp1 <- cli::make_spinner()
     cli::cli_inform("Waiting for shiny app to start...")
-    sp1 <- make_spinner()
+
     total_time <- 35  # Total wait time in seconds
     interval <- 0.1   # Spinner refresh interval in seconds
     iterations <- total_time / interval  # Total iterations needed
@@ -112,13 +112,32 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
         break
       }
 
+      # if rstudioapi is >= 0.16.0, can check if there's been an error in the bgj
+      if (packageVersion("rstudioapi") >= "0.16.0") {
+        if (rstudioapi::jobGetState(job_id) == "failed") {
+          sp1$finish()
+          cli::cli_alert_danger("Shiny app could not be started due to error (see Background Jobs panel)")
+          break
+        }
+      }
+
+
       counter <- counter + 1
       Sys.sleep(interval)
     }
-    if (counter > iterations) {
-      cli::cli_alert_danger("Shiny app could not be started due to timeout or error")
-    }
 
+    # check if there was a timeout
+    if (counter > iterations) {
+      # if rstudio api is newer, it caught it eariler in the case of an error, so it's definitely a timeout
+      if (packageVersion("rstudioapi") >= "0.16.0") {
+        sp1$finish()
+        cli::cli_alert_danger("Shiny app could not be started due to timeout")
+      }
+      else { # else, was either a timeout or error
+        sp1$finish()
+        cli::cli_alert_danger("Shiny app could not be started due to timeout or error")
+      }
+    }
 
     rstudioapi::viewer(url)
   }, error = function(e){
