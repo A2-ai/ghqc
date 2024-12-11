@@ -99,17 +99,23 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
 
 
     cli::cli_inform("Waiting for shiny app to start...")
+    sp1 <- make_spinner()
+    total_time <- 35  # Total wait time in seconds
+    interval <- 0.1   # Spinner refresh interval in seconds
+    iterations <- total_time / interval  # Total iterations needed
     counter <- 1
-    while(counter < 35) {
+    while(counter <= iterations) {
+      sp1$spin()
       if (is_shiny_ready(url)) {
-        cli::cli_inform("Shiny app started")
+        sp1$finish()
+        cli_alert_success("Shiny app started")
         break
       }
 
       counter <- counter + 1
-      Sys.sleep(1)
+      Sys.sleep(interval)
     }
-    if (counter > 34) {
+    if (counter > iterations) {
       cli::cli_alert_danger("Shiny app could not be started due to timeout or error")
     }
 

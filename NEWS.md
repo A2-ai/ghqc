@@ -1,3 +1,8 @@
+# ghqc 0.2.1
+
+- increases counter for starting up shiny apps
+- adds waiter to console while app is starting up
+
 # ghqc 0.2.0
 
 - Updated the custom configuration options repository (now `GHQC_OPTIONS_REPO`) check to reflect the following changes:
