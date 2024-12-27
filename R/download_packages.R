@@ -110,7 +110,7 @@ setup_rpsm_url <- function(snapshot_date) {
 
 #' @importFrom rlang is_installed
 #' @importFrom rlang abort
-install_dev_ghqcapp <- function(remote_path = "a2-ai/ghqc.app",
+install_dev_ghqcapp <- function(branch = NULL, remote_path = "a2-ai/ghqc.app",
                              lib_path = ghqc_libpath(),
                              .local = FALSE) {
   if (.local) {
@@ -122,10 +122,13 @@ install_dev_ghqcapp <- function(remote_path = "a2-ai/ghqc.app",
     res <- install.packages(ghqc_ver$path, lib = lib_path)
     return(invisible(res))
   }
+
   tryCatch({
-    pak::pkg_install(remote_path, lib = lib_path, ask = FALSE)
+    pkg_input_path <- ifelse(is.null(branch), remote_path, paste0(remote_path, "@", branch))
+
+    pak::pkg_install(pkg_input_path, lib = lib_path, ask = FALSE)
   }, error = function(e) {
-    rlang::abort("Remote ghqc.app cannot be found", parent = "Remote ghqc.app cannot be found")
+    rlang::abort(paste("Remote ghqc.app cannot be found:", e$message))
   })
 }
 
