@@ -1,3 +1,8 @@
+# ghqc 0.2.2
+
+- fixes error handling bug in install_dev_ghqcapp (non-exported function)
+- adds branch input to install_dev_ghqcapp (non-exported function)
+
 # ghqc 0.2.1
 
 - increases counter for starting up shiny apps
