@@ -80,6 +80,8 @@ remove_ghqc_dependencies <- function(lib_path = ghqc_libpath(),
 #' @importFrom withr with_options
 #' @importFrom utils available.packages
 setup_rpsm_url <- function(snapshot_date) {
+  # I'd like to update this function before this gets merged to main. We're highly limited to just linux and it should be expanded to allow all OSs
+
   ### TODO: Expand beyond linux OS
   tryCatch(
     {

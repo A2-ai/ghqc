@@ -55,6 +55,7 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
   # needed a way to create a temp file that would ran in a background job in the qc dir
   # the script needed to point towards the ghqc libpaths, load the package, and run the app
   tryCatch({
+    # maybe add line here to check that lib_path contains all packages needed. I don't think we'll want a check to make sure it has a system and versioned folder inside since if someone provides their own custom local, we should just be along for the ride
     if (is.null(ghqcapp_pkg_status(lib_path))) rlang::abort(message = glue::glue("ghqc.app not installed in {lib_path}. Please install before running any ghqc apps"))
     script <- tempfile("background", tmpdir = tempdir(), fileext = ".R")
     withr::defer(fs::file_delete(script))

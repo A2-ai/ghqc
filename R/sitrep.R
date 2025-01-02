@@ -15,6 +15,8 @@ ghqc_sitrep <- function(...,
                         config_path = ghqc_config_path()){
   inputs <- c(...)
 
+  # add section to print out system info like R version and os. So that we can easily walk in and get that info and compare to any folder structure they have on their system
+
   cli::cli_h1("Package Dependencies")
   sitrep_dep_check(lib_comparison(lib_path), lib_path)
   if ("pkgs" %in% inputs) {

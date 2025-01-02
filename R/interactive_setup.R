@@ -134,6 +134,8 @@ interactive_install <- function() {
 interactive_link <- function() {
   cli::cli_inform(" ")
   link_path <- gsub('\"', "", readline("Path to previously installed package library from which to link: "))
+  # I think it'd be "slick" if we're able to drill down R versions here. Like if the user supplies "/data/rpkgs/ghqc", we should be able to find "4.3" if that's a folder within there.
+  # The trickier one would be if the user supplies "/data/rpkgs/ghqc", but the folder system is actually "/data/rpkgs/R-4.3/ghqc". Could/should we find that?
 
   tryCatch({
     check_link_path(link_path)
