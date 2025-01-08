@@ -46,6 +46,10 @@ ghqc_basepath <- function() {
   "~/.local/share/ghqc/rpkgs" # this is now the BASE PATH to be installed to
 }
 
+get_os_arch <- function() {
+  R.version$platform
+}
+
 
 #' The default install location for the ghqc package and its dependencies. If it does not exist, it will be created.
 #'
@@ -62,7 +66,7 @@ ghqc_libpath <- function() {
   # r_version <- glue::glue("R-{R.version$major}.{//split R.version$minor to grab the minor and not include the path//}")
   r_version <- get_r_version()
 
-  os_arch <- R.version$platform
+  os_arch <- get_os_arch()
 
   lib_path <- file.path(base_path, platform, r_version, os_arch)
   # example: linux-ubuntu-jammy/R-4.4/x86_64-pc-linux-gnu

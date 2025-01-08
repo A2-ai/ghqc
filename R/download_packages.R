@@ -139,18 +139,7 @@ test_repo_url <- function(url) {
 
 find_os_release <- function() {
   if (grepl("linux", R.version$platform)) {
-    return(
-      tryCatch({
-        gsub(".*=", "",
-             grep("VERSION_CODENAME",
-                  readLines("/etc/os-release"),
-                  value = TRUE
-                  )
-             ) #gsub
-      }, error = function(e) {
-        NA
-      })
-    )
+    return(find_os_info()$version_codename)
   }
 
   tryCatch({
