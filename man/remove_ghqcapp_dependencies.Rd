@@ -14,6 +14,8 @@ remove_ghqcapp_dependencies(
 \item{lib_path}{\emph{(optional)} the path to the installed dependency packages. If not set, defaults to ghqc_libpath()}
 
 \item{cache}{\emph{(optional)} flag of whether to clear the cache or not. Defaults to keeping the cache}
+
+\item{.only_base}{\emph{(optional)} flag to only delete ghqc.app dependencies in the basepath}
 }
 \value{
 information related to deleted lib path

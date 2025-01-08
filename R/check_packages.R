@@ -47,7 +47,7 @@ installed_pkgs <- function(lib_path) {
 
 #' @importFrom utils available.packages
 rec_pkgs <- function() {
-  ap <- as.data.frame(utils::available.packages(repos = setup_rpsm_url(ghqc_depends_snapshot_date)))
+  ap <- as.data.frame(utils::available.packages(repos = setup_rspm_url(ghqc_depends_snapshot_date)))
   ap <- ap[ap$Package %in% ghqc_depends, c("Package", "Version")]
   colnames(ap) <- c("Package", "Recommended_Version")
   ap$Recommended_Version <- gsub("-", ".", ap$Recommended_Version)

@@ -24,12 +24,12 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
     if (!rlang::is_installed("pak") && use_pak) rlang::abort("pak is not installed. Install pak for better performance. If pak cannot be installed, set `use_pak` = FALSE in `install_ghqcapp_dependencies()` function call")
 
     if (use_pak) {
-      res <- withr::with_options(list("pkg.sysreqs" = FALSE, repos = setup_rpsm_url(ghqc_depends_snapshot_date)),
+      res <- withr::with_options(list("pkg.sysreqs" = FALSE, repos = setup_rspm_url(ghqc_depends_snapshot_date)),
                                  pak::pkg_install(pkgs, lib = lib_path, upgrade = TRUE, ask = FALSE)) #blow cache, run this, check description file
 
     } else {
       if (rlang::is_installed("pak")) cli::cli_alert_warning("pak is installed, but input `use_pak` was set to FALSE. Set `use_pak` to TRUE for better performance.")
-      res <- utils::install.packages(pkgs, lib = lib_path, repos = setup_rpsm_url(ghqc_depends_snapshot_date))
+      res <- utils::install.packages(pkgs, lib = lib_path, repos = setup_rspm_url(ghqc_depends_snapshot_date))
     }
     dT <- difftime(Sys.time(), start_time)
     cli::cli_alert_success(sprintf("Installation of ghqc.app package dependencies completed in %0.2f %s", dT, units(dT)))
@@ -46,6 +46,7 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
 #' Remove all content in the specified lib path. Optionally removes the cache as well.
 #' @param lib_path *(optional)* the path to the installed dependency packages. If not set, defaults to ghqc_libpath()
 #' @param cache *(optional)* flag of whether to clear the cache or not. Defaults to keeping the cache
+#' @param .only_base *(optional)* flag to only delete ghqc.app dependencies in the basepath
 #'
 #' @importFrom cli cli_inform
 #' @importFrom cli cli_alert_success
@@ -59,10 +60,10 @@ remove_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
                            cache = FALSE,
                            .only_base = FALSE) {
   if (.only_base) {
-    # can't just delete everything because the packages may have been downloaded in the new style,
+    # can't just delete everything because the packages may have been downloaded in the new convention,
     # hence the name of the flag .only_base, excluding the new convention
     base_dir <- ghqc_basepath()
-    base_dir_contents <- dir_ls(base_dir, type = "directory", recurse = FALSE)
+    base_dir_contents <- fs::dir_ls(base_dir, type = "directory", recurse = FALSE)
 
     folder_names_to_remove <- ghqc_depends
     dirs_to_remove <- base_dir_contents[basename(base_dir_contents) %in% folder_names_to_remove]
