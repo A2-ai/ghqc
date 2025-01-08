@@ -1,6 +1,6 @@
 #' Check the installed/linked packages in `lib_path` against the recommended ghqc.app dependency package version
 #'
-#' @param lib_path *(optional)* the path to the installed/linked dependencies. If not set, defaults to "~/.local/share/ghqc/rpkgs"
+#' @param lib_path *(optional)* the path to the installed/linked dependencies. If not set, defaults to ghqc_libpath()
 #' @param use_pak *(optional)* optionally removes the requirement to have `pak` installed in the project repository. Setting to `FALSE` will reduce performance
 #'
 #' @return This function is primarily used for its printed results and subsequent actions, not a returned output.

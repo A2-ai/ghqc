@@ -1,6 +1,6 @@
 #' install ghqc.app's dependencies into an isolated library
 #'
-#' @param lib_path *(optional)* the path to install the dependencies. If not set, defaults to "~/.local/share/ghqc/rpkgs"
+#' @param lib_path *(optional)* the path to install the dependencies. If not set, defaults to ghqc_libpath()
 #' @param pkgs *(optional)* list of packages to install. Defaults to ghqc and all of its dependencies
 #' @param use_pak *(optional)* optionally removes the requirement to have `pak` installed in the project repository. Setting to `FALSE` will reduce performance
 #'
@@ -44,7 +44,7 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
 }
 
 #' Remove all content in the specified lib path. Optionally removes the cache as well.
-#' @param lib_path *(optional)* the path to the installed dependency packages. If not set, defaults to "~/.local/share/ghqc/rpkgs"
+#' @param lib_path *(optional)* the path to the installed dependency packages. If not set, defaults to ghqc_libpath()
 #' @param cache *(optional)* flag of whether to clear the cache or not. Defaults to keeping the cache
 #'
 #' @importFrom cli cli_inform

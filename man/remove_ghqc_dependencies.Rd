@@ -7,7 +7,7 @@
 remove_ghqc_dependencies(lib_path = ghqc_libpath(), cache = FALSE)
 }
 \arguments{
-\item{lib_path}{\emph{(optional)} the path to the installed dependency packages. If not set, defaults to "~/.local/share/ghqc/rpkgs"}
+\item{lib_path}{\emph{(optional)} the path to the installed dependency packages. If not set, defaults to ghqc_libpath()}
 
 \item{cache}{\emph{(optional)} flag of whether to clear the cache or not. Defaults to keeping the cache}
 }

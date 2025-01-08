@@ -1,6 +1,30 @@
+#' Find and format the linux platform string for ghqc/rpkg installation
+#'
+#' @return the string of the linux platform based on os-release file
+format_linux_platform <- function() {
+  # check if os file exists
+  os_release_path <- "/etc/os-release"
+  if (!file.exists(os_release_path)) {
+    cli::cli_abort("Cannot determine Linux flavor: /etc/os-release file is missing.")
+  }
+
+  os_release <- readLines(os_release_path)
+
+  # parse
+  os_info <- list(
+    name = sub('NAME="?(.*?)"?$', "\\1", grep("^NAME=", os_release, value = TRUE)),
+    version_codename = sub('VERSION_CODENAME="?(.*?)"?$', "\\1", grep("^VERSION_CODENAME=", os_release, value = TRUE))
+  )
+
+  # linux-{name}-{version_codename}
+  linux_string <- paste0("linux-", tolower(os_info$name), "-", os_info$version_codename)
+  return(linux_string)
+}
+
+
 #' The default install location for the ghqc package and its dependencies. If it does not exist, it will be created.
 #'
-#' @return string containing the default lib path for the ghqc package and its dependencies (~/.local/share/ghqc/rpkgs)
+#' @return string containing the default lib path for the ghqc package and its dependencies (~/.local/share/ghqc/rpkgs/<platform>/<r version>/<os arch>)
 #'
 #' @importFrom fs dir_exists
 #' @importFrom fs dir_create
@@ -9,12 +33,23 @@
 ghqc_libpath <- function() {
   base_path <- "~/.local/share/ghqc/rpkgs" # this is now the BASE PATH to be installed to
   # platform <- similar to renv. For linux, format is "linux-{linux flavor}-{flavor version}" i.e. "linux-ubuntu-jammy". For mac, just "macos"
+  platform <- switch(
+    Sys.info()[["sysname"]],
+    "Linux" = format_linux_platform(),
+    "Darwin" = "macos",
+    "Windows" = "windows",
+    cli::cli_abort("Unsupported OS")
+  )
   # r_version <- glue::glue("R-{R.version$major}.{//split R.version$minor to grab the minor and not include the path//}")
+  r_version <- paste0("R-", R.version$major, ".", sub("\\..*", "", R.version$minor)) # don't include patch
 
-  # lib_path <- file.path(base_path, platform, r_version)
+  os_arch <- R.version$platform
+
+  lib_path <- file.path(base_path, platform, r_version, os_arch)
+  # example: linux-ubuntu-jammy/R-4.4/x86_64-pc-linux-gnu
 
   if (!fs::dir_exists(lib_path)) fs::dir_create(lib_path, recurse = TRUE)
-  lib_path
+  return(lib_path)
 }
 
 #' The default install location for the ghqc custom configuration repository

@@ -11,7 +11,7 @@ install_ghqcapp_dependencies(
 )
 }
 \arguments{
-\item{lib_path}{\emph{(optional)} the path to install the dependencies. If not set, defaults to "~/.local/share/ghqc/rpkgs"}
+\item{lib_path}{\emph{(optional)} the path to install the dependencies. If not set, defaults to ghqc_libpath()}
 
 \item{pkgs}{\emph{(optional)} list of packages to install. Defaults to ghqc and all of its dependencies}
 
