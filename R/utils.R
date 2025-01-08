@@ -1,9 +1,7 @@
-#' Find and format the linux platform string for ghqc/rpkg installation
-#'
-#' @return the string of the linux platform based on os-release file
-format_linux_platform <- function() {
-  # check if os file exists
+find_os_info <- function() {
   os_release_path <- "/etc/os-release"
+
+  # check if os file exists
   if (!file.exists(os_release_path)) {
     cli::cli_abort("Cannot determine Linux flavor: /etc/os-release file is missing.")
   }
@@ -15,6 +13,14 @@ format_linux_platform <- function() {
     name = sub('NAME="?(.*?)"?$', "\\1", grep("^NAME=", os_release, value = TRUE)),
     version_codename = sub('VERSION_CODENAME="?(.*?)"?$', "\\1", grep("^VERSION_CODENAME=", os_release, value = TRUE))
   )
+}
+
+
+#' Find and format the linux platform string for ghqc/rpkg installation
+#'
+#' @return the string of the linux platform based on os-release file
+format_linux_platform <- function() {
+  os_info <- find_os_info()
 
   # linux-{name}-{version_codename}
   linux_string <- paste0("linux-", tolower(os_info$name), "-", os_info$version_codename)

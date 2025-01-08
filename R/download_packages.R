@@ -56,9 +56,15 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
 #' @return information related to deleted lib path
 #' @export
 remove_ghqc_dependencies <- function(lib_path = ghqc_libpath(),
-                           cache = FALSE){
-  msg <- "all packages"
-  if (cache) msg <- "cache and all packages"
+                           cache = FALSE,
+                           .remove_base=FALSE) {
+  if (.remove_base) {
+
+
+
+  }
+
+  msg <- ifelse(cache, "cache and all packages", "all packages")
   cli::cli_inform("Removing {msg} in {lib_path}...")
   tryCatch({
     if (cache){
