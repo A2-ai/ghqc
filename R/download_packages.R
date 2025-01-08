@@ -73,40 +73,75 @@ remove_ghqc_dependencies <- function(lib_path = ghqc_libpath(),
   })
 }
 
-
-#' @importFrom processx run
-#' @importFrom cli cli_abort
-#' @importFrom rlang is_installed
-#' @importFrom withr with_options
-#' @importFrom utils available.packages
-setup_rpsm_url <- function(snapshot_date) {
-  # I'd like to update this function before this gets merged to main. We're highly limited to just linux and it should be expanded to allow all OSs
-
-  ### TODO: Expand beyond linux OS
-  tryCatch(
-    {
-      cmd <- list(cmd = Sys.which("lsb_release"), args = "-a")
-      system_info <- processx::run(cmd$cmd, args = cmd$args)$stdout
-      system_info <- gsub(" ", replacement = "_", system_info)
-      ubuntu_codename <- regmatches(system_info, regexec("\nCodename:\t(.*?)\n", system_info))[[1]][2]
-    }, error = function(e) {
-      cli::cli_abort(message = "Failed to detect codename via lsb_release")
+#' @importFrom cli cli_alert_warning
+setup_rspm_url <- function(snapshot_date) {
+  repo <- if (grepl("linux", R.version$platform)) {
+    code_name <- find_os_release()
+    if (is.na(code_name)) {
+      source_and_test(snapshot_date)
+    } else {
+      url <- file.path("https://packagemanager.posit.co/cran/__linux__", code_name, snapshot_date)
+      if (!test_repo_url(url)) {
+        cli::cli_alert_warning("Linux binary for {code_name} not found. Using source packages")
+        source_and_test(snapshot_date)
+      }
+      url
     }
-  )
-  repo <- file.path("https://packagemanager.posit.co/cran/__linux__", tolower(ubuntu_codename),snapshot_date)
-  if (rlang::is_installed("pak")) {
-    repo_status <- withr::with_options(list(repos = repo), pak::repo_status(bioc = FALSE, cran_mirror = repo))$ok
   } else {
-    tryCatch({
-      utils::available.packages(repos = repo)
-      repo_status <- TRUE
-    }, error = function(e) {
-      repo_status = FALSE
-    })
+    source_and_test(url)
   }
-  if (!repo_status) cli::cli_abort(message = sprintf("Posit package manager for snapshot date %s and os %s is not available", snapshot_date, ubuntu_codename))
 
   c("CRAN" = repo)
+}
+
+source_and_test <- function(snapshot_date) {
+  url <- file.path("https://packagemanager.posit.co/cran", snapshot_date)
+  if (!test_repo_url(url)) abort_source(url, snapshot_date)
+  url
+}
+
+#' @importFrom cli cli_abort
+abort_source <- function(url, snapshot_date) {
+  cli::cli_abort("Repository could not be found for {snapshot_date}. Please use different date (repository url: {url})")
+}
+
+#' @importFrom withr with_options
+#' @importFrom utils available.packages
+#' @importFrom rlang is_installed
+test_repo_url <- function(url) {
+  if (rlang::is_installed("pak")) {
+    withr::with_options(list(repos = url), pak::repo_status(bioc = FALSE, cran_mirror = url))$ok
+  } else {
+    tryCatch({
+      utils::available.packages(repos = url)
+      TRUE
+    }, error = function(e) {
+      FALSE
+    })
+  }
+}
+
+find_os_release <- function() {
+  if (grepl("linux", R.version$platform)) {
+    return(
+      tryCatch({
+        gsub(".*=", "",
+             grep("VERSION_CODENAME",
+                  readLines("/etc/os-release"),
+                  value = TRUE
+                  )
+             ) #gsub
+      }, error = function(e) {
+        NA
+      })
+    )
+  }
+
+  tryCatch({
+      Sys.info()["release"]
+    }, error = function(e) {
+      NA
+    })
 }
 
 
