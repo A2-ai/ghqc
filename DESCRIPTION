@@ -21,14 +21,13 @@ Imports:
     rstudioapi,
     withr,
     glue,
-    processx,
     rlang,
     cli,
     fs,
     yaml
 Suggests:
     gert,
-    pak
+    pak (>= 0.6.0)
 Depends: 
     R (>= 2.10)
 Config/Needs/website:
