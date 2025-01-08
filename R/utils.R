@@ -27,6 +27,25 @@ format_linux_platform <- function() {
   return(linux_string)
 }
 
+get_platform <- function() {
+  platform <- switch(
+    Sys.info()[["sysname"]],
+    "Linux" = format_linux_platform(),
+    "Darwin" = "macos",
+    "Windows" = "windows",
+    cli::cli_abort("Unsupported OS")
+  )
+  return(platform)
+}
+
+get_r_version <- function() {
+  paste0("R-", R.version$major, ".", sub("\\..*", "", R.version$minor)) # don't include patch
+}
+
+ghqc_basepath <- function() {
+  "~/.local/share/ghqc/rpkgs" # this is now the BASE PATH to be installed to
+}
+
 
 #' The default install location for the ghqc package and its dependencies. If it does not exist, it will be created.
 #'
@@ -37,17 +56,11 @@ format_linux_platform <- function() {
 #'
 #' @export
 ghqc_libpath <- function() {
-  base_path <- "~/.local/share/ghqc/rpkgs" # this is now the BASE PATH to be installed to
+  base_path <- ghqc_basepath()
   # platform <- similar to renv. For linux, format is "linux-{linux flavor}-{flavor version}" i.e. "linux-ubuntu-jammy". For mac, just "macos"
-  platform <- switch(
-    Sys.info()[["sysname"]],
-    "Linux" = format_linux_platform(),
-    "Darwin" = "macos",
-    "Windows" = "windows",
-    cli::cli_abort("Unsupported OS")
-  )
+  platform <- get_platform()
   # r_version <- glue::glue("R-{R.version$major}.{//split R.version$minor to grab the minor and not include the path//}")
-  r_version <- paste0("R-", R.version$major, ".", sub("\\..*", "", R.version$minor)) # don't include patch
+  r_version <- get_r_version()
 
   os_arch <- R.version$platform
 

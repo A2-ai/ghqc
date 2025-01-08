@@ -33,7 +33,7 @@ link_ghqcapp_dependencies <- function(link_path,
 #' @importFrom fs dir_exists
 #' @importFrom fs dir_create
 libpath_setup <- function(lib_path) {
-  remove_ghqc_dependencies(lib_path = lib_path)
+  remove_ghqcapp_dependencies(lib_path = lib_path)
   if (!fs::dir_exists(lib_path)) return(fs::dir_create(lib_path))
 }
 

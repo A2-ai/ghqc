@@ -55,13 +55,22 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
 #'
 #' @return information related to deleted lib path
 #' @export
-remove_ghqc_dependencies <- function(lib_path = ghqc_libpath(),
+remove_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
                            cache = FALSE,
-                           .remove_base=FALSE) {
-  if (.remove_base) {
+                           .only_base = FALSE) {
+  if (.only_base) {
+    # can't just delete everything because the packages may have been downloaded in the new style,
+    # hence the name of the flag .only_base, excluding the new convention
+    base_dir <- ghqc_basepath()
+    base_dir_contents <- dir_ls(base_dir, type = "directory", recurse = FALSE)
 
+    folder_names_to_remove <- ghqc_depends
+    dirs_to_remove <- base_dir_contents[basename(base_dir_contents) %in% folder_names_to_remove]
+    # include _cache and ghqc.app folders
+    dirs_to_remove <- c(dirs_to_remove, file.path(base_dir, "_cache"), file.path(base_dir, "ghqc.app"))
 
-
+    fs::file_delete(dirs_to_remove)
+    return()
   }
 
   msg <- ifelse(cache, "cache and all packages", "all packages")
