@@ -60,16 +60,8 @@ get_os_arch <- function() {
 #'
 #' @export
 ghqc_libpath <- function() {
-  base_path <- ghqc_basepath()
-  # platform <- similar to renv. For linux, format is "linux-{linux flavor}-{flavor version}" i.e. "linux-ubuntu-jammy". For mac, just "macos"
-  platform <- get_platform()
-  # r_version <- glue::glue("R-{R.version$major}.{//split R.version$minor to grab the minor and not include the path//}")
-  r_version <- get_r_version()
-
-  os_arch <- get_os_arch()
-
-  lib_path <- file.path(base_path, platform, r_version, os_arch)
-  # example: linux-ubuntu-jammy/R-4.4/x86_64-pc-linux-gnu
+  # example: ~/.local/share/ghqc/rpkgs/linux-ubuntu-jammy/R-4.4/x86_64-pc-linux-gnu
+  lib_path <- file.path(ghqc_basepath(), get_platform(), get_r_version(), get_os_arch())
 
   if (!fs::dir_exists(lib_path)) fs::dir_create(lib_path, recurse = TRUE)
   return(lib_path)
