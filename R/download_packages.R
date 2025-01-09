@@ -100,7 +100,7 @@ setup_rspm_url <- function(snapshot_date) {
     cli::cli_alert_warning("Linux binary for {code_name} not found. Using source packages")
   }
   # if its not linux OR the binary url isn't valid, test and return the source url
-  c("CRAN" = source_and_test(url))
+  c("CRAN" = source_and_test(snapshot_date))
 }
 
 source_and_test <- function(snapshot_date) {
@@ -119,7 +119,7 @@ abort_source <- function(url, snapshot_date) {
 #' @importFrom rlang is_installed
 test_repo_url <- function(url) {
   if (rlang::is_installed("pak")) {
-    withr::with_options(list(repos = url), pak::repo_status(bioc = FALSE, cran_mirror = url))$ok
+    any(withr::with_options(list(repos = url), pak::repo_status(bioc = FALSE, cran_mirror = url))$ok)
   } else {
     tryCatch({
       utils::available.packages(repos = url)
