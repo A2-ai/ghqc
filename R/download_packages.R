@@ -46,7 +46,7 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
 #' Remove all content in the specified lib path. Optionally removes the cache as well.
 #' @param lib_path *(optional)* the path to the installed dependency packages. If not set, defaults to ghqc_libpath()
 #' @param cache *(optional)* flag of whether to clear the cache or not. Defaults to keeping the cache
-#' @param .only_base *(optional)* flag to only delete ghqc.app dependencies in the basepath
+#' @param .remove_all *(optional)* flag to delete all contents in the basepath: ~/.local/share/ghqc/rpkgs
 #'
 #' @importFrom cli cli_inform
 #' @importFrom cli cli_alert_success

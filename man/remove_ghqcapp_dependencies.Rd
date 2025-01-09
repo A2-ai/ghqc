@@ -7,7 +7,7 @@
 remove_ghqcapp_dependencies(
   lib_path = ghqc_libpath(),
   cache = FALSE,
-  .only_base = FALSE
+  .remove_all = FALSE
 )
 }
 \arguments{
@@ -15,7 +15,7 @@ remove_ghqcapp_dependencies(
 
 \item{cache}{\emph{(optional)} flag of whether to clear the cache or not. Defaults to keeping the cache}
 
-\item{.only_base}{\emph{(optional)} flag to only delete ghqc.app dependencies in the basepath}
+\item{.remove_all}{\emph{(optional)} flag to delete all contents in the basepath: ~/.local/share/ghqc/rpkgs}
 }
 \value{
 information related to deleted lib path
