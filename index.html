@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ghqc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -120,7 +120,7 @@ NOTE: This will remove all local changes to the repository and hard reset to the
 <p>INSTALL PACKAGES</p>
 <ul>
 <li><p>NOTE: The install option is currently only available to linux systems supported by Posit Package Manager (PPM) and will install from <a href="https://packagemanager.posit.co/cran/2024-03-01" class="external-link">PPM@2024-03-01</a>.</p></li>
-<li><p>The dependency packages are installed by default to “~/.local/share/ghqc/rpkgs”. To install to the default location, which is highly recommended, hit <code>ENTER</code>. Otherwise, type in the path in which to install the dependency packages.</p></li>
+<li><p>The dependency packages are installed by default to “~/.local/share/ghqc/rpkgs/<platform>/<r version>/<os arch>”. To install to the default location, which is highly recommended, hit <code>ENTER</code>. Otherwise, type in the path in which to install the dependency packages.</os></r></platform></p></li>
 </ul>
 <p><img src="reference/figures/install_depends.png"></p>
 </li>
@@ -129,7 +129,7 @@ NOTE: This will remove all local changes to the repository and hard reset to the
 <ul>
 <li><p>NOTE: The link option requires all packages be installed in the same <code>link_path</code> AND they meet the requirements listed in the imports.</p></li>
 <li><p>Provide the path to the previously installed package library.</p></li>
-<li><p>The dependency packages are symlinked by default to “~/.local/share/ghqc/rpkgs”. To symlink to the default location, which is highly recommended, hit <code>ENTER</code>. Otherwise, type in the path in which to download the repository.</p></li>
+<li><p>The dependency packages are symlinked by default to “~/.local/share/ghqc/rpkgs/<platform>/<r version>/<os arch>”. To symlink to the default location, which is highly recommended, hit <code>ENTER</code>. Otherwise, type in the path in which to download the repository.</os></r></platform></p></li>
 </ul>
 <p><img src="reference/figures/link_depends.png"></p>
 </li>
