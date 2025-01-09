@@ -1,7 +1,7 @@
 # ghqc 0.3.0
 
 - refactors ghqc.app dependency installation based on R version and operating system
-- minimizes number of ghqc.app dependencies from 148 to 92
+- removes extraneous ghqc.app dependencies, minimizing number of required dependency packages from 148 to 92
 
 # ghqc 0.2.2
 
