@@ -1,6 +1,6 @@
 #' install ghqc.app's dependencies into an isolated library
 #'
-#' @param lib_path *(optional)* the path to install the dependencies. If not set, defaults to "~/.local/share/ghqc/rpkgs"
+#' @param lib_path *(optional)* the path to install the dependencies. If not set, defaults to ghqc_libpath()
 #' @param pkgs *(optional)* list of packages to install. Defaults to ghqc and all of its dependencies
 #' @param use_pak *(optional)* optionally removes the requirement to have `pak` installed in the project repository. Setting to `FALSE` will reduce performance
 #'
@@ -24,12 +24,12 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
     if (!rlang::is_installed("pak") && use_pak) rlang::abort("pak is not installed. Install pak for better performance. If pak cannot be installed, set `use_pak` = FALSE in `install_ghqcapp_dependencies()` function call")
 
     if (use_pak) {
-      res <- withr::with_options(list("pkg.sysreqs" = FALSE, repos = setup_rpsm_url(ghqc_depends_snapshot_date)),
+      res <- withr::with_options(list("pkg.sysreqs" = FALSE, repos = setup_rspm_url(ghqc_depends_snapshot_date)),
                                  pak::pkg_install(pkgs, lib = lib_path, upgrade = TRUE, ask = FALSE)) #blow cache, run this, check description file
 
     } else {
       if (rlang::is_installed("pak")) cli::cli_alert_warning("pak is installed, but input `use_pak` was set to FALSE. Set `use_pak` to TRUE for better performance.")
-      res <- utils::install.packages(pkgs, lib = lib_path, repos = setup_rpsm_url(ghqc_depends_snapshot_date))
+      res <- utils::install.packages(pkgs, lib = lib_path, repos = setup_rspm_url(ghqc_depends_snapshot_date))
     }
     dT <- difftime(Sys.time(), start_time)
     cli::cli_alert_success(sprintf("Installation of ghqc.app package dependencies completed in %0.2f %s", dT, units(dT)))
@@ -44,8 +44,9 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
 }
 
 #' Remove all content in the specified lib path. Optionally removes the cache as well.
-#' @param lib_path *(optional)* the path to the installed dependency packages. If not set, defaults to "~/.local/share/ghqc/rpkgs"
+#' @param lib_path *(optional)* the path to the installed dependency packages. If not set, defaults to ghqc_libpath()
 #' @param cache *(optional)* flag of whether to clear the cache or not. Defaults to keeping the cache
+#' @param .remove_all *(optional)* flag to delete all contents in the basepath: ~/.local/share/ghqc/rpkgs
 #'
 #' @importFrom cli cli_inform
 #' @importFrom cli cli_alert_success
@@ -55,57 +56,80 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
 #'
 #' @return information related to deleted lib path
 #' @export
-remove_ghqc_dependencies <- function(lib_path = ghqc_libpath(),
-                           cache = FALSE){
-  msg <- "all packages"
-  if (cache) msg <- "cache and all packages"
-  cli::cli_inform("Removing {msg} in {lib_path}...")
+remove_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
+                           cache = FALSE,
+                           .remove_all = FALSE) {
+
+
+  msg <- ifelse(cache, "cache and all packages", "all packages")
+  base_dir <- get_basepath()
+  deleted_dir <- ifelse(.remove_all, base_dir, lib_path)
+  cli::cli_inform("Removing {msg} in {deleted_dir}...")
+
   tryCatch({
-    if (cache){
+    if (cache) {
       if (fs::dir_exists("~/.cache/R/pkgcache")) fs::dir_delete("~/.cache/R/pkgcache/")
       cli::cli_alert_success("Cache successfully cleared")
     }
 
+    if (.remove_all) {
+      if (fs::dir_exists(base_dir)) fs::dir_delete(base_dir)
+
+      cli::cli_alert_success("All content in {base_dir} was successfully removed")
+      return(invisible())
+    }
+
     if (fs::dir_exists(lib_path)) fs::dir_delete(lib_path)
+
     cli::cli_alert_success("All packages in {lib_path} were successfully removed")
   }, error = function(e) {
     cli::cli_abort("All packages in {lib_path} were not removed due to {e$message}")
   })
 }
 
+#' @importFrom cli cli_alert_warning
+setup_rspm_url <- function(snapshot_date) {
+  # check if linux
+  if (grepl("linux", get_os_arch())) {
+    code_name <- find_linux_os_info()$version_codename
+    url_binary <- file.path("https://packagemanager.posit.co/cran/__linux__", code_name, snapshot_date)
+    # check if the binary url is valid, if it is return it
+    if (test_repo_url(url_binary)) {
+      return(c("CRAN" = url_binary))
+    }
+    cli::cli_alert_warning("Linux binary for {code_name} not found. Using source packages")
+  }
+  # if its not linux OR the binary url isn't valid, test and return the source url
+  c("CRAN" = source_and_test(snapshot_date))
+}
 
-#' @importFrom processx run
+source_and_test <- function(snapshot_date) {
+  url <- file.path("https://packagemanager.posit.co/cran", snapshot_date)
+  if (!test_repo_url(url)) abort_source(url, snapshot_date)
+  url
+}
+
 #' @importFrom cli cli_abort
-#' @importFrom rlang is_installed
+abort_source <- function(url, snapshot_date) {
+  cli::cli_abort("Repository could not be found for {snapshot_date}. Please use different date (repository url: {url})")
+}
+
 #' @importFrom withr with_options
 #' @importFrom utils available.packages
-setup_rpsm_url <- function(snapshot_date) {
-  ### TODO: Expand beyond linux OS
-  tryCatch(
-    {
-      cmd <- list(cmd = Sys.which("lsb_release"), args = "-a")
-      system_info <- processx::run(cmd$cmd, args = cmd$args)$stdout
-      system_info <- gsub(" ", replacement = "_", system_info)
-      ubuntu_codename <- regmatches(system_info, regexec("\nCodename:\t(.*?)\n", system_info))[[1]][2]
-    }, error = function(e) {
-      cli::cli_abort(message = "Failed to detect codename via lsb_release")
-    }
-  )
-  repo <- file.path("https://packagemanager.posit.co/cran/__linux__", tolower(ubuntu_codename),snapshot_date)
+#' @importFrom rlang is_installed
+test_repo_url <- function(url) {
   if (rlang::is_installed("pak")) {
-    repo_status <- withr::with_options(list(repos = repo), pak::repo_status(bioc = FALSE, cran_mirror = repo))$ok
+    any(withr::with_options(list(repos = url), pak::repo_status(bioc = FALSE, cran_mirror = url))$ok)
   } else {
     tryCatch({
-      utils::available.packages(repos = repo)
-      repo_status <- TRUE
+      utils::available.packages(repos = url)
+      TRUE
     }, error = function(e) {
-      repo_status = FALSE
+      FALSE
     })
   }
-  if (!repo_status) cli::cli_abort(message = sprintf("Posit package manager for snapshot date %s and os %s is not available", snapshot_date, ubuntu_codename))
-
-  c("CRAN" = repo)
 }
+
 
 
 #' @importFrom rlang is_installed

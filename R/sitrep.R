@@ -15,6 +15,11 @@ ghqc_sitrep <- function(...,
                         config_path = ghqc_config_path()){
   inputs <- c(...)
 
+  cli::cli_h1("Environment")
+  cli::cli_alert_info(sprintf("R version: %s", get_r_version()))
+  cli::cli_alert_info(sprintf("Operating system: %s", get_platform()))
+
+
   cli::cli_h1("Package Dependencies")
   sitrep_dep_check(lib_comparison(lib_path), lib_path)
   if ("pkgs" %in% inputs) {
@@ -60,7 +65,8 @@ sitrep_dep_check <- function(lib_comp, lib_path) {
     cli::cli_alert_danger("ghqc.app is not installed in {lib_path}")
   } else {
     cli::cli_inform("")
-    cli::cli_alert_success("ghqc.app is installed in {lib_path}")
+    ghqcapp_version <- utils::packageVersion("ghqc.app", lib.loc = ghqc::ghqc_libpath())
+    cli::cli_alert_success("ghqc.app {ghqcapp_version} is installed in {lib_path}")
   }
 }
 

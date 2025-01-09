@@ -7,7 +7,7 @@
 check_ghqcapp_dependencies(lib_path = ghqc_libpath(), use_pak = TRUE)
 }
 \arguments{
-\item{lib_path}{\emph{(optional)} the path to the installed/linked dependencies. If not set, defaults to "~/.local/share/ghqc/rpkgs"}
+\item{lib_path}{\emph{(optional)} the path to the installed/linked dependencies. If not set, defaults to ghqc_libpath()}
 
 \item{use_pak}{\emph{(optional)} optionally removes the requirement to have \code{pak} installed in the project repository. Setting to \code{FALSE} will reduce performance}
 }

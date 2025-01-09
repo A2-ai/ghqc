@@ -9,7 +9,7 @@ link_ghqcapp_dependencies(link_path, lib_path = ghqc_libpath())
 \arguments{
 \item{link_path}{the path to the installed package library}
 
-\item{lib_path}{\emph{(optional)} the path to install the dependencies. If not set, defaults to "~/.local/share/ghqc/rpkgs"}
+\item{lib_path}{\emph{(optional)} the path to install the dependencies. If not set, defaults to ghqc_libpath()}
 }
 \value{
 this function is primarly used for its effects, but will the results of the symlink

@@ -1,7 +1,7 @@
 #' symlink previously installed package library containing all ghqc.app dependencies to an isolated package library
 #'
 #' @param link_path the path to the installed package library
-#' @param lib_path *(optional)* the path to install the dependencies. If not set, defaults to "~/.local/share/ghqc/rpkgs"
+#' @param lib_path *(optional)* the path to install the dependencies. If not set, defaults to ghqc_libpath()
 #'
 #' @return this function is primarly used for its effects, but will the results of the symlink
 #'
@@ -33,7 +33,7 @@ link_ghqcapp_dependencies <- function(link_path,
 #' @importFrom fs dir_exists
 #' @importFrom fs dir_create
 libpath_setup <- function(lib_path) {
-  remove_ghqc_dependencies(lib_path = lib_path)
+  remove_ghqcapp_dependencies(lib_path = lib_path)
   if (!fs::dir_exists(lib_path)) return(fs::dir_create(lib_path))
 }
 

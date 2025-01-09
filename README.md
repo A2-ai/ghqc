@@ -126,7 +126,7 @@ previously a previously installed package library.
     [PPM@2024-03-01](https://packagemanager.posit.co/cran/2024-03-01).
 
   - The dependency packages are installed by default to
-    “~/.local/share/ghqc/rpkgs”. To install to the default location,
+    “~/.local/share/ghqc/rpkgs/<platform>/<r version>/<os arch>”. To install to the default location,
     which is highly recommended, hit `ENTER`. Otherwise, type in the
     path in which to install the dependency packages.
 
@@ -140,7 +140,7 @@ previously a previously installed package library.
   - Provide the path to the previously installed package library.
 
   - The dependency packages are symlinked by default to
-    “~/.local/share/ghqc/rpkgs”. To symlink to the default location,
+    “~/.local/share/ghqc/rpkgs/<platform>/<r version>/<os arch>”. To symlink to the default location,
     which is highly recommended, hit `ENTER`. Otherwise, type in the
     path in which to download the repository.
 

@@ -99,7 +99,7 @@ Select whether to install the dependency packages or symlink to previously a pre
 
   - NOTE: The install option is currently only available to linux systems supported by Posit Package Manager (PPM) and will install from [PPM@2024-03-01](https://packagemanager.posit.co/cran/2024-03-01). 
   
-  - The dependency packages are installed by default to "~/.local/share/ghqc/rpkgs". To install to the default location, which is highly recommended, hit `ENTER`. Otherwise, type in the path in which to install the dependency packages.
+  - The dependency packages are installed by default to "~/.local/share/ghqc/rpkgs/<platform>/<r version>/<os arch>". To install to the default location, which is highly recommended, hit `ENTER`. Otherwise, type in the path in which to install the dependency packages.
   
   ![](man/figures/install_depends.png)
 
@@ -109,7 +109,7 @@ Select whether to install the dependency packages or symlink to previously a pre
   
   - Provide the path to the previously installed package library
   
-  - The dependency packages are symlinked by default to "~/.local/share/ghqc/rpkgs". To symlink to the default location, which is highly recommended, hit `ENTER`. Otherwise, type in the path in which to download the repository.
+  - The dependency packages are symlinked by default to "~/.local/share/ghqc/rpkgs/<platform>/<r version>/<os arch>". To symlink to the default location, which is highly recommended, hit `ENTER`. Otherwise, type in the path in which to download the repository.
   
   ![](man/figures/link_depends.png)
 

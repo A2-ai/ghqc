@@ -1,6 +1,6 @@
 Package: ghqc
 Title: Manage QC via GitHub Issues using Shiny Apps
-Version: 0.2.2
+Version: 0.3.0
 Authors@R: c(
     person("Anne", "Zheng", email = "anne@a2-ai.com", role = c("aut")),
     person("Jenna", "Johnson", email = "jenna@a2-ai.com", role = c("aut")),
@@ -21,14 +21,13 @@ Imports:
     rstudioapi,
     withr,
     glue,
-    processx,
     rlang,
     cli,
     fs,
     yaml
 Suggests:
     gert,
-    pak
+    pak (>= 0.6.0)
 Depends: 
     R (>= 2.10)
 Config/Needs/website:

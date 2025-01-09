@@ -1,6 +1,6 @@
 #' Check the installed/linked packages in `lib_path` against the recommended ghqc.app dependency package version
 #'
-#' @param lib_path *(optional)* the path to the installed/linked dependencies. If not set, defaults to "~/.local/share/ghqc/rpkgs"
+#' @param lib_path *(optional)* the path to the installed/linked dependencies. If not set, defaults to ghqc_libpath()
 #' @param use_pak *(optional)* optionally removes the requirement to have `pak` installed in the project repository. Setting to `FALSE` will reduce performance
 #'
 #' @return This function is primarily used for its printed results and subsequent actions, not a returned output.
@@ -28,7 +28,7 @@ check_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
 
 #' @importFrom fs dir_ls
 check_lib_status <- function(lib_path) {
-  if (length(fs::dir_ls(lib_path)) == 0) return(list(status = "all_upg", upg_needed = cbind(rec_pkgs(), Installed_Version = NA)[c(1,3,2)]))
+  if (nrow(installed_pkgs(lib_path)) == 0) return(list(status = "all_upg", upg_needed = cbind(rec_pkgs(), Installed_Version = NA)[c(1,3,2)]))
 
   diffs <- pkg_diffs(installed_pkgs(lib_path), rec_pkgs())
   if (dim(diffs)[1] == 0) {
@@ -47,7 +47,7 @@ installed_pkgs <- function(lib_path) {
 
 #' @importFrom utils available.packages
 rec_pkgs <- function() {
-  ap <- as.data.frame(utils::available.packages(repos = setup_rpsm_url(ghqc_depends_snapshot_date)))
+  ap <- as.data.frame(utils::available.packages(repos = setup_rspm_url(ghqc_depends_snapshot_date)))
   ap <- ap[ap$Package %in% ghqc_depends, c("Package", "Version")]
   colnames(ap) <- c("Package", "Recommended_Version")
   ap$Recommended_Version <- gsub("-", ".", ap$Recommended_Version)
