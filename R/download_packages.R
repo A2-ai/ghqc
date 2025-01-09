@@ -91,7 +91,7 @@ remove_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
 #' @importFrom cli cli_alert_warning
 setup_rspm_url <- function(snapshot_date) {
   repo <- if (grepl("linux", get_os_arch())) {
-    code_name <- find_os_info()$version_codename
+    code_name <- find_linux_os_info()$version_codename
     if (is.na(code_name)) {
       source_and_test(snapshot_date)
     } else {

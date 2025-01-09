@@ -1,4 +1,4 @@
-find_os_info <- function() {
+find_linux_os_info <- function() {
   os_release_path <- "/etc/os-release"
 
   # check if os file exists
@@ -20,7 +20,7 @@ find_os_info <- function() {
 #'
 #' @return the string of the linux platform based on os-release file
 format_linux_platform <- function() {
-  os_info <- find_os_info()
+  os_info <- find_linux_os_info()
 
   # linux-{name}-{version_codename}
   linux_string <- paste0("linux-", tolower(os_info$name), "-", os_info$version_codename)
