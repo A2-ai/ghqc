@@ -73,10 +73,9 @@ remove_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
     }
 
     if (.remove_all) {
-
       if (fs::dir_exists(base_dir)) fs::dir_delete(base_dir)
 
-      cli::cli_alert_success("All packages in {base_dir} were successfully removed")
+      cli::cli_alert_success("All content in {base_dir} was successfully removed")
       return(invisible())
     }
 
