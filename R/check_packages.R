@@ -28,7 +28,7 @@ check_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
 
 #' @importFrom fs dir_ls
 check_lib_status <- function(lib_path) {
-  if (length(fs::dir_ls(lib_path)) == 0) return(list(status = "all_upg", upg_needed = cbind(rec_pkgs(), Installed_Version = NA)[c(1,3,2)]))
+  if (nrow(installed_pkgs(lib_path)) == 0) return(list(status = "all_upg", upg_needed = cbind(rec_pkgs(), Installed_Version = NA)[c(1,3,2)]))
 
   diffs <- pkg_diffs(installed_pkgs(lib_path), rec_pkgs())
   if (dim(diffs)[1] == 0) {
