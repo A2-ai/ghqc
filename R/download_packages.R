@@ -58,31 +58,30 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
 #' @export
 remove_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
                            cache = FALSE,
-                           .only_base = FALSE) {
-  if (.only_base) {
-    # can't just delete everything because the packages may have been downloaded in the new convention,
-    # hence the name of the flag .only_base, excluding the new convention
-    base_dir <- ghqc_basepath()
-    base_dir_contents <- fs::dir_ls(base_dir, type = "directory", recurse = FALSE)
+                           .remove_all = FALSE) {
 
-    folder_names_to_remove <- ghqc_depends
-    dirs_to_remove <- base_dir_contents[basename(base_dir_contents) %in% folder_names_to_remove]
-    # include _cache and ghqc.app folders
-    dirs_to_remove <- c(dirs_to_remove, file.path(base_dir, "_cache"), file.path(base_dir, "ghqc.app"))
-
-    fs::file_delete(dirs_to_remove)
-    return()
-  }
 
   msg <- ifelse(cache, "cache and all packages", "all packages")
-  cli::cli_inform("Removing {msg} in {lib_path}...")
+  base_dir <- ghqc_basepath()
+  deleted_dir <- ifelse(.remove_all, base_dir, lib_path)
+  cli::cli_inform("Removing {msg} in {deleted_dir}...")
+
   tryCatch({
-    if (cache){
+    if (cache) {
       if (fs::dir_exists("~/.cache/R/pkgcache")) fs::dir_delete("~/.cache/R/pkgcache/")
       cli::cli_alert_success("Cache successfully cleared")
     }
 
+    if (.remove_all) {
+
+      if (fs::dir_exists(base_dir)) fs::dir_delete(base_dir)
+
+      cli::cli_alert_success("All packages in {base_dir} were successfully removed")
+      return(invisible())
+    }
+
     if (fs::dir_exists(lib_path)) fs::dir_delete(lib_path)
+
     cli::cli_alert_success("All packages in {lib_path} were successfully removed")
   }, error = function(e) {
     cli::cli_abort("All packages in {lib_path} were not removed due to {e$message}")
