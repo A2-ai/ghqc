@@ -42,7 +42,7 @@ get_r_version <- function() {
   paste0("R-", R.version$major, ".", sub("\\..*", "", R.version$minor)) # don't include patch
 }
 
-ghqc_basepath <- function() {
+get_basepath <- function() {
   "~/.local/share/ghqc/rpkgs" # this is now the BASE PATH to be installed to
 }
 
@@ -61,7 +61,7 @@ get_os_arch <- function() {
 #' @export
 ghqc_libpath <- function() {
   # example: ~/.local/share/ghqc/rpkgs/linux-ubuntu-jammy/R-4.4/x86_64-pc-linux-gnu
-  lib_path <- file.path(ghqc_basepath(), get_platform(), get_r_version(), get_os_arch())
+  lib_path <- file.path(get_basepath(), get_platform(), get_r_version(), get_os_arch())
 
   if (!fs::dir_exists(lib_path)) fs::dir_create(lib_path, recurse = TRUE)
   return(lib_path)

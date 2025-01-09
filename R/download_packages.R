@@ -62,7 +62,7 @@ remove_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
 
 
   msg <- ifelse(cache, "cache and all packages", "all packages")
-  base_dir <- ghqc_basepath()
+  base_dir <- get_basepath()
   deleted_dir <- ifelse(.remove_all, base_dir, lib_path)
   cli::cli_inform("Removing {msg} in {deleted_dir}...")
 
