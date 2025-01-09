@@ -119,7 +119,7 @@ interactive_install <- function() {
   }
 
   cli::cli_inform(" ")
-  lib_path <- gsub('\"', "", readline(paste0("Path to install the ghqc.app dependencies (", ghqc_libpath(), ")")))
+  lib_path <- gsub('\"', "", readline(paste0("Path to install the ghqc.app dependencies (", ghqc_libpath(), ") ")))
   if (lib_path == "") lib_path <- ghqc_libpath()
   if (!fs::file_exists(lib_path)) fs::dir_create(lib_path)
 
@@ -144,7 +144,7 @@ interactive_link <- function() {
     return(invisible())
   })
 
-  lib_path <- gsub('\"', "", readline(paste0("Path to link the ghqc.app dependencies (", ghqc_libpath(), ")")))
+  lib_path <- gsub('\"', "", readline(paste0("Path to link the ghqc.app dependencies (", ghqc_libpath(), ") ")))
   if (lib_path == "") lib_path <- ghqc_libpath()
   if (!fs::file_exists(lib_path)) fs::dir_create(lib_path)
 
