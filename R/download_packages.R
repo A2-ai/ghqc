@@ -90,23 +90,18 @@ remove_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
 
 #' @importFrom cli cli_alert_warning
 setup_rspm_url <- function(snapshot_date) {
-  repo <- if (grepl("linux", get_os_arch())) {
+  # check if linux
+  if (grepl("linux", get_os_arch())) {
     code_name <- find_linux_os_info()$version_codename
-    if (is.na(code_name)) {
-      source_and_test(snapshot_date)
-    } else {
-      url <- file.path("https://packagemanager.posit.co/cran/__linux__", code_name, snapshot_date)
-      if (!test_repo_url(url)) {
-        cli::cli_alert_warning("Linux binary for {code_name} not found. Using source packages")
-        source_and_test(snapshot_date)
-      }
-      url
+    url_binary <- file.path("https://packagemanager.posit.co/cran/__linux__", code_name, snapshot_date)
+    # check if the binary url is valid, if it is return it
+    if (test_repo_url(url_binary)) {
+      return(c("CRAN" = url_binary))
     }
-  } else {
-    source_and_test(url)
+    cli::cli_alert_warning("Linux binary for {code_name} not found. Using source packages")
   }
-
-  c("CRAN" = repo)
+  # if its not linux OR the binary url isn't valid, test and return the source url
+  c("CRAN" = source_and_test(url))
 }
 
 source_and_test <- function(snapshot_date) {
