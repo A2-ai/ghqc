@@ -42,7 +42,7 @@ is_shiny_ready <- function(url) {
 } # is_shiny_ready
 
 #' @importFrom httpuv randomPort
-#' @importFrom rstudioapi jobRunScript jobGetState viewer
+#' @importFrom rstudioapi jobRunScript viewer
 #' @importFrom fs file_exists
 #' @importFrom withr defer
 run_app <- function(app_name, qc_dir, lib_path, config_path) {
@@ -55,6 +55,7 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
   # needed a way to create a temp file that would ran in a background job in the qc dir
   # the script needed to point towards the ghqc libpaths, load the package, and run the app
   tryCatch({
+
     if (is.null(ghqcapp_pkg_status(lib_path))) rlang::abort(message = glue::glue("ghqc.app not installed in {lib_path}. Please install before running any ghqc apps"))
     script <- tempfile("background", tmpdir = tempdir(), fileext = ".R")
     withr::defer(fs::file_delete(script))
