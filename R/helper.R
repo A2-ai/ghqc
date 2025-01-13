@@ -55,6 +55,7 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
   # needed a way to create a temp file that would ran in a background job in the qc dir
   # the script needed to point towards the ghqc libpaths, load the package, and run the app
   tryCatch({
+
     if (is.null(ghqcapp_pkg_status(lib_path))) rlang::abort(message = glue::glue("ghqc.app not installed in {lib_path}. Please install before running any ghqc apps"))
     script <- tempfile("background", tmpdir = tempdir(), fileext = ".R")
     withr::defer(fs::file_delete(script))
@@ -116,7 +117,8 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
 
       # if rstudioapi is >= 0.16.0, can use jobGetState to check if there's been an error in the bgj
       if (new_rstudioapi) {
-        if (rstudioapi::jobGetState(job_id) == "failed") {
+        job_state <- do.call("jobGetState", list(job = "job_id"), envir = asNamespace("rstudioapi"))
+        if (job_state == "failed") {
           sp1$finish()
           cli::cli_alert_danger("Shiny app could not be started due to error (see Background Jobs panel)")
           break
