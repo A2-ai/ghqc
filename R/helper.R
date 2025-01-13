@@ -98,7 +98,7 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
 
 
     # new_rstudioapi is true if its >= 0.16.0
-   new_rstudioapi <- compareVersion(utils::packageDescription("rstudioapi", fields = "Version"), "0.16.0") != -1
+    new_rstudioapi <- compareVersion(utils::packageDescription("rstudioapi", fields = "Version"), "0.16.0") != -1
 
     sp1 <- cli::make_spinner()
     cli::cli_inform("Waiting for shiny app to start...")
@@ -117,7 +117,6 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
 
       # if rstudioapi is >= 0.16.0, can use jobGetState to check if there's been an error in the bgj
       if (new_rstudioapi) {
-        #job_state <- do.call("jobGetState", list(job = "job_id"), envir = asNamespace("rstudioapi"))
         if (rstudioapi::jobGetState(job_id) == "failed") {
           sp1$finish()
           cli::cli_alert_danger("Shiny app could not be started due to error (see Background Jobs panel)")
