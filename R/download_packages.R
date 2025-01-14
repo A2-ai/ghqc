@@ -18,6 +18,7 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
                                       use_pak = TRUE) {
 
   tryCatch({
+    browser()
     start_time <- Sys.time()
     cli::cli_inform("Installing ghqc.app package dependencies...")
     if (!fs::dir_exists(lib_path)) fs::dir_create(lib_path)
@@ -37,9 +38,9 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
     invisible(res)
   }, error = function(e) {
     cli::cli_inform(c("Package installation failed",
-                      "*" = "ghqc will not work as epected.",
-                      "i" = "If issue pursists, please contact the authors"))
-    rlang::abort(class = "error", parent = e$parent)
+                      "*" = "ghqc will not work as expected.",
+                      "i" = "If issue persists, please contact the authors"))
+    rlang::abort(message = e$message, class = "error", parent = e$parent)
   })
 }
 
