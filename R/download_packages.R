@@ -18,7 +18,6 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
                                       use_pak = TRUE) {
 
   tryCatch({
-    browser()
     start_time <- Sys.time()
     cli::cli_inform("Installing ghqc.app package dependencies...")
     if (!fs::dir_exists(lib_path)) fs::dir_create(lib_path)
