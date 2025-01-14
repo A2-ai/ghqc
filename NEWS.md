@@ -1,3 +1,7 @@
+# ghqc 0.3.2
+
+- fixes typos and returns error message of error handling in `install_ghqcapp_dependencies`
+
 # ghqc 0.3.1
 
 - fixes bug from 0.2.1 in which jobGetState was imported from rstudioapi but was unavailable in versions < 0.16.0 and caught by renv
