@@ -31,10 +31,11 @@ interactive_info <- function(renv_text) {
   if (config$val == "") {
     cli::cli_inform(c(" ", "GHQC_CONFIG_REPO is not set in your ~/.Renviron"))
     config_read <- readline("Provide the URL to the custom configuration repository: ")
-  } else {
+  }
+  else {
     cli::cli_inform(c(" ", "GHQC_CONFIG_REPO is set to {config$val} in your ~/.Renviron"))
-    config_read <- readline(glue::glue("Custom Configuration Repository ({config$val}) "))
-    if (config_read == "") config_read <- config$val
+    yN_config <- readline(glue::glue("Custom Configuration Repository {config$val} (y/N) "))
+    if (yN_config == "y" || yN_config == "Y") config_read <- config$val
   }
   repeat {
     config_read <- gsub('\"', "", config_read)
@@ -62,8 +63,8 @@ interactive_config_download <- function() {
   if (!rlang::is_installed("gert")) {
     cli::cli_inform(c("!" = "Package {.code gert} is not found in your project package library",
                       " " = "The custom configuration repository cannot be downloaded unless this package is present"))
-    yN <- gsub('\"', "", readline("Would you like to install `gert` to continue? (y/N) "))
-    if (yN != "y" || yN == "") {
+    yN_gert <- gsub('\"', "", readline("Would you like to install `gert` to continue? (y/N) "))
+    if (yN_gert != "y" || yN_gert != "y" || yN_gert == "") {
       cli::cli_alert_danger("`gert` is not installed. Custom configuration repository cannot be checked or downloaded using this package")
       return(invisible())
     }
@@ -71,8 +72,11 @@ interactive_config_download <- function() {
   }
 
   cli::cli_inform(" ")
-  config_path <- gsub('\"', "", readline(glue::glue("Path to download the custom configuration repository ({ghqc_config_path()}) ")))
-  if (config_path == "") config_path <- ghqc_config_path()
+  yN_config <- gsub('\"', "", readline(glue::glue("Download custom configuration repository to path: {ghqc_config_path()} (y/N) ")))
+  if (yN_config == "y" || yN_config == "Y" || yN_config == "") config_path <- ghqc_config_path()
+  else if (yN_config == "n" || yN_config == "N") {
+    config_path <- gsub('\"', "", readline(glue::glue("Download custom configuration repository to path: ")))
+  }
 
   cli::cli_inform(" ")
   check_ghqc_configuration(config_path = config_path)
@@ -142,9 +146,12 @@ interactive_link <- function() {
     return(invisible())
   })
 
-  lib_path <- gsub('\"', "", readline(paste0("Path to link the ghqc.app dependencies (", ghqc_libpath(), ") ")))
-  if (lib_path == "") lib_path <- ghqc_libpath()
-  if (!fs::file_exists(lib_path)) fs::dir_create(lib_path)
+  yN <- gsub('\"', "", readline(paste0("Link ghqc.app dependencies to path: ", ghqc_libpath(), " (y/N) ")))
+  if (yN == "y" || yn == "Y") lib_path <- ghqc_libpath()
+  else if (yN == "n" || yN == "N") {
+    libpath <- gsub('\"', "", readline(paste0("Link ghqc.app dependencies to path: ", ghqc_libpath(), " (y/N) ")))
+    if (!fs::file_exists(lib_path)) fs::dir_create(lib_path)
+  }
 
   cli::cli_inform(" ")
   link_ghqcapp_dependencies(link_path = link_path, lib_path = lib_path)
