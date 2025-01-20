@@ -45,7 +45,6 @@ libpath_setup <- function(lib_path) {
 check_link_path <- function(link_path) {
   if (!fs::dir_exists(link_path)) cli::cli_abort("{.code {link_path}} does not exist")
   if (length(fs::dir_ls(link_path)) == 0) cli::cli_abort("{.code {link_path}} is empty")
-  browser()
   if (any(!(ghqc_depends %in% basename(fs::dir_ls(link_path))))) {
     pkgs_not_in_link <- paste0(ghqc_depends[!(ghqc_depends %in% basename(fs::dir_ls(link_path)))], collapse = ", ")
     cli::cli_abort(c("The following packages are required for ghqc.app, but cannot be found in {.code {link_path}}:", "{pkgs_not_in_link}"))
