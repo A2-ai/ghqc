@@ -1,3 +1,9 @@
+# ghqc 0.3.3
+
+- refactors `setup_ghqc()` such that each interactive input is (y/N)
+- updates explicit dependencies of `ghqc.app` in sysdata.rda
+- updates pak version to 0.8.0
+
 # ghqc 0.3.2
 
 - fixes typos and returns error message of error handling in `install_ghqcapp_dependencies`
