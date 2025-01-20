@@ -1,3 +1,7 @@
+# ghqc 0.3.3
+
+- refactors `setup_ghqc()` such that each interactive input is (y/N)
+
 # ghqc 0.3.2
 
 - fixes typos and returns error message of error handling in `install_ghqcapp_dependencies`
