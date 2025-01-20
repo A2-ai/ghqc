@@ -33,11 +33,20 @@ interactive_info <- function(renv_text) {
     config_read <- readline("Provide URL to custom configuration repository: ")
   }
   else {
-    cli::cli_inform(c(" ", "GHQC_CONFIG_REPO is set to {config$val} in your ~/.Renviron"))
-    yN_config <- readline(glue::glue("Custom configuration repository: {config$val} (y/N) "))
-    if (yN_config == "y" || yN_config == "Y") config_read <- config$val
-    else if (yN_config == "n" || yN_config == "N") config_read <- readline("Provide URL to custom configuration repository: ")
-  }
+    repeat {
+      cli::cli_inform(c(" ", "GHQC_CONFIG_REPO is set to {config$val} in your ~/.Renviron"))
+      yN_config <- readline(glue::glue("Custom configuration repository: {config$val} (y/N) "))
+      if (yN_config %in% c("y", "Y", "")) {
+        config_read <- config$val
+        break
+      }
+      else if (yN_config %in% c("n", "N")) {
+        config_read <- readline("Provide URL to custom configuration repository: ")
+        break
+      }
+      cli::cli_inform("Unrecognized input. Please input 'y' or 'N'")
+    } # repeat
+  } # else
   repeat {
     config_read <- gsub('\"', "", config_read)
     if (grepl("^https:", config_read)) {
@@ -64,27 +73,28 @@ interactive_config_download <- function() {
   if (!rlang::is_installed("gert")) {
     cli::cli_inform(c("!" = "Package {.code gert} is not found in your project package library",
                       " " = "The custom configuration repository cannot be downloaded unless this package is present"))
-    yN_gert <- gsub('\"', "", readline("Would you like to install `gert` to continue? (y/N) "))
-    if (yN_gert != "y" || yN_gert != "Y" || yN_gert == "") {
-      cli::cli_alert_danger("{.code gert} is not installed. Custom configuration repository cannot be checked or downloaded using this package")
+    yN <- gsub('\"', "", readline("Would you like to install `gert` to continue? (y/N) "))
+    if (!yN %in% c("y", "Y")) {
+      cli::cli_alert_danger("`gert` is not installed. Custom configuration repository cannot be checked or downloaded using this package")
       return(invisible())
     }
     install.packages("gert")
   }
 
-  cli::cli_inform(" ")
-  yN_config <- gsub('\"', "", readline(glue::glue("Download custom configuration repository to path: {ghqc_config_path()} (y/N) ")))
-  if (yN_config %in% c("y", "Y", "")) config_path <- ghqc_config_path()
-  else if (yN_config != "N") config_path <- gsub('\"', "", readline(glue::glue("Provide path to download custom configuration repository: ")))
-
   repeat {
-    config_read <- gsub('\"', "", config_read)
-    if (grepl("^https:", config_read)) {
-      config$val <- config_read
+    cli::cli_inform(" ")
+    config_yN <- gsub('\"', "", readline(glue::glue("Download custom configuration repository to path: {ghqc_config_path()} (y/N) ")))
+    if (config_yN %in% c("y", "Y", "")) {
+      config_path <- ghqc_config_path()
       break
     }
-    config_read <- readline(glue::glue("GHQC_CONFIG_REPO does not start with 'https:'. Please provide a valid URL: "))
+    else if (config_yN %in% c("n", "N")) {
+      config_path <- gsub('\"', "", readline(glue::glue("Provide path to download custom configuration repository: ")))
+      break
+    }
+    cli::cli_inform("Unrecognized input. Please input 'y' or 'N'")
   }
+
 
   cli::cli_inform(" ")
   check_ghqc_configuration(config_path = config_path)
