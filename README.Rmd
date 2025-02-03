@@ -59,7 +59,7 @@ An example structure of the configuration information repository can be found at
 
 ## ghqc Setup
 
-ghqc has 3 main requirements that must be met before running any of the ghqc ecosystem apps:
+ghqc has 3 main requirements that must be met before running any ghqc ecosystem apps:
 
 1. An environmental variable, `GHQC_INFO_REPO`, must be set to the configuration information repository url in "~/.Renviron". 
 

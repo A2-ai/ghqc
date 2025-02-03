@@ -85,7 +85,7 @@ prompt_repo_clone <- function(config_path) {
 #' @importFrom cli cli_alert_danger
 prompt_repo_update <- function(config_path) {
   cli::cli_alert_warning(sprintf("Custom configuration repository %s was found locally, but is not the most recent version", basename(config_path)))
-  yN <- readline(prompt = glue::glue("Would you like to update the repository. This will delete all local changes to {config_path} (y/N)? "))
+  yN <- readline(prompt = glue::glue("Would you like to update the repository? This will delete all local changes to {config_path} (y/N) "))
   if (yN == "y") {
     repo_clone(config_path)
   } else {
