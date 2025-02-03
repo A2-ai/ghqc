@@ -7,7 +7,8 @@
 ghqc_libpath()
 }
 \value{
-string containing the default lib path for the ghqc package and its dependencies (~/.local/share/ghqc/rpkgs/\if{html}{\out{<platform>}}/\if{html}{\out{<r version>}}/\if{html}{\out{<os arch>}})
+string containing the default lib path for the ghqc package and its dependencies depending on the user's platform, R version, and os arch:
+\verb{~/.local/share/ghqc/rpkgs/<platform>/<R version>/<os arch>}
 }
 \description{
 The default install location for the ghqc package and its dependencies. If it does not exist, it will be created.

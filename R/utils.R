@@ -53,7 +53,8 @@ get_os_arch <- function() {
 
 #' The default install location for the ghqc package and its dependencies. If it does not exist, it will be created.
 #'
-#' @return string containing the default lib path for the ghqc package and its dependencies (~/.local/share/ghqc/rpkgs/<platform>/<r version>/<os arch>)
+#' @return string containing the default lib path for the ghqc package and its dependencies depending on the user's platform, R version, and os arch:
+#' `~/.local/share/ghqc/rpkgs/<platform>/<R version>/<os arch>`
 #'
 #' @importFrom fs dir_exists
 #' @importFrom fs dir_create
