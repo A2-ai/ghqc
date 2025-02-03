@@ -127,7 +127,7 @@ interactive_depends <- function() {
           "1" = return(interactive_install()),
           "2" = return(interactive_link()),
           "3" = {
-            cli::cli_alert_warning("Ensure that ghqc.app and its dependencies are installed into an isolated ghqc package library path before using any of the ghqc ecosystem apps.")
+            cli::cli_alert_warning("Ensure that ghqc.app and its dependencies are installed into an isolated ghqc package library path before using any ghqc ecosystem apps.")
             return(invisible())
           }
   )
