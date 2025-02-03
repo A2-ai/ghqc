@@ -1,3 +1,7 @@
+# ghqc 0.3.6
+
+- fixes typo in parse_renviron
+
 # ghqc 0.3.5
 
 - fixes typo in local custom configuration repository update prompt

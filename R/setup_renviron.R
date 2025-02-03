@@ -67,7 +67,7 @@ parse_renviron <- function(var_name, renv_text) {
   n <- substring(x, 1L, m - 1L)
   v <- substring(x, m + 1L)
   if (!(var_name %in% n)) return(list(index = NA, val = ""))
-  if (anyDuplicated(n[n == var_name]) != 0) cli::cli_abort("{var_name} found multiple times in ~/.Renvirion. Please ensure only one occurance of the variable occurs in your ~/.Renviron")
+  if (anyDuplicated(n[n == var_name]) != 0) cli::cli_abort("{var_name} found multiple times in ~/.Renviron. Please ensure only one occurance of the variable in your ~/.Renviron")
   index <- which(var_name == n)
   list(index = index, val = v[index])
 }
