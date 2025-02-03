@@ -1,3 +1,8 @@
+# ghqc 0.3.5
+
+- fixes typo in local custom configuration repository update prompt
+- rephrases warning for required setup before running ghqc ecosystem apps
+
 # ghqc 0.3.4
 
 - adds warning to checklist validation if checklist yamls lack a trailing newline
