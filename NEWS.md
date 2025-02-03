@@ -1,3 +1,7 @@
+# ghqc 0.3.7
+
+- fixes html in `ghqc_libpath()` documentation
+
 # ghqc 0.3.6
 
 - fixes typo in parse_renviron
