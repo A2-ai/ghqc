@@ -1,3 +1,7 @@
+# ghqc 0.3.4
+
+- adds warning to checklist validation if checklist yamls lack a trailing newline
+
 # ghqc 0.3.3
 
 - refactors `setup_ghqc()` such that each interactive input is (y/N)
