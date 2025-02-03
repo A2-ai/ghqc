@@ -76,7 +76,7 @@ prompt_repo_clone <- function(config_path) {
   if (yN == "y") {
     repo_clone(config_path)
   } else {
-    cli::cli_alert_danger("Run {.code ghqc::download_ghqc_configuration()} before running any of the ghqc ecosystem apps")
+    cli::cli_alert_danger("Run {.code ghqc::download_ghqc_configuration()} before running any ghqc ecosystem apps")
   }
 }
 
@@ -89,7 +89,7 @@ prompt_repo_update <- function(config_path) {
   if (yN == "y") {
     repo_clone(config_path)
   } else {
-    cli::cli_alert_danger("Run {.code ghqc::download_ghqc_configuration()} before running any of the ghqc ecosystem apps")
+    cli::cli_alert_danger("Run {.code ghqc::download_ghqc_configuration()} before running any ghqc ecosystem apps")
   }
 }
 
