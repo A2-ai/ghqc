@@ -13,6 +13,11 @@
 #' @export
 check_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
                                        use_pak = TRUE) {
+  pak_version <- packageVersion("pak")
+  if (use_pak && pak_version < "0.8.0") {
+    cli::cli_abort("`pak` version is {pak_version}. Update pak to at least 0.8.0 or re-run with parameter `use_pak = FALSE`")
+  }
+
   if (!fs::dir_exists(lib_path)) fs::dir_create(lib_path)
   res <- check_lib_status(lib_path)
   switch(res$status,
