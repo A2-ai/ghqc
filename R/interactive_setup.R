@@ -140,9 +140,9 @@ interactive_depends <- function() {
 #' @importFrom fs dir_create
 interactive_install <- function() {
   use_pak <- TRUE
-  if (!rlang::is_installed("pak", version = "0.8.0")) {
+  if (!rlang::is_installed("pak", version = "0.8.0")) { # if min version of pak isn't installed
     repeat {
-      pak_old_version_installed <- rlang::is_installed("pak")
+      pak_old_version_installed <- rlang::is_installed("pak") # if pak is installed, it's the old version
       cli::cli_inform(" ")
       if (pak_old_version_installed) {
         pak_version <- packageVersion("pak")
@@ -154,8 +154,7 @@ interactive_install <- function() {
 
       yN_pak <- gsub('\"', "", readline("To improve performance, would you like to install `pak (>= 0.8.0)`? (y/N) "))
       if (yN_pak %in% c("y", "Y", "")) {
-        # if a lower version of pak is installed
-        if (rlang::is_installed("pak")) {
+        if (pak_old_version_installed) { # if an old version was installed, remove the package and its cache to avoid corruption errors
           if ("pak" %in% loadedNamespaces()) {
             unloadNamespace("pak")
           }
