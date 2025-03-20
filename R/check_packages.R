@@ -13,6 +13,9 @@
 #' @export
 check_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
                                        use_pak = TRUE) {
+
+  check_pak_version(use_pak)
+
   if (!fs::dir_exists(lib_path)) fs::dir_create(lib_path)
   res <- check_lib_status(lib_path)
   switch(res$status,

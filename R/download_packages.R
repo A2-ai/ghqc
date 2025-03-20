@@ -17,6 +17,8 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
                                       pkgs = ghqc_depends,
                                       use_pak = TRUE) {
 
+  check_pak_version(use_pak)
+
   tryCatch({
     start_time <- Sys.time()
     cli::cli_inform("Installing ghqc.app package dependencies...")

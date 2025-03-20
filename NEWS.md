@@ -1,3 +1,7 @@
+# ghqc 0.3.8
+
+- adds error handling for whether the minimum version of pak is installed in `setup_ghqc()`, `check_ghqcapp_dependencies()` and `install_ghqcapp_dependencies()`
+
 # ghqc 0.3.7
 
 - fixes html in `ghqc_libpath()` documentation

@@ -140,13 +140,29 @@ interactive_depends <- function() {
 #' @importFrom fs dir_create
 interactive_install <- function() {
   use_pak <- TRUE
-  if (!rlang::is_installed("pak")) {
+  if (!rlang::is_installed("pak", version = "0.8.0")) { # if min version of pak isn't installed
     repeat {
+      pak_old_version_installed <- rlang::is_installed("pak") # if pak is installed, it's the old version
       cli::cli_inform(" ")
-      cli::cli_inform("Package {.code pak} is not found in your project package library")
-      yN_pak <- gsub('\"', "", readline("To improve performance, would you like to install `pak`? (y/N) "))
+      if (pak_old_version_installed) {
+        pak_version <- packageVersion("pak")
+        cli::cli_inform("Package {.code pak} version is {pak_version}")
+      }
+      else {
+        cli::cli_inform("Package {.code pak (>= 0.8.0)} is not found in your project package library")
+      }
+
+      yN_pak <- gsub('\"', "", readline("To improve performance, would you like to install `pak (>= 0.8.0)`? (y/N) "))
       if (yN_pak %in% c("y", "Y", "")) {
+        if (pak_old_version_installed) { # if an old version was installed, remove the package and its cache to avoid corruption errors
+          if ("pak" %in% loadedNamespaces()) {
+            unloadNamespace("pak")
+          }
+          utils::remove.packages("pak")
+          unlink(".RData")
+        }
         utils::install.packages("pak")
+        rlang::check_installed("pak", version = "0.8.0")
         break
       }
       else if (yN_pak %in% c("n", "N")) {
