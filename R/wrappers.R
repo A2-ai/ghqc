@@ -124,3 +124,23 @@ ghqc_record_app <- function(app_name = "ghqc_record_app",
           config_path = config_path)
 }
 
+#' @title Status QC file(s)
+#'
+#' @param app_name the name of the app to run in the background
+#' @param qc_dir the directory in which the app is run
+#' @param lib_path the path to the ghqc package and its dependencies
+#' @param config_path the path to the ghqc configuring information
+#'
+#' @seealso \link{ghqc_resolve_app} and \link{ghqc_record_app}
+#'
+#' @export
+ghqc_status_app <- function(app_name = "ghqc_status_app",
+                            qc_dir = getwd(),
+                            lib_path = ghqc_libpath(),
+                            config_path = ghqc_config_path()) {
+  run_app(app_name = app_name,
+          qc_dir = qc_dir,
+          lib_path = lib_path,
+          config_path = config_path)
+}
+

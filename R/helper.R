@@ -8,7 +8,7 @@ delete_bgj_script <- function(script) {
 error_checks <- function(app_name, qc_dir, lib_path, config_path) {
   if(!fs::dir_exists(qc_dir)) cli::cli_abort(paste(qc_dir, "does not exist."))
   if(!fs::dir_exists(lib_path)) cli::cli_abort(paste(lib_path, "does not exist. Refer to installation guide and check library path is set to correct location."))
-  if(!(app_name) %in% c("ghqc_assign_app", "ghqc_resolve_app", "ghqc_record_app")) cli::cli_abort(paste(app_name, "not found in ghqc package."))
+  if(!(app_name) %in% c("ghqc_assign_app", "ghqc_resolve_app", "ghqc_record_app", "ghqc_status_app")) cli::cli_abort(paste(app_name, "not found in ghqc package."))
   if(!fs::dir_exists(config_path)) cli::cli_abort(c("{config_path} does not exist.", "Run {.code ghqc::check_ghqc_configuration(config_path = '{config_path}')} to verify proper setup."))
 }
 
