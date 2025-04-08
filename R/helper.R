@@ -103,7 +103,7 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
     sp1 <- cli::make_spinner()
     cli::cli_inform("Waiting for shiny app to start...")
 
-    total_time <- 35  # Total wait time in seconds
+    total_time <- 200  # Total wait time in seconds
     interval <- 0.1   # Spinner refresh interval in seconds
     iterations <- total_time / interval  # Total iterations needed
     counter <- 1

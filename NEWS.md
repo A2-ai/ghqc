@@ -1,3 +1,7 @@
+# ghqc 0.3.9
+
+- increases timeout for shiny sessions that take a long time to start
+
 # ghqc 0.3.8
 
 - adds error handling for whether the minimum version of pak is installed in `setup_ghqc()`, `check_ghqcapp_dependencies()` and `install_ghqcapp_dependencies()`
