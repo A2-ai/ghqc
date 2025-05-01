@@ -24,5 +24,5 @@ ghqc_status_app(
 Status QC file(s)
 }
 \seealso{
-\link{ghqc_resolve_app} and \link{ghqc_record_app}
+\link{ghqc_assign_app} and \link{ghqc_record_app}
 }

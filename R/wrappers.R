@@ -26,7 +26,7 @@
 #' @param lib_path the path to the ghqc package and its dependencies
 #' @param config_path the path to the ghqc configuring information
 #'
-#' @seealso \link{ghqc_resolve_app} and \link{ghqc_record_app}
+#' @seealso \link{ghqc_status_app} and \link{ghqc_record_app}
 #'
 #' @export
 ghqc_assign_app <- function(app_name = "ghqc_assign_app",
@@ -71,7 +71,7 @@ ghqc_assign_app <- function(app_name = "ghqc_assign_app",
 #' @seealso \link{ghqc_assign_app} and \link{ghqc_record_app}
 #'
 #' @export
-ghqc_resolve_app <- function(app_name = "ghqc_resolve_app",
+ghqc_notify_app <- function(app_name = "ghqc_notify_app",
                          qc_dir = getwd(),
                          lib_path = ghqc_libpath(),
                          config_path = ghqc_config_path()) {
@@ -111,7 +111,7 @@ ghqc_resolve_app <- function(app_name = "ghqc_resolve_app",
 #' @param lib_path the path to the ghqc package and its dependencies
 #' @param config_path the path to the ghqc configuring information
 #'
-#' @seealso \link{ghqc_assign_app} and \link{ghqc_resolve_app}
+#' @seealso \link{ghqc_assign_app} and \link{ghqc_status_app}
 #'
 #' @export
 ghqc_record_app <- function(app_name = "ghqc_record_app",
@@ -131,7 +131,7 @@ ghqc_record_app <- function(app_name = "ghqc_record_app",
 #' @param lib_path the path to the ghqc package and its dependencies
 #' @param config_path the path to the ghqc configuring information
 #'
-#' @seealso \link{ghqc_resolve_app} and \link{ghqc_record_app}
+#' @seealso \link{ghqc_assign_app} and \link{ghqc_record_app}
 #'
 #' @export
 ghqc_status_app <- function(app_name = "ghqc_status_app",

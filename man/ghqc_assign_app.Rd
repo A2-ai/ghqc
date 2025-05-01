@@ -47,5 +47,5 @@ At any time, the user can:
 }
 }
 \seealso{
-\link{ghqc_resolve_app} and \link{ghqc_record_app}
+\link{ghqc_status_app} and \link{ghqc_record_app}
 }

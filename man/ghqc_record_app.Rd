@@ -44,5 +44,5 @@ for each Issue including version control information, users, datetimes, events, 
 }
 }
 \seealso{
-\link{ghqc_assign_app} and \link{ghqc_resolve_app}
+\link{ghqc_assign_app} and \link{ghqc_status_app}
 }
