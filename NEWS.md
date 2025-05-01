@@ -1,3 +1,7 @@
+# ghqc 0.4.0
+
+- modifies package dependencies and wrapper functions to export the new functions in ghqc.app
+
 # ghqc 0.3.9
 
 - increases timeout for shiny sessions that take a long time to start
