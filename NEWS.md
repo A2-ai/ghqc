@@ -1,3 +1,7 @@
+# ghqc 0.4.1
+
+- adds necessary packages to ghqc_depends
+
 # ghqc 0.4.0
 
 - modifies package dependencies and wrapper functions to export the new functions in ghqc.app
