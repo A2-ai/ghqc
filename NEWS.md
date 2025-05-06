@@ -1,3 +1,7 @@
+# ghqc 0.4.2
+
+- adds other necessary packages to ghqc_depends (ellipsis, colorspace)
+
 # ghqc 0.4.1
 
 - adds necessary packages to ghqc_depends
