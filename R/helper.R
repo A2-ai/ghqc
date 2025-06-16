@@ -148,20 +148,19 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
 }
 
 
-ghqc_example_setup <- function(config_repo = "https://github.com/A2-ai/ghqc.example_config_repo") {
-  # check that gert is installed
-  config_repo_status(config_path = ghqc_config_path())
-
+ghqc_quick_setup <- function(config_repo = "https://github.com/A2-ai/ghqc.example_config_repo") {
   lib_path <- ghqc_libpath()
 
-  # step 1: set example config repo in Renviron
-  setup_ghqc_renviron(config_repo)
+  # if Renviron not already set, set config repo as inputted config repo (default is example config repo)
+  if (is.null(Sys.getenv("GHQC_CONFIG_REPO"))) {
+    setup_ghqc_renviron(config_repo)
+  }
 
-  # step 2: clone config repo
+  # step 2: clone config repo (this will check if gert is installed)
   download_ghqc_configuration()
 
-  # step 3: download ghqc.app dependencies
-  use_pak <- { # use_pak if at least 0.8.0 is installed (can't do this in the same if statement or else an error will occur)
+  # step 3: use_pak if at least 0.8.0 is installed (can't do this in the same if statement or else an error will occur)
+  use_pak <- {
     if (rlang::is_installed("pak")) {
       pak_version <- packageVersion("pak") # can't check pak version unless it's installed (will get an error)
       if (pak_version >= "0.8.0") {
@@ -177,6 +176,7 @@ ghqc_example_setup <- function(config_repo = "https://github.com/A2-ai/ghqc.exam
   } # use_pak
 
   # step 4: install ghqc.app dependencies
+  remove_ghqcapp_dependencies(.remove_all = TRUE, cache = TRUE)
   install_ghqcapp_dependencies(use_pak = use_pak)
 
   # step 5: install ghqc.app if available (should be if the use set options to PRISM repo or equivalent)
