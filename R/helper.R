@@ -146,3 +146,21 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
     cli::cli_alert_danger(cli::col_br_red(e$message))
   })
 }
+
+
+ghqc_quick_setup <- function(config_repo = "https://github.com/A2-ai/ghqc.example_config_repo") {
+  # step 1: set example config repo in Renviron
+  ghqc::setup_ghqc_renviron(config_repo)
+
+  # step 2: clone config repo
+  ghqc::download_ghqc_configuration()
+
+  # step 3: download ghqc.app dependencies
+  ghqc::install_ghqcapp_dependencies(use_pak = FALSE)
+
+  # step 4: install ghqc.app from github/PRISM
+  install_dev_ghqcapp()
+
+  # step 5: output a message to the user about how to create/set their own config repo
+
+}
