@@ -152,7 +152,7 @@ ghqc_quick_setup <- function(config_repo = "https://github.com/A2-ai/ghqc.exampl
   lib_path <- ghqc_libpath()
 
   # if Renviron not already set, set config repo as inputted config repo (default is example config repo)
-  if (is.null(Sys.getenv("GHQC_CONFIG_REPO"))) {
+  if (Sys.getenv("GHQC_CONFIG_REPO") == "") {
     setup_ghqc_renviron(config_repo)
   }
 
@@ -186,15 +186,12 @@ ghqc_quick_setup <- function(config_repo = "https://github.com/A2-ai/ghqc.exampl
   }
 
   # step 6: if ghqc.app is not installed, output note; else, output success message
-  if (!is.null(ghqcapp_pkg_status(lib_path))) {
+  if (is.null(ghqcapp_pkg_status(lib_path))) {
     cli::cli_alert_warning("NOTE: ghqc.app is not installed in {lib_path}. Please install before running any ghqc apps")
   }
   else {
     cli::cli_alert_success("Setup successful! See ghqc documentation for info on how to create and set your organization's own configuration repository for checklist templates")
   }
 } # ghqc_example_setup
-
-
-
 
 
