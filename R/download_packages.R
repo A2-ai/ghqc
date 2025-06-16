@@ -35,7 +35,7 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
     }
     dT <- difftime(Sys.time(), start_time)
     cli::cli_alert_success(sprintf("Installation of ghqc.app package dependencies completed in %0.2f %s", dT, units(dT)))
-    if (is.null(ghqcapp_pkg_status(lib_path))) cli::cli_alert_warning("NOTE: ghqc.app is not installed in {lib_path}. Please install before running any ghqc apps")
+
     invisible(res)
   }, error = function(e) {
     cli::cli_inform(c("Package installation failed",

@@ -148,19 +148,50 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
 }
 
 
-ghqc_quick_setup <- function(config_repo = "https://github.com/A2-ai/ghqc.example_config_repo") {
+ghqc_example_setup <- function(config_repo = "https://github.com/A2-ai/ghqc.example_config_repo") {
   # step 1: set example config repo in Renviron
-  ghqc::setup_ghqc_renviron(config_repo)
+  setup_ghqc_renviron(config_repo)
 
   # step 2: clone config repo
-  ghqc::download_ghqc_configuration()
+  # check that gert is installed
+  config_repo_status(config_path = ghqc_config_path())
+  download_ghqc_configuration()
 
   # step 3: download ghqc.app dependencies
-  ghqc::install_ghqcapp_dependencies(use_pak = FALSE)
+  # use_pak if at least 0.8.0 is installed (can't do this in the same if statement or else an error will occur)
+  use_pak <- {
+    if (rlang::is_installed("pak")) {
+      pak_version <- packageVersion("pak") # can't check pak version unless it's installed (will get an error)
+      if (pak_version >= "0.8.0") {
+        TRUE
+      }
+      else {
+        FALSE
+      }
+    } # if pak installed
+    else {
+      FALSE
+    }
+  } # use_pak
 
-  # step 4: install ghqc.app from github/PRISM
-  install_dev_ghqcapp()
+  install_ghqcapp_dependencies(use_pak = use_pak)
 
-  # step 5: output a message to the user about how to create/set their own config repo
+  # step 4: check is ghqc.app is available (should be if the use set options to PRISM repo)
+  ghqcapp_available <- "ghqc.app" %in% available.packages()
+  if (ghqcapp_available) {
+    install.packages("ghqc.app",
+                     lib = ghqc_libpath())
+  }
 
-}
+  # if ghqc.app is installed, output success message
+  if (!is.null(ghqcapp_pkg_status(ghqc_libpath()))) {
+
+    cli::cli_alert_success("Setup successful! See ghqc documentation for info on how to create and set your organization's own configuration repository for checklist templates")
+   }
+
+} # ghqc_example_setup
+
+
+
+
+
