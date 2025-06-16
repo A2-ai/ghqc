@@ -149,17 +149,19 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
 
 
 ghqc_example_setup <- function(config_repo = "https://github.com/A2-ai/ghqc.example_config_repo") {
+  # check that gert is installed
+  config_repo_status(config_path = ghqc_config_path())
+
+  lib_path <- ghqc_libpath()
+
   # step 1: set example config repo in Renviron
   setup_ghqc_renviron(config_repo)
 
   # step 2: clone config repo
-  # check that gert is installed
-  config_repo_status(config_path = ghqc_config_path())
   download_ghqc_configuration()
 
   # step 3: download ghqc.app dependencies
-  # use_pak if at least 0.8.0 is installed (can't do this in the same if statement or else an error will occur)
-  use_pak <- {
+  use_pak <- { # use_pak if at least 0.8.0 is installed (can't do this in the same if statement or else an error will occur)
     if (rlang::is_installed("pak")) {
       pak_version <- packageVersion("pak") # can't check pak version unless it's installed (will get an error)
       if (pak_version >= "0.8.0") {
@@ -174,21 +176,22 @@ ghqc_example_setup <- function(config_repo = "https://github.com/A2-ai/ghqc.exam
     }
   } # use_pak
 
+  # step 4: install ghqc.app dependencies
   install_ghqcapp_dependencies(use_pak = use_pak)
 
-  # step 4: check is ghqc.app is available (should be if the use set options to PRISM repo)
-  ghqcapp_available <- "ghqc.app" %in% available.packages()
-  if (ghqcapp_available) {
+  # step 5: install ghqc.app if available (should be if the use set options to PRISM repo or equivalent)
+  if ("ghqc.app" %in% available.packages()) {
     install.packages("ghqc.app",
-                     lib = ghqc_libpath())
+                     lib = lib_path)
   }
 
-  # if ghqc.app is installed, output success message
-  if (!is.null(ghqcapp_pkg_status(ghqc_libpath()))) {
-
+  # step 6: if ghqc.app is not installed, output note; else, output success message
+  if (!is.null(ghqcapp_pkg_status(lib_path))) {
+    cli::cli_alert_warning("NOTE: ghqc.app is not installed in {lib_path}. Please install before running any ghqc apps")
+  }
+  else {
     cli::cli_alert_success("Setup successful! See ghqc documentation for info on how to create and set your organization's own configuration repository for checklist templates")
-   }
-
+  }
 } # ghqc_example_setup
 
 
