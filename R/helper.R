@@ -148,11 +148,21 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
 }
 
 
-ghqc_quick_setup <- function(config_repo = "https://github.com/A2-ai/ghqc.example_config_repo") {
+ghqc_example_setup <- function(config_repo = "https://github.com/A2-ai/ghqc.example_config_repo") {
+  # check that gert is installed
+  if (!rlang::is_installed("gert", version = "1.5.0")) {
+    cli::cli_alert_danger(sprintf("Package 'gert' (>= 1.5.0) is not installed. Install 'gert' to clone the example repo."))
+    return(invisible())
+  }
+
   lib_path <- ghqc_libpath()
 
-  # if Renviron not already set, set config repo as inputted config repo (default is example config repo)
-  if (Sys.getenv("GHQC_CONFIG_REPO") == "") {
+  # step 1: setup renviron
+  # if the renviron hasn't been setup OR the input config_repo isn't the default, setup the renviron
+  # if there is already a config repo, chances are that the user wants to stick with that one instead of overwriting the
+  # renviron with the example repo
+  # if the inputted config repo isn't the default example, then chances are the user wanted to be explicit to set the renviron
+  if (Sys.getenv("GHQC_CONFIG_REPO") == "" || config_repo != "https://github.com/A2-ai/ghqc.example_config_repo") {
     setup_ghqc_renviron(config_repo)
   }
 
