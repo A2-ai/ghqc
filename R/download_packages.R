@@ -33,6 +33,15 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
       if (rlang::is_installed("pak")) cli::cli_alert_warning("pak is installed, but input `use_pak` was set to FALSE. Set `use_pak` to TRUE for better performance.")
       res <- utils::install.packages(pkgs, lib = lib_path, repos = setup_rspm_url(ghqc_depends_snapshot_date))
     }
+
+    pkgs <- as.data.frame(available.packages())
+    ghqcapp_row <- pkgs[pkgs$Package == "ghqc.app", ]
+    # if ghqc.app >= 0.5.0 is an available package, install it
+    if (nrow(ghqcapp_row) > 0 && package_version(ghqcapp_row$Version) >= "0.5.0") {
+      install.packages("ghqc.app",
+                       lib = lib_path)
+    }
+
     dT <- difftime(Sys.time(), start_time)
     cli::cli_alert_success(sprintf("Installation of ghqc.app package dependencies completed in %0.2f %s", dT, units(dT)))
 

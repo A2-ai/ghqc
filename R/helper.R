@@ -149,51 +149,33 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
 
 
 ghqc_example_setup <- function(config_repo = "https://github.com/A2-ai/ghqc.example_config_repo") {
-  # check that gert is installed
-  if (!rlang::is_installed("gert", version = "1.5.0")) {
-    cli::cli_alert_danger(sprintf("Package 'gert' (>= 1.5.0) is not installed. Install 'gert' to clone the example repo."))
-    return(invisible())
+  # if the config isn't set up, make sure gert is installed so it can be set up
+  config_repo_env_var_set <- Sys.getenv("GHQC_CONFIG_REPO") != ""
+  config_repo_cloned <- config_repo_status(ghqc_config_path()) == "none"
+  if (!(config_repo_env_var_set && config_repo_cloned)) { # if the config repo env var isn't set or the config repo isn't cloned,
+    if (!rlang::is_installed("gert", version = "1.5.0")) {
+      cli::cli_alert_danger(sprintf("Package 'gert' (>= 1.5.0) is not installed. Install 'gert' to clone the example repo."))
+      return(invisible())
+    }
   }
-
-  lib_path <- ghqc_libpath()
 
   # step 1: setup renviron
   # if the renviron hasn't been setup OR the input config_repo isn't the default, setup the renviron
   # if there is already a config repo, chances are that the user wants to stick with that one instead of overwriting the
   # renviron with the example repo
   # if the inputted config repo isn't the default example, then chances are the user wanted to be explicit to set the renviron
-  if (Sys.getenv("GHQC_CONFIG_REPO") == "" || config_repo != "https://github.com/A2-ai/ghqc.example_config_repo") {
+  if (!config_repo_env_var_set || config_repo != "https://github.com/A2-ai/ghqc.example_config_repo") {
     setup_ghqc_renviron(config_repo)
   }
 
   # step 2: clone config repo (this will check if gert is installed)
   download_ghqc_configuration()
 
-  # step 3: use_pak if at least 0.8.0 is installed (can't do this in the same if statement or else an error will occur)
-  use_pak <- {
-    if (rlang::is_installed("pak")) {
-      pak_version <- packageVersion("pak") # can't check pak version unless it's installed (will get an error)
-      if (pak_version >= "0.8.0") {
-        TRUE
-      }
-      else {
-        FALSE
-      }
-    } # if pak installed
-    else {
-      FALSE
-    }
-  } # use_pak
+  # step 3: use_pak if at least 0.8.0 is installed
+  use_pak <- rlang::is_installed("pak", version = "0.8.0")
 
-  # step 4: install ghqc.app dependencies
-  remove_ghqcapp_dependencies(.remove_all = TRUE, cache = TRUE)
+  # step 4: install ghqc.app dependencies - this fxn has been modified to install ghqc.app if available
   install_ghqcapp_dependencies(use_pak = use_pak)
-
-  # step 5: install ghqc.app if available (should be if the use set options to PRISM repo or equivalent)
-  if ("ghqc.app" %in% available.packages()) {
-    install.packages("ghqc.app",
-                     lib = lib_path)
-  }
 
   # step 6: if ghqc.app is not installed, output note; else, output success message
   if (is.null(ghqcapp_pkg_status(lib_path))) {
