@@ -149,9 +149,10 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
 
 
 ghqc_example_setup <- function(config_repo = "https://github.com/A2-ai/ghqc.example_config_repo") {
+  browser()
   # if the config isn't set up, make sure gert is installed so it can be set up
-  config_repo_env_var_set <- Sys.getenv("GHQC_CONFIG_REPO") == ""
-  if (!config_repo_env_var_set || !config_repo_status(ghqc_config_path()) == "none") { # if the config repo env var isn't set or the config repo isn't cloned,
+  config_repo_env_var_set <- Sys.getenv("GHQC_CONFIG_REPO") != ""
+  if (!config_repo_env_var_set && !config_repo_status(ghqc_config_path()) == "none") { # if the config repo env var isn't set and the config repo isn't cloned,
     if (!rlang::is_installed("gert", version = "1.5.0")) {
       cli::cli_alert_danger(sprintf("Package 'gert' (>= 1.5.0) is not installed. Install 'gert' to clone the example repo."))
       return(invisible())
@@ -181,7 +182,7 @@ ghqc_example_setup <- function(config_repo = "https://github.com/A2-ai/ghqc.exam
     cli::cli_alert_warning("NOTE: ghqc.app is not installed in {ghqc_libpath()}. Please install before running any ghqc apps")
   }
   else {
-    cli::cli_alert_success("You’re all set! Visit the ghqc documentation to learn how to connect your organization’s custom repository for checklist templates and more.")
+    cli::cli_alert_success("You're all set! Visit the ghqc documentation to learn how to connect your organization's custom repository for checklist templates and more.")
   }
 } # ghqc_example_setup
 
