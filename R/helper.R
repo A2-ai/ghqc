@@ -150,9 +150,8 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
 
 ghqc_example_setup <- function(config_repo = "https://github.com/A2-ai/ghqc.example_config_repo") {
   # if the config isn't set up, make sure gert is installed so it can be set up
-  config_repo_env_var_set <- Sys.getenv("GHQC_CONFIG_REPO") != ""
-  config_repo_cloned <- config_repo_status(ghqc_config_path()) == "none"
-  if (!(config_repo_env_var_set && config_repo_cloned)) { # if the config repo env var isn't set or the config repo isn't cloned,
+  config_repo_env_var_set <- Sys.getenv("GHQC_CONFIG_REPO") == ""
+  if (!config_repo_env_var_set || !config_repo_status(ghqc_config_path()) == "none") { # if the config repo env var isn't set or the config repo isn't cloned,
     if (!rlang::is_installed("gert", version = "1.5.0")) {
       cli::cli_alert_danger(sprintf("Package 'gert' (>= 1.5.0) is not installed. Install 'gert' to clone the example repo."))
       return(invisible())
