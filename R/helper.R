@@ -178,11 +178,11 @@ ghqc_example_setup <- function(config_repo = "https://github.com/A2-ai/ghqc.exam
   install_ghqcapp_dependencies(use_pak = use_pak)
 
   # step 6: if ghqc.app is not installed, output note; else, output success message
-  if (is.null(ghqcapp_pkg_status(lib_path))) {
-    cli::cli_alert_warning("NOTE: ghqc.app is not installed in {lib_path}. Please install before running any ghqc apps")
+  if (is.null(ghqcapp_pkg_status(ghqc_libpath()))) {
+    cli::cli_alert_warning("NOTE: ghqc.app is not installed in {ghqc_libpath()}. Please install before running any ghqc apps")
   }
   else {
-    cli::cli_alert_success("Setup successful! See ghqc documentation for info on how to create and set your organization's own configuration repository for checklist templates")
+    cli::cli_alert_success("You’re all set! Visit the ghqc documentation to learn how to connect your organization’s custom repository for checklist templates and more.")
   }
 } # ghqc_example_setup
 
