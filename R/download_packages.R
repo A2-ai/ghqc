@@ -34,10 +34,8 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
       res <- utils::install.packages(pkgs, lib = lib_path, repos = setup_rspm_url(ghqc_depends_snapshot_date))
     }
 
-    pkgs <- as.data.frame(available.packages())
-    ghqcapp_row <- pkgs[pkgs$Package == "ghqc.app", ]
-    # if ghqc.app >= 0.5.0 is an available package, install it
-    if (nrow(ghqcapp_row) > 0 && package_version(ghqcapp_row$Version) >= "0.5.0") {
+    # if ghqc.app is an available package, install it
+    if ("ghqc.app" %in % as.data.frame(available.packages())$Package) {
       install.packages("ghqc.app",
                        lib = lib_path)
     }
