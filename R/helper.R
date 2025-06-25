@@ -218,9 +218,6 @@ ghqc_example_setup <- function(
   # if there is already a config repo, chances are that the user wants to stick with that one instead of overwriting the
   # renviron with the example repo
   # if the inputted config repo isn't the default example, then chances are the user wanted to be explicit to set the renviron
-
-  browser()
-
   if (
     !config_repo_env_var_set ||
       config_repo != "https://github.com/A2-ai/ghqc.example_config_repo"

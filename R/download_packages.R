@@ -35,10 +35,12 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
     }
 
     # if ghqc.app is an available package, install it
-    if ("ghqc.app" %in % as.data.frame(available.packages())$Package) {
+    if ("ghqc.app" %in% as.data.frame(available.packages())$Package) {
       install.packages("ghqc.app",
                        lib = lib_path)
+      cli::cli_alert_success("Installation of ghqc.app completed")
     }
+    # TODO
 
     dT <- difftime(Sys.time(), start_time)
     cli::cli_alert_success(sprintf("Installation of ghqc.app package dependencies completed in %0.2f %s", dT, units(dT)))
