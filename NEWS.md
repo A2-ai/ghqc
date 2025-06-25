@@ -1,3 +1,7 @@
+# ghqc 0.5.0
+
+- includes .txt checklist files in custom configuration repository validation
+
 # ghqc 0.4.2
 
 - adds other necessary packages to ghqc_depends (ellipsis, colorspace)

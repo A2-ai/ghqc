@@ -161,7 +161,7 @@ config_files_desc <- function(config_path) {
   }
 
   if (fs::file_exists(repo_files[3])) {
-    if (length(fs::dir_ls(file.path(config_path, "checklists"), regexp = "(.*?).yaml")) == 0) {
+    if (length(fs::dir_ls(file.path(config_path, "checklists"), regexp = "\\.(ya?ml|txt)$")) == 0) {
       cli::cli_alert_danger(paste0(cli::col_blue("Checklist directory"), " is empty"))
     } else {
       checklists_found(config_path)

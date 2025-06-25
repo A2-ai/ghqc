@@ -1,7 +1,7 @@
 #' @importFrom fs dir_ls
 validate_checklists <- function(config_path = ghqc_config_path()) {
   if (!fs::dir_exists(file.path(config_path, "checklists"))) return(invisible())
-  checklist_ls <- fs::dir_ls(file.path(config_path, "checklists"), regexp = "(.*?).yaml")
+  checklist_ls <- fs::dir_ls(file.path(config_path, "checklists"), regexp = "\\.(ya?ml|txt)$")
   lapply(checklist_ls, function(x) val_checklist(x))
 }
 
@@ -13,6 +13,9 @@ checklist_has_trailing_newline <- function(file) {
 
 #' @importFrom yaml yaml.load_file
 val_checklist <- function(checklist) {
+  if (tools::file_ext(checklist) == "txt") {
+    return(list(valid = TRUE, reason = NA))
+  }
   content <- tryCatch({
     yaml::yaml.load_file(checklist, readLines.warn = FALSE)
   },
@@ -26,7 +29,7 @@ val_checklist <- function(checklist) {
   if (!inherits(content, "list")) return(list(valid = FALSE, reason = "Only strings found. Use ':' for headers and '-' for checklist items")) # CASE 3: only a single. No top levels or elements
   if (any(sapply(content[[1]], function(x) class(x) != "character"))) return(list(valid = FALSE, reason = "There are too many sublevels. Checklist only supports a title and one section level"))
   if (!checklist_has_trailing_newline(checklist)) return(list(valid = TRUE, reason = "File does not have a trailing newline")) # checklist is valid, but give a warning
-  list(valid = TRUE, reason = NA)
+  return(list(valid = TRUE, reason = NA))
 }
 
 invalidate_checklists <- function(config_path = ghqc_config_path()) {
