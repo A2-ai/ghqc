@@ -252,13 +252,13 @@ config_files_desc <- function(config_path) {
     if (
       length(fs::dir_ls(
         file.path(config_path, "checklists"),
-        regexp = "(.*?).yaml"
+        regexp = "\\.(ya?ml|txt)$"
       )) ==
         0
     ) {
       cli::cli_alert_danger(paste0(
         cli::col_blue("Checklist directory"),
-        " is empty"
+        " does not contain .yaml or .txt checklist files"
       ))
     } else {
       checklists_found(config_path)
