@@ -242,7 +242,7 @@ ghqc_example_setup <- function(
   ghqcapp_status <- ghqcapp_pkg_status(ghqc_libpath())
   if (!is.null(ghqcapp_status)) {
     cli::cli_alert_success(
-      "You're all set! Visit the ghqc documentation to learn how to connect your organization's custom repository for checklist templates and more."
+      "Setup complete! Visit the ghqc documentation to learn how to connect your organization's custom repository for checklist templates and more."
     )
   }
 } # ghqc_example_setup
