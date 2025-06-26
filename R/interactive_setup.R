@@ -4,7 +4,7 @@
 #'
 #' @return This function is used for its effects, not outputs. It will return the results of any ghqc dependency installation as needed
 #' @export
-setup_ghqc <- function() {
+ghqc_setup <- function() {
   if (!interactive()) {
     cli::cli_abort("This session is not interactive. This function is to interactively setup the environment for ghqc. Please use {.code install_ghqc_dependencies()}, {.code setup_ghqc_renviron()}, and {.code download_ghqc_configuration()} to setup directly")
   }
@@ -262,8 +262,6 @@ interactive_link <- function() {
 #' Function to set up the ghqc environment, including writing to the .Renviron, custom configuration repository download, ghqc.app dependency installation, and ghqc.app installation if available, for use of the ghqc application suite
 #'
 #' @param config_repo the URL for the custom configuration repository from which to import organization specific items like checklist templates
-#'
-#' @return
 #' @export
 ghqc_example_setup <- function(
     config_repo = "https://github.com/A2-ai/ghqc.example_config_repo"
