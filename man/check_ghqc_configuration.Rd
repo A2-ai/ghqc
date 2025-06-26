@@ -9,6 +9,9 @@ check_ghqc_configuration(config_path = ghqc_config_path())
 \arguments{
 \item{config_path}{\emph{(optional)} path in which the repository, set in environmental variable \code{GHQC_CONFIG_REPO}, is, or should be, downloaded to. Defaults to \verb{~/.local/share/ghqc/\{repo_name\}}}
 }
+\value{
+this function is used for its effects, but will return if bool if the result is a config repo found locally at config_path
+}
 \description{
 Check the content of the downloaded ghqc custom configuration repository and download any updates needed
 }

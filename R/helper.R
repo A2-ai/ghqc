@@ -207,42 +207,4 @@ run_app <- function(app_name, qc_dir, lib_path, config_path) {
 }
 
 
-ghqc_example_setup <- function(
-  config_repo = "https://github.com/A2-ai/ghqc.example_config_repo"
-) {
-  # if the config isn't set up, make sure gert is installed so it can be set up
-  config_repo_env_var_set <- Sys.getenv("GHQC_CONFIG_REPO") != ""
 
-  # step 1: setup renviron
-  # if the renviron hasn't been setup OR the input config_repo isn't the default, setup the renviron
-  # if there is already a config repo, chances are that the user wants to stick with that one instead of overwriting the
-  # renviron with the example repo
-  # if the inputted config repo isn't the default example, then chances are the user wanted to be explicit to set the renviron
-  if (
-    !config_repo_env_var_set ||
-      config_repo != "https://github.com/A2-ai/ghqc.example_config_repo"
-  ) {
-    setup_ghqc_renviron(config_repo)
-  }
-
-  # step 2: clone config repo (this will check if gert is installed)
-  if (!download_ghqc_configuration()) {
-    cli::cli_abort(
-      "The configuration repository could not be downloaded. Refer to the above error message."
-    )
-  }
-
-  # step 3: use_pak if at least 0.8.0 is installed
-  use_pak <- rlang::is_installed("pak", version = "0.8.0")
-
-  # step 4: install ghqc.app dependencies - this fxn has been modified to install ghqc.app if available
-  install_ghqcapp_dependencies(use_pak = use_pak)
-
-  # step 5: if ghqc.app is installed, output success message; else, a warning was outputted in install_ghqcapp_dependencies
-  ghqcapp_status <- ghqcapp_pkg_status(ghqc_libpath())
-  if (!is.null(ghqcapp_status)) {
-    cli::cli_alert_success(
-      "Setup complete! Visit the ghqc documentation to learn how to connect your organization's custom repository for checklist templates and more."
-    )
-  }
-} # ghqc_example_setup

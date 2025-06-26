@@ -11,6 +11,9 @@ download_ghqc_configuration(config_path = ghqc_config_path(), .force = FALSE)
 
 \item{.force}{\emph{(optional)} option to force a new download of the ghqc custom configuration repository}
 }
+\value{
+this function is used for its effects, but will return if bool if the result is a config repo found locally at config_path
+}
 \description{
 Download the custom configuration repository as set in environmental variable \code{GHQC_CONFIG_REPO}
 }
