@@ -113,6 +113,7 @@ pkg_output_table <- function(upg_needed) {
 upg_pkgs <- function(yN, lib_path, pkgs = ghqc_depends, use_pak) {
   if (yN == "y") {
     install_ghqcapp_dependencies(lib_path, pkgs = pkgs, use_pak = use_pak)
+
   } else {
     cli::cli_alert_warning("Run {.code install_ghqcapp_dependencies()} before running any other ghqc functions")
     if (is.null(ghqcapp_pkg_status(lib_path))) cli::cli_alert_warning("NOTE: ghqc.app is not installed in {lib_path}. Please install before running any ghqc apps")

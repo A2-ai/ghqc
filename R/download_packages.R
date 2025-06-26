@@ -33,9 +33,24 @@ install_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
       if (rlang::is_installed("pak")) cli::cli_alert_warning("pak is installed, but input `use_pak` was set to FALSE. Set `use_pak` to TRUE for better performance.")
       res <- utils::install.packages(pkgs, lib = lib_path, repos = setup_rspm_url(ghqc_depends_snapshot_date))
     }
+
     dT <- difftime(Sys.time(), start_time)
     cli::cli_alert_success(sprintf("Installation of ghqc.app package dependencies completed in %0.2f %s", dT, units(dT)))
-    if (is.null(ghqcapp_pkg_status(lib_path))) cli::cli_alert_warning("NOTE: ghqc.app is not installed in {lib_path}. Please install before running any ghqc apps")
+
+    # if ghqc.app is an available package, install it
+    if ("ghqc.app" %in% as.data.frame(available.packages())$Package) {
+      install.packages("ghqc.app",
+                       lib = lib_path)
+    }
+
+    ghqcapp_status <- ghqcapp_pkg_status(lib_path)
+    if (is.null(ghqcapp_status)) {
+      cli::cli_alert_warning("NOTE: ghqc.app is not installed in {lib_path}. Please install before running any ghqc apps")
+    }
+    else {
+      cli::cli_alert_success("ghqc.app {ghqcapp_status[2]} installed in {lib_path}")
+    }
+
     invisible(res)
   }, error = function(e) {
     cli::cli_inform(c("Package installation failed",
