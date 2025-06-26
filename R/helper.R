@@ -238,12 +238,9 @@ ghqc_example_setup <- function(
   # step 4: install ghqc.app dependencies - this fxn has been modified to install ghqc.app if available
   install_ghqcapp_dependencies(use_pak = use_pak)
 
-  # step 6: if ghqc.app is not installed, output note; else, output success message
-  if (is.null(ghqcapp_pkg_status(ghqc_libpath()))) {
-    cli::cli_alert_warning(
-      "NOTE: ghqc.app is not installed in {ghqc_libpath()}. Please install before running any ghqc apps"
-    )
-  } else {
+  # step 5: if ghqc.app is installed, output success message; else, a warning was outputted in install_ghqcapp_dependencies
+  ghqcapp_status <- ghqcapp_pkg_status(ghqc_libpath())
+  if (!is.null(ghqcapp_status)) {
     cli::cli_alert_success(
       "You're all set! Visit the ghqc documentation to learn how to connect your organization's custom repository for checklist templates and more."
     )
