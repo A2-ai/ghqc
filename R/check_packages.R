@@ -22,10 +22,12 @@ check_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
          "all_upg" = all_upg_needed(lib_path, use_pak),
          "some_upg" = some_upg_needed(lib_path, res$upg_needed, use_pak),
          "no_upg" = {
-           cli::cli_alert_success(sprintf("All dependency packages in %s are up to date", lib_path))
-           if (is.null(ghqcapp_pkg_status(lib_path))) cli::cli_alert_warning("NOTE: ghqc.app is not installed in {lib_path}. Please install before running any ghqc apps")
+           cli::cli_alert_success(sprintf("All ghqc.app dependency packages in %s are up to date", lib_path))
          }
          )
+
+  # if ghqc.app available, install it
+
   invisible(res$upg_needed)
 }
 

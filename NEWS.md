@@ -1,3 +1,8 @@
+# ghqc 0.6.1
+
+- renames `setup_ghqc()` to `ghqc_setup()` to maintain function naming consistency
+- modifies `ghqc_setup()` to install ghqc.app if it is an available package according to a user's `option("repos")`
+
 # ghqc 0.6.0
 
 - exports new ghqc_example_setup() function, which provides an out-of-the-box installation architecture and configuration to begin using the ghqc ecosystem
