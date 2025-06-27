@@ -7,5 +7,5 @@
 setup_ghqc()
 }
 \description{
-This function is deprecated. Use \code{ghqc_setup()} instead.
+This function is deprecated. Use \link{ghqc_setup} instead.
 }

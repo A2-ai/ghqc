@@ -1,5 +1,5 @@
 #' @title setup_ghqc
-#' @description This function is deprecated. Use `ghqc_setup()` instead.
+#' @description This function is deprecated. Use \link{ghqc_setup} instead.
 #' @export
 setup_ghqc <- function() {
   warning("`setup_ghqc()` is deprecated and will be removed in a future version. Use `ghqc_setup()` instead.", call. = FALSE)
