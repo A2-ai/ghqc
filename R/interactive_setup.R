@@ -1,3 +1,11 @@
+#' @title setup_ghqc
+#' @description This function is deprecated. Use `ghqc_setup()` instead.
+#' @export
+setup_ghqc <- function() {
+  warning("`setup_ghqc()` is deprecated and will be removed in a future version. Use `ghqc_setup()` instead.", call. = FALSE)
+}
+
+
 #' Interactive function to set up the ghqc environment, including writing to the .Renviron, custom configuration repository download, and ghqc.app dependency installation/linking, for use of the ghqc application suite
 #'
 #' @importFrom cli cli_abort
