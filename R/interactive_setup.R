@@ -19,12 +19,7 @@ ghqc_setup <- function() {
 
   renv_text <- interactive_renviron()
   interactive_config_download()
-  lib_path <- interactive_depends()
-  ghqcapp_status <- install_ghqcapp_if_available(lib_path)
-
-  if (!is.null(ghqcapp_status)) {
-    cli::cli_alert_success("Setup complete!")
-  }
+  interactive_depends()
 }
 
 install_ghqcapp_if_available <- function(lib_path) {
@@ -225,6 +220,13 @@ interactive_install <- function() {
 
   cli::cli_inform(" ")
   check_ghqcapp_dependencies(lib_path = lib_path, use_pak = use_pak)
+
+  ghqcapp_status <- install_ghqcapp_if_available(lib_path)
+
+  if (!is.null(ghqcapp_status)) {
+    cli::cli_alert_success("Setup complete!")
+  }
+
   return(lib_path)
 }
 
