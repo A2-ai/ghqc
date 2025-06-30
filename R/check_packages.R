@@ -27,6 +27,11 @@ check_ghqcapp_dependencies <- function(lib_path = ghqc_libpath(),
          )
 
   # if ghqc.app available, install it
+  ghqcapp_status <- install_ghqcapp_if_available(lib_path)
+
+  if (!is.null(ghqcapp_status)) {
+    cli::cli_alert_success("Setup complete!")
+  }
 
   invisible(res$upg_needed)
 }

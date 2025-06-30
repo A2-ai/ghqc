@@ -220,14 +220,6 @@ interactive_install <- function() {
 
   cli::cli_inform(" ")
   check_ghqcapp_dependencies(lib_path = lib_path, use_pak = use_pak)
-
-  ghqcapp_status <- install_ghqcapp_if_available(lib_path)
-
-  if (!is.null(ghqcapp_status)) {
-    cli::cli_alert_success("Setup complete!")
-  }
-
-  return(lib_path)
 }
 
 #' @importFrom cli cli_inform
