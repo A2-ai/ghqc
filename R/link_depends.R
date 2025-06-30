@@ -23,7 +23,6 @@ link_ghqcapp_dependencies <- function(link_path,
                            fs::path(lib_path, ghqc_depends))
     dT <- difftime(Sys.time(), start_time)
     cli::cli_alert_success(sprintf("All {length(res)} ghqc.app dependency packages were linked to {.code {lib_path}} in %0.2f {units(dT)}", dT))
-    if (is.null(ghqcapp_pkg_status(lib_path))) cli::cli_alert_warning("NOTE: ghqc.app is not installed in {lib_path}. Please install before running any ghqc apps")
     invisible(res)
   }, error = function(e) {
     cli::cli_abort("The ghqc.app dependencies could not be linked to {.code {lib_path}} due to {e$message}")

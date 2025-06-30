@@ -1,17 +1,46 @@
+#' @title setup_ghqc
+#' @description This function is deprecated. Use \link{ghqc_setup} instead.
+#' @export
+setup_ghqc <- function() {
+  warning("`setup_ghqc()` is deprecated and will be removed in a future version. Use `ghqc_setup()` instead.", call. = FALSE)
+}
+
+
 #' Interactive function to set up the ghqc environment, including writing to the .Renviron, custom configuration repository download, and ghqc.app dependency installation/linking, for use of the ghqc application suite
 #'
 #' @importFrom cli cli_abort
 #'
 #' @return This function is used for its effects, not outputs. It will return the results of any ghqc dependency installation as needed
 #' @export
-setup_ghqc <- function() {
+ghqc_setup <- function() {
   if (!interactive()) {
     cli::cli_abort("This session is not interactive. This function is to interactively setup the environment for ghqc. Please use {.code install_ghqc_dependencies()}, {.code setup_ghqc_renviron()}, and {.code download_ghqc_configuration()} to setup directly")
   }
 
   renv_text <- interactive_renviron()
   interactive_config_download()
-  check_res <- interactive_depends()
+  interactive_depends()
+}
+
+install_ghqcapp_if_available <- function(lib_path) {
+  # if ghqc.app is an available package, install it even if a version is already installed
+  if ("ghqc.app" %in% as.data.frame(available.packages())$Package) {
+    install.packages("ghqc.app",
+                     lib = lib_path)
+    ghqcapp_status <- ghqcapp_pkg_status(lib_path)
+    cli::cli_alert_success("ghqc.app {ghqcapp_status[2]} installed in {lib_path}")
+  }
+  else {
+    ghqcapp_status <- ghqcapp_pkg_status(lib_path)
+    if (is.null(ghqcapp_status)) {
+      cli::cli_alert_warning("NOTE: ghqc.app is not installed in {lib_path}. Please install before running any ghqc apps")
+    }
+    else {
+      cli::cli_alert_success("ghqc.app {ghqcapp_status[2]} already installed in {lib_path}")
+    }
+  }
+
+  return(ghqcapp_status)
 }
 
 #' @importFrom cli cli_h1
@@ -229,13 +258,12 @@ interactive_link <- function() {
 
   cli::cli_inform(" ")
   link_ghqcapp_dependencies(link_path = link_path, lib_path = lib_path)
+  return(lib_path)
 }
 
 #' Function to set up the ghqc environment, including writing to the .Renviron, custom configuration repository download, ghqc.app dependency installation, and ghqc.app installation if available, for use of the ghqc application suite
 #'
 #' @param config_repo the URL for the custom configuration repository from which to import organization specific items like checklist templates
-#'
-#' @return
 #' @export
 ghqc_example_setup <- function(
     config_repo = "https://github.com/A2-ai/ghqc.example_config_repo"
@@ -265,11 +293,13 @@ ghqc_example_setup <- function(
   # step 3: use_pak if at least 0.8.0 is installed
   use_pak <- rlang::is_installed("pak", version = "0.8.0")
 
-  # step 4: install ghqc.app dependencies - this fxn has been modified to install ghqc.app if available
+  # step 4: install ghqc.app dependencies
   install_ghqcapp_dependencies(use_pak = use_pak)
 
-  # step 5: if ghqc.app is installed, output success message; else, a warning was outputted in install_ghqcapp_dependencies
-  ghqcapp_status <- ghqcapp_pkg_status(ghqc_libpath())
+  # step 5: install ghqc.app if available
+  ghqcapp_status <- install_ghqcapp_if_available(lib_path = ghqc_libpath())
+
+  # step 6: output message
   if (!is.null(ghqcapp_status)) {
     cli::cli_alert_success(
       "Setup complete! Visit the ghqc documentation to learn how to connect your organization's custom repository for checklist templates and more."
