@@ -145,7 +145,7 @@ ghqc_status_app <- function(app_name = "ghqc_status_app",
 }
 
 
-#' @title Archive QC file(s)
+#' @title Archive file(s)
 #'
 #' @param app_name the name of the app to run in the background
 #' @param qc_dir the directory in which the app is run
