@@ -22,7 +22,8 @@ error_checks <- function(app_name, qc_dir, lib_path, config_path) {
         "ghqc_resolve_app",
         "ghqc_record_app",
         "ghqc_status_app",
-        "ghqc_notify_app"
+        "ghqc_notify_app",
+        "ghqc_archive_app"
       )
   ) {
     cli::cli_abort(paste(app_name, "not found in ghqc package."))

@@ -1,12 +1,13 @@
 Package: ghqc
 Title: Manage QC via GitHub Issues using Shiny Apps
-Version: 0.6.1
+Version: 0.7.0
 Authors@R: c(
-    person("Anne", "Zheng", email = "anne@a2-ai.com", role = c("aut")),
+    person("Wes", "Cummings", email = "wes@a2-ai.com", role = c("aut", "cre")),
     person("Jenna", "Johnson", email = "jenna@a2-ai.com", role = c("aut")),
+    person("Anne", "Zheng", email = "anne@a2-ai.com", role = c("aut")),
     person("Janelle", "Lennie", email = "janelle.l.lennie@gsk.com", role = c("ctb")),
     person("Devin", "Pastoor", email = "devin@a2-ai.com", role = c("aut")),
-    person("Wes", "Cummings", email = "wes@a2-ai.com", role = c("aut", "cre")))
+    person("Andrew", "Acker", email = "andrew@a2-ai.com", role = c("aut")))
 Description: This package launches 3 ghqc applications as background jobs to 
   aid the QC process through the use of shiny apps. It also contains aides to 
   maintain the proper setup of the ecosystem. Namely, it will aid in the 
