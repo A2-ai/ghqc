@@ -3,6 +3,7 @@
 export(check_ghqc_configuration)
 export(check_ghqcapp_dependencies)
 export(download_ghqc_configuration)
+export(ghqc_archive_app)
 export(ghqc_assign_app)
 export(ghqc_config_path)
 export(ghqc_example_setup)
