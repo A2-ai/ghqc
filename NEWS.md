@@ -1,3 +1,12 @@
+# ghqc 0.7.1
+
+- add `ghqc_archive_app()` to addins file
+- No functional changes
+
+# ghqc 0.7.0
+
+- add `ghqc_archive_app()` launching wrapper for archiving QC files.
+
 # ghqc 0.6.1
 
 - renames `setup_ghqc()` to `ghqc_setup()` to maintain function naming consistency

@@ -1,6 +1,6 @@
 Package: ghqc
 Title: Manage QC via GitHub Issues using Shiny Apps
-Version: 0.7.1.9000
+Version: 0.7.1
 Authors@R: c(
     person("Wes", "Cummings", email = "wes@a2-ai.com", role = c("aut", "cre")),
     person("Jenna", "Johnson", email = "jenna@a2-ai.com", role = c("aut")),
