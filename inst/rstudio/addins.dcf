@@ -13,6 +13,11 @@ Description: Generate a QC Record for one or more ghqc Milestones.
 Binding: ghqc_record_app
 Interactive: true
 
+Name: Archive QC Files
+Description: Generate an Archive for one or more ghqc Milestones.
+Binding: ghqc_archive_app
+Interactive: true
+
 Name: Post QC Notification(s)
 Description: Post a QC Notification comment to a ghqc Issue to notify collaborators of changes.
 Binding: ghqc_notify_app
