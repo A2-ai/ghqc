@@ -1,3 +1,7 @@
+# ghqc 0.7.2
+
+- add `tidyr` to `ghqc_depends` data for proper linking installation mode
+
 # ghqc 0.7.1
 
 - add `ghqc_archive_app()` to addins file
