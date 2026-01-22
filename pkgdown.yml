@@ -2,7 +2,7 @@ pandoc: 3.1.11
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles: {}
-last_built: 2026-01-22T20:29Z
+last_built: 2026-01-22T20:45Z
 urls:
   reference: https://a2-ai.github.io/ghqc/reference
   article: https://a2-ai.github.io/ghqc/articles
