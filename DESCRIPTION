@@ -3,11 +3,11 @@ Title: Manage QC through GitHub Issues
 Version: 0.7.2
 Authors@R: c(
     person("Wes", "Cummings", email = "wes@a2-ai.com", role = c("aut", "cre")),
-    person("Jenna", "Johnson", email = "jenna@a2-ai.com", role = c("aut")),
-    person("Anne", "Zheng", email = "anne@a2-ai.com", role = c("aut")),
+    person("Jenna", "Johnson", email = "jenna@a2-ai.com", role = c("ctb")),
+    person("Anne", "Zheng", email = "anne@a2-ai.com", role = c("ctb")),
     person("Janelle", "Lennie", email = "janelle.l.lennie@gsk.com", role = c("ctb")),
-    person("Devin", "Pastoor", email = "devin@a2-ai.com", role = c("aut")),
-    person("Andrew", "Acker", email = "andrew@a2-ai.com", role = c("aut")))
+    person("Devin", "Pastoor", email = "devin@a2-ai.com", role = c("ctb")),
+    person("Andrew", "Acker", email = "andrew@a2-ai.com", role = c("ctb")))
 Description: This package installs, updates, and runs the ghqc cli tool to aide R users.
 License: GPL (>= 3) + file LICENSE
 Encoding: UTF-8
@@ -18,7 +18,8 @@ Imports:
     glue,
     callr,
     cli,
-    curl,
-    jsonlite
+    jsonlite,
+    processx,
+    rlang
 Depends: 
     R (>= 4.1)
