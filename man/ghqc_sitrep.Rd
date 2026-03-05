@@ -2,20 +2,41 @@
 % Please edit documentation in R/sitrep.R
 \name{ghqc_sitrep}
 \alias{ghqc_sitrep}
-\title{Situation report for ghqc set-up}
+\title{Print a situation report for ghqc and the current project}
 \usage{
-ghqc_sitrep(..., lib_path = ghqc_libpath(), config_path = ghqc_config_path())
+ghqc_sitrep(
+  directory = here::here(),
+  config_dir = NULL,
+  with_configuration = FALSE
+)
 }
 \arguments{
-\item{...}{options to expand output. Current option is only "pkgs" to expand list of dependencies}
+\item{directory}{Path to the project directory. Defaults to the project root
+as determined by \code{\link[here:here]{here::here()}}.}
 
-\item{lib_path}{the path to the ghqc package and its dependencies}
+\item{config_dir}{Path to the ghqc configuration directory. If \code{NULL}
+(default), ghqc uses its default configuration discovery logic.}
 
-\item{config_path}{the path to the ghqc custom configuration}
+\item{with_configuration}{Logical. If \code{TRUE}, include a section describing
+the ghqc configuration (checklists, options). Defaults to \code{FALSE}.}
 }
 \value{
-This function is primarily used for its printed output, not a returned output
+The raw sitrep data list returned by \verb{ghqc sitrep --json},
+invisibly. The primary purpose of this function is its printed output.
 }
 \description{
-Situation report for ghqc set-up
+Collects and displays diagnostic information about the ghqc binary, the
+currently running ghqc background server (if any), and the git repository
+for the given directory (owner, repo, branch, and milestones). Optionally
+also reports on the ghqc configuration (checklists, options, etc.).
+}
+\examples{
+\dontrun{
+# Basic sitrep
+ghqc_sitrep()
+
+# Include configuration details
+ghqc_sitrep(with_configuration = TRUE)
+}
+
 }
