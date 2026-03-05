@@ -1,165 +1,199 @@
-#' Situation report for ghqc set-up
+#' Print a situation report for ghqc and the current project
 #'
-#' @param ... options to expand output. Current option is only "pkgs" to expand list of dependencies
-#' @param lib_path the path to the ghqc package and its dependencies
-#' @param config_path the path to the ghqc custom configuration
+#' Collects and displays diagnostic information about the ghqc binary, the
+#' currently running ghqc background server (if any), and the git repository
+#' for the given directory (owner, repo, branch, and milestones). Optionally
+#' also reports on the ghqc configuration (checklists, options, etc.).
 #'
-#' @return This function is primarily used for its printed output, not a returned output
+#' @param directory Path to the project directory. Defaults to the project root
+#'   as determined by [here::here()].
+#' @param config_dir Path to the ghqc configuration directory. If `NULL`
+#'   (default), ghqc uses its default configuration discovery logic.
+#' @param with_configuration Logical. If `TRUE`, include a section describing
+#'   the ghqc configuration (checklists, options). Defaults to `FALSE`.
 #'
-#' @importFrom cli cli_h1
-#' @importFrom cli cli_h2
+#' @return The raw sitrep data list returned by `ghqc sitrep --json`,
+#'   invisibly. The primary purpose of this function is its printed output.
+#'
+#' @examples
+#' \dontrun{
+#' # Basic sitrep
+#' ghqc_sitrep()
+#'
+#' # Include configuration details
+#' ghqc_sitrep(with_configuration = TRUE)
+#' }
 #'
 #' @export
-ghqc_sitrep <- function(...,
-                        lib_path = ghqc_libpath(),
-                        config_path = ghqc_config_path()){
-  inputs <- c(...)
+ghqc_sitrep <- function(
+  directory = here::here(),
+  config_dir = NULL,
+  with_configuration = FALSE
+) {
+  .require_min_version("0.2.0", "ghqc_sitrep()")
+  data <- .sitrep(directory, config_dir)
+  .print_sitrep(data, with_configuration)
+  invisible(data)
+}
 
-  cli::cli_h1("Environment")
-  cli::cli_alert_info(sprintf("R version: %s", get_r_version()))
-  cli::cli_alert_info(sprintf("Operating system: %s", get_platform()))
+.sitrep <- function(directory, config_dir) {
+  args <- c("sitrep", "--json", "--directory", directory)
+  if (!is.null(config_dir)) {
+    args <- c(args, "--config_dir", config_dir)
+  }
+  res <- .run_ghqc(args)
 
-
-  cli::cli_h1("Package Dependencies")
-  sitrep_dep_check(lib_comparison(lib_path), lib_path)
-  if ("pkgs" %in% inputs) {
-    cli::cli_h2("Local vs Approved Package Version Comparison")
-    pkg_output_table(rbind(lib_comparison(lib_path), ghqcapp_pkg_status(lib_path)))
+  if (res$status != 0) {
+    cli::cli_abort(
+      "Failed to run `ghqc sitrep`{}",
+      if (res$stderr == "") {
+        " with no stderr"
+      } else {
+        glue::glue(": {res$stderr}")
+      }
+    )
   }
 
-  cli::cli_h1("Renviron Settings")
-  sitrep_renviron_check()
+  res$stdout |> jsonlite::fromJSON()
+}
 
-  config_repo_section = FALSE
-  tryCatch({
-    config_path
-    config_repo_section = TRUE
-  }, error = function(e) {
-    config_repo_section = FALSE
-  }) # if config_path not self set AND GHQC_CONFIG_REPO not set, section will be omitted
-  if (config_repo_section){
-    cli::cli_h1("Custom configuration Repository")
-    sitrep_config_check(config_path)
+.print_sitrep <- function(data, with_configuration) {
+  .print_binary_sitrep(data$binary)
+  .print_process_sitrep()
+  .print_repo_sitrep(data$repository, data$directory)
+  if (with_configuration) {
+    .print_config_sitrep(data$configuration)
   }
 }
 
-## write table to stdout instead of arrows at dots
-
-### Package Dependencies ###
-#' @importFrom cli cli_alert_success
-#' @importFrom cli cli_alert_info
-sitrep_dep_check <- function(lib_comp, lib_path) {
-  sitrep_add_pkgs(lib_comp[is.na(lib_comp$Installed_Version), ], max(nchar(lib_comp$Package)))
-
-  upg_pkgs <- lib_comp[ver_comp(lib_comp) == -1 & !is.na(lib_comp$Installed_Version), ]
-  sitrep_upg_pkgs(upg_pkgs, max(nchar(lib_comp$Package)))
-
-  correct_pkgs <- lib_comp[ver_comp(lib_comp) == 0 | (ver_comp(lib_comp) == 1 & !is.na(lib_comp$Recommended_Version)), ]
-  cli::cli_alert_success(sprintf("Packages correctly installed: %i", dim(correct_pkgs)[1]))
-
-  extra_pkgs <- lib_comp[is.na(lib_comp$Recommended_Version), ]
-  cli::cli_alert_info(sprintf("Extra packages installed: %i", dim(extra_pkgs)[1]))
-
-  if (is.null(ghqcapp_pkg_status(lib_path))) {
-    cli::cli_inform("")
-    cli::cli_alert_danger("ghqc.app is not installed in {lib_path}")
+.print_process_sitrep <- function() {
+  cli::cli_h1("Process")
+  port <- .ghqc_env$port
+  if (is.null(port)) {
+    cli::cli_text("Status: Not running")
+    return(invisible(NULL))
+  }
+  proc <- .ghqc_env$proc
+  url <- glue::glue("http://localhost:{port}")
+  if (proc$is_alive()) {
+    cli::cli_text("Status: Running at {url}")
   } else {
-    cli::cli_inform("")
-    ghqcapp_version <- utils::packageVersion("ghqc.app", lib.loc = ghqc::ghqc_libpath())
-    cli::cli_alert_success("ghqc.app {ghqcapp_version} is installed in {lib_path}")
+    cli::cli_text("Status: Stopped (was running at {url})")
   }
 }
 
-lib_comparison <- function(lib_path) {
-  inst_pkgs <- installed_pkgs(lib_path)
-  if (length(inst_pkgs) == 0) return(cbind(rec_pkgs(), "Installed_Version" = NA)[,c(1,3,2)])
-  comp <- merge(inst_pkgs, rec_pkgs(), by = "Package", all = TRUE)
-  comp[comp$Package != "ghqc" & comp$Package != "ghqc.app", ]
-}
-
-#' @importFrom cli cli_alert_danger
-sitrep_add_pkgs <- function(add_pkgs, max_pkg) {
-  cli::cli_alert_danger(sprintf("Packages not installed: %i", dim(add_pkgs)[1]))
-  if (dim(add_pkgs)[1] > 0) pkg_output_table(add_pkgs)
-}
-
-#' @importFrom cli cli_alert_warning
-sitrep_upg_pkgs <- function(upg_pkgs, max_pkg) {
-  cli::cli_alert_warning(sprintf("Package upgrades needed: %i", dim(upg_pkgs)[1]))
-  if (dim(upg_pkgs)[1] > 0) {
-    pkg_output_table(upg_pkgs)
-  }
-}
-
-sitrep_pkg_status <- function(pkg_comp) {
-  if (is.na(pkg_comp$Installed_Version)) return("danger")
-  if (is.na(pkg_comp$Recommended_Version)) return("info")
-  if (ver_comp(pkg_comp) == -1) return("warning")
-  return("success")
-}
-
-#' @importFrom utils installed.packages
-ghqcapp_pkg_status <- function(lib_path) {
-  ip <- as.data.frame(installed.packages(lib.loc = lib_path))[, c("Package", "Version")]
-  if ("ghqc.app" %in% ip$Package) return(c("ghqc.app", ip["ghqc.app", "Version"], ip["ghqc.app", "Version"]))
-  NULL
-}
-
-### Renviron Check ###
-#' @importFrom cli cli_alert_danger
-#' @importFrom cli cli_alert_success
-sitrep_renviron_check <- function() {
-  sysenv <- sitrep_read_renviron()
-  ifelse(sysenv == "",
-         cli::cli_alert_danger("GHQC_CONFIG_REPO is not set in ~/.Renviron"),
-         cli::cli_alert_success("GHQC_CONFIG_REPO is set to {sysenv}"))
-  invisible(NA)
-}
-
-#' @importFrom fs file_exists
-sitrep_read_renviron <- function() {
-  if (fs::file_exists("~/.Renviron")) {
-    readRenviron("~/.Renviron")
-    Sys.getenv("GHQC_CONFIG_REPO")
+.print_binary_sitrep <- function(binary) {
+  cli::cli_h1("Binary")
+  if (!is.null(binary$path$Ok)) {
+    cli::cli_text("Path: {binary$path$Ok}")
   } else {
-    ""
+    cli::cli_text(
+      "Path: Failed to determine executable path: {binary$path$Err}"
+    )
+  }
+  cli::cli_text("Version: {binary$version}")
+  remote_version <- suppressMessages(ghqc_remote_version())
+  if (is.null(remote_version)) {
+    cli::cli_alert_warning("Unable to determine remote version")
+  } else {
+    cli::cli_text("Remote Version: {gsub('v', '', remote_version)}")
   }
 }
 
-### Custom configuration Repo ###
-#' @importFrom cli cli_alert_danger
-sitrep_config_check <- function(config_path) {
-  switch(config_repo_status(config_path),
-         "clone" = cli::cli_alert_danger(sprintf("%s cannot be found locally", config_repo_name())),
-         "update" = sitrep_repo_update(config_path),
-         "none" = sitrep_repo_none(config_path),
-         "gert" = sitrep_repo_gert(config_path)
-         )
+.print_repo_sitrep <- function(repo, directory) {
+  cli::cli_h1("Repository")
+  if (!is.null(repo$Ok)) {
+    r <- repo$Ok
+    cli::cli_text("Directory: {r$path}")
+    cli::cli_text("Repository: {r$owner}/{r$repo} ({r$remote_url})")
+    # Branch
+    if (!is.null(r$branch$Ok)) {
+      cli::cli_text("Branch: {r$branch$Ok}")
+    } else {
+      cli::cli_text("Branch: Failed to determine branch: {r$branch$Err}")
+    }
+    # Milestones
+    cli::cli_h1("Milestones")
+    if (!is.null(r$milestones$Ok)) {
+      ms <- r$milestones$Ok
+      if (NROW(ms) == 0) {
+        cli::cli_text("No milestones")
+      } else {
+        ms_names <- sapply(ms, `[[`, 1)
+        ms_is_open <- sapply(ms, function(x) x[[2]]$is_open)
+        ms_open <- sapply(ms, function(x) x[[2]]$open)
+        ms_closed <- sapply(ms, function(x) x[[2]]$closed)
+        ms_labels <- paste0(
+          ms_names,
+          ": ",
+          ms_open,
+          " open | ",
+          ms_closed,
+          " closed"
+        )
+
+        open_labels <- ms_labels[ms_is_open]
+        closed_labels <- ms_labels[!ms_is_open]
+
+        cli::cli_text("{.strong Open Milestones: {length(open_labels)}}")
+        if (length(open_labels) > 0) {
+          cli::cli_ul(open_labels)
+        }
+        cli::cli_inform("")
+
+        cli::cli_text("{.strong Closed Milestones: {length(closed_labels)}}")
+        if (length(closed_labels) > 0) cli::cli_ul(closed_labels)
+      }
+    } else {
+      cli::cli_text(
+        "Milestones: Failed to determine milestones: {r$milestones$Err}"
+      )
+    }
+  } else {
+    cli::cli_text(
+      "Failed to determine Git Repository Info for {directory}: {repo$Err}"
+    )
+  }
 }
 
-#' @importFrom cli cli_alert_warning
-sitrep_repo_update <- function(config_path) {
-  cli::cli_alert_warning(sprintf("%s was found locally but needs to be updated", config_repo_name()))
-  print_local_content(config_path)
+.print_config_sitrep <- function(cfg) {
+  cli::cli_h1("Configuration")
+  # Directory line with optional ❌ indicator
+  dir_label <- cfg$configuration$path
+  if (!cfg$path_exists) {
+    dir_label <- paste0(dir_label, "    \u274c Directory not found")
+  }
+  cli::cli_text("Directory: {dir_label}")
+  # Repository line
+  if (!is.null(cfg$owner) && !is.null(cfg$repo)) {
+    cli::cli_text("Repository: {cfg$owner}/{cfg$repo} ({cfg$remote_url})")
+  } else {
+    cli::cli_text("Repository: Not determined to be git repository")
+  }
+  # Checklists
+  checklists <- cfg$configuration$checklists
+  cli::cli_text("Checklists: {length(checklists)}")
+  if (length(checklists) > 0) {
+    # Count items per checklist (lines starting with "- [")
+    item_counts <- vapply(
+      checklists,
+      function(cl) {
+        sum(grepl("^- \\[", strsplit(cl$content, "\n")[[1]]))
+      },
+      integer(1)
+    )
+    cli::cli_ul(paste0(names(checklists), ": ", item_counts, " items"))
+  }
+  # Options
+  opts <- cfg$configuration$options
+  cli::cli_inform("")
+  cli::cli_text("{.strong Options:}")
+  if (!is.null(opts$prepended_checklist_note)) {
+    cli::cli_ul("Prepended Checklist Note:")
+    cli::cli_blockquote(opts$prepended_checklist_note)
+  }
+  cli::cli_ul("Checklist Display Name:  '{opts$checklist_display_name}'")
+  cli::cli_ul("Logo Path: '{opts$logo_path}'")
+  cli::cli_ul("Checklist Directory: '{opts$checklist_directory}'")
+  cli::cli_ul("Record Template Path: '{opts$record_path}'")
 }
-
-#' @importFrom cli cli_alert_success
-sitrep_repo_none <- function(config_path) {
-  cli::cli_alert_success(sprintf("%s was successfully found locally", config_repo_name()))
-  print_local_content(config_path)
-}
-
-#' @importFrom cli cli_alert_warning
-sitrep_repo_gert <- function(config_path) {
-  sitrep_repo_none(config_path)
-  cli::cli_alert_warning("Package 'gert' (>= 1.5.0) was not installed to check if custom configuration repository is up to date")
-}
-
-#' @importFrom cli cli_inform
-#' @importFrom cli cli_h2
-print_local_content <- function(config_path) {
-  cli::cli_inform(sprintf("    Local Directory: %s", config_path))
-  cli::cli_h2(sprintf("%s Local Content", config_repo_name()))
-  config_files_desc(config_path)
-}
-

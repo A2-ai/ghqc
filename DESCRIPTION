@@ -1,36 +1,25 @@
 Package: ghqc
-Title: Manage QC via GitHub Issues using Shiny Apps
+Title: Manage QC through GitHub Issues
 Version: 0.7.2
 Authors@R: c(
     person("Wes", "Cummings", email = "wes@a2-ai.com", role = c("aut", "cre")),
-    person("Jenna", "Johnson", email = "jenna@a2-ai.com", role = c("aut")),
-    person("Anne", "Zheng", email = "anne@a2-ai.com", role = c("aut")),
+    person("Jenna", "Johnson", email = "jenna@a2-ai.com", role = c("ctb")),
+    person("Anne", "Zheng", email = "anne@a2-ai.com", role = c("ctb")),
     person("Janelle", "Lennie", email = "janelle.l.lennie@gsk.com", role = c("ctb")),
-    person("Devin", "Pastoor", email = "devin@a2-ai.com", role = c("aut")),
-    person("Andrew", "Acker", email = "andrew@a2-ai.com", role = c("aut")))
-Description: This package launches 3 ghqc applications as background jobs to 
-  aid the QC process through the use of shiny apps. It also contains aides to 
-  maintain the proper setup of the ecosystem. Namely, it will aid in the 
-  installation of ghqc.app and its dependendencies into an isolated directory as
-  to not interfere with the project being QCed.
+    person("Devin", "Pastoor", email = "devin@a2-ai.com", role = c("ctb")),
+    person("Andrew", "Acker", email = "andrew@a2-ai.com", role = c("ctb")))
+Description: This package installs, updates, and runs the ghqc cli tool to aide R users.
 License: GPL (>= 3) + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports: 
-    httpuv,
-    rstudioapi,
-    withr,
+    here,
     glue,
-    rlang,
+    callr,
     cli,
-    fs,
-    yaml
-Suggests:
-    gert,
-    pak (>= 0.8.0)
+    jsonlite,
+    processx,
+    rlang
 Depends: 
-    R (>= 3.5)
-Config/Needs/website:
-    sessioninfo
-URL: https://a2-ai.github.io/ghqc
+    R (>= 4.1)
