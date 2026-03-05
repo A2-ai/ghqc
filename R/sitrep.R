@@ -30,6 +30,7 @@ ghqc_sitrep <- function(
   config_dir = NULL,
   with_configuration = FALSE
 ) {
+  .require_min_version("0.2.0", "ghqc_sitrep()")
   data <- .sitrep(directory, config_dir)
   .print_sitrep(data, with_configuration)
   invisible(data)
