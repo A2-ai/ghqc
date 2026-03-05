@@ -9,6 +9,8 @@ The ghqc R package is a lightweight wrapper that installs and runs the
 [ghqctoolkit](https://github.com/a2-ai/ghqctoolkit) CLI binary, which provides
 a web UI for managing QC through GitHub Issues and Milestones.
 
+For more information about ghqc, refer to the [README of ghqctoolkit](https://github.com/a2-ai/ghqctoolkit). Updates to the documentation website are ongoing.
+
 ## Installation
 
 ``` r
