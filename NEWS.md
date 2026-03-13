@@ -1,3 +1,8 @@
+# ghqc 0.7.2.9000
+
+- Remove all old content
+- Functions to run the new ghqc server, install the binary, and 
+
 # ghqc 0.7.2
 
 - add `tidyr` to `ghqc_depends` data for proper linking installation mode
