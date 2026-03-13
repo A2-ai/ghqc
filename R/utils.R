@@ -26,7 +26,11 @@
 
 .run_ghqc <- function(args) {
   .check_installed()
-  res <- processx::run(.ghqc_exe(), args, error_on_status = FALSE)
+  res <- processx::run(
+    .ghqc_exe(),
+    args,
+    error_on_status = FALSE
+  )
   res$stdout <- res$stdout |> trimws()
   res
 }

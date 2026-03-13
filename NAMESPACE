@@ -2,6 +2,7 @@
 
 export(ghqc)
 export(ghqc_install)
+export(ghqc_log)
 export(ghqc_reconnect)
 export(ghqc_remote_version)
 export(ghqc_sitrep)

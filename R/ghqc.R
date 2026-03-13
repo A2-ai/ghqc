@@ -11,6 +11,8 @@
 #'   random available port is selected automatically.
 #' @param config_dir Path to the ghqc configuration directory. If `NULL`
 #'   (default), ghqc uses its default configuration discovery logic.
+#' @param log_level Level of logging the server runs with. Recommended to leave as TRACE
+#' since [ghqc_log()] will filter levels.
 #'
 #' @return Called for its side effect of starting the server and opening the
 #'   browser. Returns `NULL` invisibly.
@@ -28,7 +30,12 @@
 #' }
 #'
 #' @export
-ghqc <- function(directory = here::here(), port = NULL, config_dir = NULL) {
+ghqc <- function(
+  directory = here::here(),
+  port = NULL,
+  config_dir = NULL,
+  log_level = Sys.getenv("GHQC_LOG_LEVEL", "TRACE")
+) {
   ghqc_stop()
 
   directory <- here::here(directory)
@@ -39,16 +46,20 @@ ghqc <- function(directory = here::here(), port = NULL, config_dir = NULL) {
     port,
     "--directory",
     directory,
-    "--no-open"
+    "--no-open",
+    # .verbosity_flag(log_level)
+    "-vvv"
   )
 
   if (!is.null(config_dir)) {
     args <- c(args, "--config-dir", here::here(config_dir))
   }
 
-  proc <- callr::r_bg(
-    function(args) ghqc:::.run_ghqc(args),
-    args = list(args = args),
+  .check_installed()
+  proc <- processx::process$new(
+    .ghqc_exe(),
+    args = args,
+    stderr = "|",
     supervise = TRUE
   )
 

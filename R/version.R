@@ -13,7 +13,10 @@
 #' @export
 ghqc_version <- function() {
   .run_ghqc("--version")$stdout |>
-    gsub(pattern = "ghqctoolkit ", replacement = "")
+    # ghqc == 0.1.0: `ghqc --version` -> ghqctoolkit 0.1.0
+    gsub(pattern = "ghqctoolkit ", replacement = "") |>
+    # ghqc >= 0.2.0: `ghqc --version` -> ghqc 0.2.0
+    gsub(pattern = "ghqc ", replacement = "")
 }
 
 #' Get the latest released ghqc version from GitHub

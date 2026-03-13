@@ -4,7 +4,12 @@
 \alias{ghqc}
 \title{Run the ghqc UI as a background job}
 \usage{
-ghqc(directory = here::here(), port = NULL, config_dir = NULL)
+ghqc(
+  directory = here::here(),
+  port = NULL,
+  config_dir = NULL,
+  log_level = Sys.getenv("GHQC_LOG_LEVEL", "TRACE")
+)
 }
 \arguments{
 \item{directory}{Path to the project directory. Defaults to the project root
@@ -15,6 +20,9 @@ random available port is selected automatically.}
 
 \item{config_dir}{Path to the ghqc configuration directory. If \code{NULL}
 (default), ghqc uses its default configuration discovery logic.}
+
+\item{log_level}{Level of logging the server runs with. Recommended to leave as TRACE
+since \code{\link[=ghqc_log]{ghqc_log()}} will filter levels.}
 }
 \value{
 Called for its side effect of starting the server and opening the
