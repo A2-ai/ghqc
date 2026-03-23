@@ -40,6 +40,7 @@ ghqc <- function(
 
   directory <- here::here(directory)
   port <- if (is.null(port)) random_port()
+
   args <- c(
     "ui",
     "--port",
@@ -47,8 +48,7 @@ ghqc <- function(
     "--directory",
     directory,
     "--no-open",
-    # .verbosity_flag(log_level)
-    "-vvv"
+    .verbosity_flag(log_level)
   )
 
   if (!is.null(config_dir)) {
@@ -77,7 +77,22 @@ ghqc <- function(
 
   url <- glue::glue("http://localhost:{port}")
   cli::cli_alert_success("ghqc server started successfully at {url}")
-  utils::browseURL(url)
+
+  rs_available <- tryCatch(
+    {
+      invisible(.rs.api.versionInfo())
+      TRUE
+    },
+    error = function(e) {
+      FALSE
+    }
+  )
+
+  if (rs_available) {
+    .rs.api.viewer(url)
+  } else {
+    utils::browseURL(url)
+  }
 }
 
 wait_for_server <- function(port, timeout = 15) {
