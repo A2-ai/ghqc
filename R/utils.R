@@ -16,6 +16,15 @@
   processx::run("which", "ghqc", error_on_status = FALSE)$status == 0
 }
 
+.is_rstudio <- function() {
+  if (rstudioapi::isAvailable()) {
+    return(
+      rstudioapi::versionInfo()$citation |> grepl(pattern = "RStudio")
+    )
+  }
+  FALSE
+}
+
 .check_installed <- function() {
   if (!.is_installed()) {
     cli::cli_abort(
@@ -29,7 +38,8 @@
   res <- processx::run(
     .ghqc_exe(),
     args,
-    error_on_status = FALSE
+    error_on_status = FALSE,
+    echo_cmd = TRUE
   )
   res$stdout <- res$stdout |> trimws()
   res

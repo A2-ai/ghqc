@@ -16,10 +16,11 @@ RoxygenNote: 7.3.3
 Imports: 
     here,
     glue,
-    callr,
     cli,
     jsonlite,
     processx,
-    rlang
+    rlang,
+    rstudioapi,
+    fs
 Depends: 
     R (>= 4.1)

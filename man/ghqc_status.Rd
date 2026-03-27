@@ -7,8 +7,8 @@
 ghqc_status()
 }
 \value{
-The server URL (\code{"http://localhost:<port>"}) invisibly, or \code{NULL}
-invisibly if no server has been started this session.
+The stored server URL invisibly, or \code{NULL} invisibly if no server
+has been started this session.
 }
 \description{
 Reports whether the server started by \code{\link[=ghqc]{ghqc()}} is currently running and, if

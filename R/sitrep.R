@@ -2,8 +2,9 @@
 #'
 #' Collects and displays diagnostic information about the ghqc binary, the
 #' currently running ghqc background server (if any), and the git repository
-#' for the given directory (owner, repo, branch, and milestones). Optionally
-#' also reports on the ghqc configuration (checklists, options, etc.).
+#' for the given directory (owner, repo, branch, and milestones). It also
+#' reports authentication state for the repository host. Optionally it reports
+#' on the ghqc configuration (checklists, options, etc.).
 #'
 #' @param directory Path to the project directory. Defaults to the project root
 #'   as determined by [here::here()].
@@ -61,6 +62,9 @@ ghqc_sitrep <- function(
   .print_binary_sitrep(data$binary)
   .print_process_sitrep()
   .print_repo_sitrep(data$repository, data$directory)
+  if (!is.null(data$auth)) {
+    .print_auth_sitrep(data$auth)
+  }
   if (with_configuration) {
     .print_config_sitrep(data$configuration)
   }
@@ -68,13 +72,12 @@ ghqc_sitrep <- function(
 
 .print_process_sitrep <- function() {
   cli::cli_h1("Process")
-  port <- .ghqc_env$port
-  if (is.null(port)) {
+  url <- .ghqc_env$url
+  if (is.null(url)) {
     cli::cli_text("Status: Not running")
     return(invisible(NULL))
   }
   proc <- .ghqc_env$proc
-  url <- glue::glue("http://localhost:{port}")
   if (proc$is_alive()) {
     cli::cli_text("Status: Running at {url}")
   } else {
@@ -154,6 +157,104 @@ ghqc_sitrep <- function(
       "Failed to determine Git Repository Info for {directory}: {repo$Err}"
     )
   }
+}
+
+.print_auth_sitrep <- function(auth) {
+  cli::cli_h1("Auth")
+
+  store_dir <- .or_default(auth$store_dir, "unavailable")
+  cli::cli_text("Store Directory: {store_dir}")
+
+  stored_tokens <- .or_default(auth$stored_tokens, "unavailable")
+  if (
+    identical(stored_tokens, "none") || identical(stored_tokens, "unavailable")
+  ) {
+    cli::cli_text("Stored Tokens: {stored_tokens}")
+  } else {
+    cli::cli_text("{.strong Stored Tokens:}")
+    cli::cli_verbatim(stored_tokens)
+  }
+
+  host <- .or_default(auth$host, "not determined")
+  cli::cli_text("Repository Host: {host}")
+
+  sources <- .auth_sources_to_list(auth$sources)
+  if (length(sources) == 0) {
+    cli::cli_text("Available Auth Sources: unknown")
+    return(invisible(NULL))
+  }
+
+  cli::cli_h2("Available Auth Sources")
+  for (source in sources) {
+    .print_auth_source(source)
+  }
+}
+
+.auth_sources_to_list <- function(sources) {
+  if (is.null(sources) || length(sources) == 0) {
+    return(list())
+  }
+
+  if (is.data.frame(sources)) {
+    return(lapply(seq_len(nrow(sources)), function(i) {
+      as.list(sources[i, , drop = FALSE])
+    }))
+  }
+
+  if (is.list(sources) && !is.null(sources$kind)) {
+    return(list(sources))
+  }
+
+  if (is.list(sources)) {
+    return(sources)
+  }
+
+  list()
+}
+
+.format_auth_source <- function(source) {
+  kind <- .or_default(source$kind, "unknown")
+  preview <- .or_default(source$token_preview, NULL)
+
+  if (.is_missing_value(preview)) {
+    kind
+  } else {
+    sprintf("%s (%s)", kind, preview)
+  }
+}
+
+.print_auth_source <- function(source) {
+  message <- .format_auth_source(source)
+  available <- .auth_source_is_available(source)
+  status_symbol <- if (available) cli::symbol$tick else cli::symbol$cross
+  status_glyph <- if (available) {
+    cli::col_green(status_symbol)
+  } else {
+    cli::col_red(status_symbol)
+  }
+  prefix <- if (isTRUE(source$is_active)) {
+    paste0(cli::symbol$arrow_right, " ")
+  } else {
+    "  "
+  }
+
+  cli::cat_line(prefix, status_glyph, " ", message)
+}
+
+.auth_source_is_available <- function(source) {
+  !.is_missing_value(source$token_preview)
+}
+
+.or_default <- function(x, default) {
+  if (.is_missing_value(x)) {
+    default
+  } else {
+    x
+  }
+}
+
+.is_missing_value <- function(x) {
+  is.null(x) || length(x) == 0 || (length(x) == 1 && is.na(x))
 }
 
 .print_config_sitrep <- function(cfg) {

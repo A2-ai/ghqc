@@ -7,8 +7,8 @@
 ghqc_reconnect()
 }
 \value{
-The server URL (\code{"http://localhost:<port>"}) invisibly, or \code{NULL}
-invisibly if no server is running.
+The stored server URL invisibly, or \code{NULL} invisibly if no server is
+running.
 }
 \description{
 Opens a browser tab pointing to a ghqc server that is already running in the

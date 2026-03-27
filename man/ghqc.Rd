@@ -8,6 +8,7 @@ ghqc(
   directory = here::here(),
   port = NULL,
   config_dir = NULL,
+  ipv4_only = FALSE,
   log_level = Sys.getenv("GHQC_LOG_LEVEL", "TRACE")
 )
 }
@@ -20,6 +21,8 @@ random available port is selected automatically.}
 
 \item{config_dir}{Path to the ghqc configuration directory. If \code{NULL}
 (default), ghqc uses its default configuration discovery logic.}
+
+\item{ipv4_only}{Force IPv4-only bind and loopback URL}
 
 \item{log_level}{Level of logging the server runs with. Recommended to leave as TRACE
 since \code{\link[=ghqc_log]{ghqc_log()}} will filter levels.}

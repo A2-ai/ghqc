@@ -11,6 +11,7 @@
 #'   random available port is selected automatically.
 #' @param config_dir Path to the ghqc configuration directory. If `NULL`
 #'   (default), ghqc uses its default configuration discovery logic.
+#' @param ipv4_only Force IPv4-only bind and loopback URL
 #' @param log_level Level of logging the server runs with. Recommended to leave as TRACE
 #' since [ghqc_log()] will filter levels.
 #'
@@ -34,12 +35,13 @@ ghqc <- function(
   directory = here::here(),
   port = NULL,
   config_dir = NULL,
-  log_level = Sys.getenv("GHQC_LOG_LEVEL", "TRACE"),
-  ipv4_only = FALSE
+  ipv4_only = FALSE,
+  log_level = Sys.getenv("GHQC_LOG_LEVEL", "TRACE")
 ) {
   ghqc_stop()
 
-  directory <- here::here(directory)
+  directory <- directory |> here::here() |> fs::path_abs() |> fs::path_expand()
+
   port <- if (!is.null(port)) {
     if (!is.numeric(port)) {
       cli::cli_abort("Argument {.code port} must be numeric")
@@ -66,15 +68,8 @@ ghqc <- function(
     port
   )
 
-  # if (!is.null(port)) {
-  #   if (!is.numeric(port)) {
-  #     cli::cli_abort("Argument {.code port} must be numeric")
-  #   }
-  #   run_args <- c(run_args, "--port", port)
-  #   url_args <- c(url_args, "--port", port)
-  # }
-
   if (!is.null(config_dir)) {
+    config_dir <- config_dir |> here::here() |> fs::path_abs()
     run_args <- c(run_args, "--config-dir", here::here(config_dir))
   }
 
@@ -83,12 +78,12 @@ ghqc <- function(
   }
 
   if (ipv4_only) {
-    run_args <- c(run_args, "--ipv4_only")
-    url_args <- c(url_args, "--ipv4_only")
+    run_args <- c(run_args, "--ipv4-only")
+    url_args <- c(url_args, "--ipv4-only")
   }
 
   url <- glue::glue("http://localhost:{port}")
-  if (.check_min_version("0.3.1")) {
+  if (.check_min_version("0.3.1") && !.is_rstudio()) {
     res <- .run_ghqc(url_args)
     if (res$status != 0) {
       cli::cli_alert_warning(
@@ -99,40 +94,35 @@ ghqc <- function(
     }
   }
 
+  log_file <- tempfile("ghqc-", fileext = ".log")
   proc <- processx::process$new(
     .ghqc_exe(),
     args = run_args,
-    stderr = "|",
-    supervise = TRUE
+    stdout = log_file,
+    stderr = "2>&1",
+    supervise = TRUE,
+    echo_cmd = TRUE
   )
 
   if (!wait_for_server(port)) {
-    err <- proc$read_error()
+    err <- .read_log_chunk(log_file)
     if (nzchar(trimws(err))) {
-      stop("ghqc server failed to start:\n", err)
+      cli::cli_abort("ghqc server failed to start:\n{err}")
     } else {
-      stop("ghqc server did not start within the timeout period")
+      cli::cli_abort("ghqc server did not start within the timeout period")
     }
   }
 
   .ghqc_env$proc <- proc
-  .ghqc_env$port <- port
+  .ghqc_env$url <- url
+  .ghqc_env$log_file <- log_file
+  .ghqc_env$log_position <- 0L
 
-  # url <- glue::glue("http://localhost:{port}")
   cli::cli_alert_success("ghqc server started successfully at {url}")
 
-  rs_available <- tryCatch(
-    {
-      invisible(.rs.api.versionInfo())
-      TRUE
-    },
-    error = function(e) {
-      FALSE
-    }
-  )
-
-  if (rs_available) {
-    .rs.api.viewer(url)
+  if (rstudioapi::isAvailable()) {
+    rstudioapi::viewer(url)
+    # utils::browseURL(url)
   } else {
     utils::browseURL(url)
   }
@@ -158,7 +148,6 @@ wait_for_server <- function(port, timeout = 15) {
   invisible(FALSE)
 }
 
-
 #' Stop the running ghqc background server
 #'
 #' Kills the supervised background process started by [ghqc()]. If no server is
@@ -176,17 +165,18 @@ wait_for_server <- function(port, timeout = 15) {
 ghqc_stop <- function() {
   proc <- .ghqc_env$proc
   if (is.null(proc)) {
-    message("No background ghqc server is running.")
+    cli::cli_alert_info("No background ghqc server is running")
     return(invisible(NULL))
   }
   if (!proc$is_alive()) {
-    message("ghqc server has already stopped.")
+    cli::cli_alert_info("ghqc server has already stopped")
     .ghqc_env$proc <- NULL
     return(invisible(NULL))
   }
   proc$kill()
   .ghqc_env$proc <- NULL
-  message("ghqc server stopped.")
+  .ghqc_env$log_position <- 0L
+  cli::cli_alert_success("ghqc server stopped")
   invisible(NULL)
 }
 
@@ -195,8 +185,8 @@ ghqc_stop <- function() {
 #' Reports whether the server started by [ghqc()] is currently running and, if
 #' so, prints its URL.
 #'
-#' @return The server URL (`"http://localhost:<port>"`) invisibly, or `NULL`
-#'   invisibly if no server has been started this session.
+#' @return The stored server URL invisibly, or `NULL` invisibly if no server
+#'   has been started this session.
 #'
 #' @examples
 #' \dontrun{
@@ -206,20 +196,19 @@ ghqc_stop <- function() {
 #'
 #' @export
 ghqc_status <- function() {
-  port <- .ghqc_env$port
+  url <- .ghqc_env$url
 
-  if (is.null(port)) {
-    message("No ghqc server has been started this session.")
+  if (is.null(url)) {
+    cli::cli_alert_info("No ghqc server has been started this session.")
     return(invisible(NULL))
   }
 
   proc <- .ghqc_env$proc
-  url <- glue::glue("http://localhost:{port}")
 
   if (!is.null(proc) && proc$is_alive()) {
-    message(glue::glue("ghqc server is running at {url}"))
+    cli::cli_alert_info("ghqc server is running at {url}")
   } else {
-    message(glue::glue("ghqc server has stopped (was at {url})"))
+    cli::cli_alert_info("ghqc server has stopped (was at {url})")
   }
 
   invisible(url)
@@ -231,8 +220,8 @@ ghqc_status <- function() {
 #' background. This is useful after accidentally closing the browser tab without
 #' stopping the server. If no server is running, a message is printed instead.
 #'
-#' @return The server URL (`"http://localhost:<port>"`) invisibly, or `NULL`
-#'   invisibly if no server is running.
+#' @return The stored server URL invisibly, or `NULL` invisibly if no server is
+#'   running.
 #'
 #' @examples
 #' \dontrun{
@@ -242,9 +231,9 @@ ghqc_status <- function() {
 #'
 #' @export
 ghqc_reconnect <- function() {
-  port <- .ghqc_env$port
-  if (is.null(port)) {
-    message(
+  url <- .ghqc_env$url
+  if (is.null(url)) {
+    cli::cli_alert_info(
       "No ghqc server has been started this session. Use ghqc() to start one."
     )
     return(invisible(NULL))
@@ -252,11 +241,16 @@ ghqc_reconnect <- function() {
 
   proc <- .ghqc_env$proc
   if (is.null(proc) || !proc$is_alive()) {
-    message("ghqc server has stopped. Use ghqc() to start a new one.")
+    cli::cli_alert_info(
+      "ghqc server has stopped. Use ghqc() to start a new one."
+    )
     return(invisible(NULL))
   }
 
-  url <- glue::glue("http://localhost:{port}")
-  utils::browseURL(url)
+  if (rstudioapi::isAvailable()) {
+    rstudioapi::viewer(url)
+  } else {
+    utils::browseURL(url)
+  }
   invisible(url)
 }

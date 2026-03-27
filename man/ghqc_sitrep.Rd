@@ -27,8 +27,9 @@ invisibly. The primary purpose of this function is its printed output.
 \description{
 Collects and displays diagnostic information about the ghqc binary, the
 currently running ghqc background server (if any), and the git repository
-for the given directory (owner, repo, branch, and milestones). Optionally
-also reports on the ghqc configuration (checklists, options, etc.).
+for the given directory (owner, repo, branch, and milestones). It also
+reports authentication state for the repository host. Optionally it reports
+on the ghqc configuration (checklists, options, etc.).
 }
 \examples{
 \dontrun{

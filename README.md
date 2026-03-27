@@ -42,7 +42,9 @@ ghqc::ghqc()
 ```
 
 This starts the ghqc web UI as a supervised background process and opens it in
-your browser. Any previously running ghqc server is stopped first.
+your browser. Any previously running ghqc server is stopped first. The launched
+server URL is discovered at startup and stored for later status checks and
+reconnection, rather than assuming `localhost`.
 
 You can optionally specify a port or a custom configuration directory:
 
@@ -60,7 +62,7 @@ ghqc::ghqc(directory = "analysis", config_dir = "~/.config/ghqc")
 # Check whether the server is running and get its URL
 ghqc::ghqc_status()
 
-# Reopen the browser tab without restarting the server
+# Reopen the browser tab using the stored server URL without restarting
 ghqc::ghqc_reconnect()
 
 # Stop the running server
