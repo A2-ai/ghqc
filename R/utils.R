@@ -35,9 +35,24 @@
   res
 }
 
-# Parse a version string like "0.1.1" into an integer vector c(0L, 1L, 1L)
+# Parse a version string like "0.1.1" into c(0L, 1L, 1L), and treat
+# prerelease/build suffixes like "0.3.1-rc1" as c(0L, 3L, 1L, 1L).
 .parse_version <- function(v) {
-  as.integer(strsplit(trimws(v), "\\.")[[1]])
+  if (length(v) == 0) {
+    return(integer())
+  }
+
+  v <- v[[1]]
+  v <- trimws(v)
+  has_suffix <- grepl("-", v, fixed = TRUE)
+  base <- sub("-.*$", "", v)
+  parsed <- as.integer(strsplit(base, "\\.")[[1]])
+
+  if (has_suffix) {
+    parsed <- c(parsed, 1L)
+  }
+
+  parsed
 }
 
 # Returns TRUE if installed version >= required version string

@@ -34,31 +34,74 @@ ghqc <- function(
   directory = here::here(),
   port = NULL,
   config_dir = NULL,
-  log_level = Sys.getenv("GHQC_LOG_LEVEL", "TRACE")
+  log_level = Sys.getenv("GHQC_LOG_LEVEL", "TRACE"),
+  ipv4_only = FALSE
 ) {
   ghqc_stop()
 
   directory <- here::here(directory)
-  port <- if (is.null(port)) random_port()
+  port <- if (!is.null(port)) {
+    if (!is.numeric(port)) {
+      cli::cli_abort("Argument {.code port} must be numeric")
+    }
+    port
+  } else {
+    random_port()
+  }
 
-  args <- c(
+  run_args <- c(
     "ui",
-    "--port",
-    port,
     "--directory",
     directory,
     "--no-open",
+    "--port",
+    port,
     .verbosity_flag(log_level)
   )
 
+  url_args <- c(
+    "ui",
+    "url",
+    "--port",
+    port
+  )
+
+  # if (!is.null(port)) {
+  #   if (!is.numeric(port)) {
+  #     cli::cli_abort("Argument {.code port} must be numeric")
+  #   }
+  #   run_args <- c(run_args, "--port", port)
+  #   url_args <- c(url_args, "--port", port)
+  # }
+
   if (!is.null(config_dir)) {
-    args <- c(args, "--config-dir", here::here(config_dir))
+    run_args <- c(run_args, "--config-dir", here::here(config_dir))
   }
 
-  .check_installed()
+  if (!is.logical(ipv4_only)) {
+    cli::cli_abort("Argument {.code ipv4_only} must be logical")
+  }
+
+  if (ipv4_only) {
+    run_args <- c(run_args, "--ipv4_only")
+    url_args <- c(url_args, "--ipv4_only")
+  }
+
+  url <- glue::glue("http://localhost:{port}")
+  if (.check_min_version("0.3.1")) {
+    res <- .run_ghqc(url_args)
+    if (res$status != 0) {
+      cli::cli_alert_warning(
+        "Failed to determine url. Defaulting to http://localhost:{port}"
+      )
+    } else {
+      url <- res$stdout
+    }
+  }
+
   proc <- processx::process$new(
     .ghqc_exe(),
-    args = args,
+    args = run_args,
     stderr = "|",
     supervise = TRUE
   )
@@ -75,7 +118,7 @@ ghqc <- function(
   .ghqc_env$proc <- proc
   .ghqc_env$port <- port
 
-  url <- glue::glue("http://localhost:{port}")
+  # url <- glue::glue("http://localhost:{port}")
   cli::cli_alert_success("ghqc server started successfully at {url}")
 
   rs_available <- tryCatch(
@@ -94,6 +137,7 @@ ghqc <- function(
     utils::browseURL(url)
   }
 }
+
 
 wait_for_server <- function(port, timeout = 15) {
   deadline <- Sys.time() + timeout
