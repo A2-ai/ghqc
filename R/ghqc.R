@@ -100,8 +100,7 @@ ghqc <- function(
     args = run_args,
     stdout = log_file,
     stderr = "2>&1",
-    supervise = TRUE,
-    echo_cmd = TRUE
+    supervise = TRUE
   )
 
   if (!wait_for_server(port)) {

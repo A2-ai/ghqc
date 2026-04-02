@@ -38,8 +38,7 @@
   res <- processx::run(
     .ghqc_exe(),
     args,
-    error_on_status = FALSE,
-    echo_cmd = TRUE
+    error_on_status = FALSE
   )
   res$stdout <- res$stdout |> trimws()
   res
