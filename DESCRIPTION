@@ -9,7 +9,7 @@ Authors@R: c(
     person("Devin", "Pastoor", email = "devin@a2-ai.com", role = c("ctb")),
     person("Andrew", "Acker", email = "andrew@a2-ai.com", role = c("ctb")))
 Description: The ghqc R package is a lightweight wrapper that installs and runs the ghqctoolkit CLI binary, which provides
-a web UI for managing QC through GitHub Issues and Milestones.
+    a web UI for managing QC through GitHub Issues and Milestones.
 URL: https://github.com/a2-ai/ghqc, https://github.com/a2-ai/ghqctoolkit, https://a2-ai.github.io/ghqc-docs
 License: GPL (>= 3) + file LICENSE
 Encoding: UTF-8
