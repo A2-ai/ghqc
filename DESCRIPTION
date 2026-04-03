@@ -8,7 +8,9 @@ Authors@R: c(
     person("Janelle", "Lennie", email = "janelle.l.lennie@gsk.com", role = c("ctb")),
     person("Devin", "Pastoor", email = "devin@a2-ai.com", role = c("ctb")),
     person("Andrew", "Acker", email = "andrew@a2-ai.com", role = c("ctb")))
-Description: This package installs, updates, and runs the ghqc cli tool to aide R users.
+Description: The ghqc R package is a lightweight wrapper that installs and runs the ghqctoolkit CLI binary, which provides
+a web UI for managing QC through GitHub Issues and Milestones.
+URL: https://github.com/a2-ai/ghqc, https://github.com/a2-ai/ghqctoolkit, https://a2-ai.github.io/ghqc-docs
 License: GPL (>= 3) + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
