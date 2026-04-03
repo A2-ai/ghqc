@@ -64,6 +64,8 @@ jobs:
 
       - name: rv-plan (Windows)
         run: |
+          rv.exe configure repository remove PRISM
+          rv.exe configure repository add PPM --url https://packagemanager.posit.co/cran/2026-02-13
           rv.exe add rcmdcheck --no-sync
           rv.exe plan
         shell: cmd
