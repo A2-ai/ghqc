@@ -79,11 +79,11 @@ jobs:
           fi
           
       - name: rv-sync
-        run: rv sync
+        run: rv add rcmdcheck
         if: runner.os != 'Windows'
 
       - name: rv-sync (Windows)
-        run: rv.exe sync
+        run: rv.exe add rcmdcheck
         shell: cmd
         if: runner.os == 'Windows'
 
