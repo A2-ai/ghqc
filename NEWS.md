@@ -1,7 +1,7 @@
-# ghqc 0.7.2.9000
+# ghqc 1.0.0
 
 - Remove all old content
-- Functions to run the new ghqc server, install the binary, and 
+- A lightweight wrapper around the [ghqctoolkit CLI](https://github.com/a2-ai/ghqctoolkit), providing a few R-native hepers for status, reconnection, and diagnostics.
 
 # ghqc 0.7.2
 
