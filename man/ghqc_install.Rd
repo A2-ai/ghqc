@@ -4,27 +4,35 @@
 \alias{ghqc_install}
 \title{Install or upgrade the ghqc binary}
 \usage{
-ghqc_install()
+ghqc_install(version = NULL)
+}
+\arguments{
+\item{version}{Optional release tag to install, such as \code{"v0.4.1"}.
+If omitted, the latest available release is installed.}
 }
 \value{
 \code{NULL} invisibly.
 }
 \description{
-Downloads and installs the ghqc command-line binary to \verb{~/.local/bin} using
-the bundled install script. Only supported on unix-like systems (Linux,
-macOS). On Windows a warning is printed and the function returns early.
+Downloads and installs the ghqc command-line binary using the bundled
+platform install script. On Linux and macOS, the binary is installed to
+\verb{~/.local/bin}. On Windows, it is installed to
+\verb{\%LOCALAPPDATA\%/Programs/ghqc}.
 }
 \details{
-If ghqc is already installed, the local version is compared to the latest
-GitHub release. When running interactively and a newer version is available,
-the user is prompted to confirm the upgrade before proceeding.
+If \code{version} is not supplied and ghqc is already installed, the local
+version is compared to the latest GitHub release. When running
+interactively and a newer version is available, the user is prompted to
+confirm the upgrade before proceeding. If \code{version} is supplied, that
+specific release is installed instead.
 
-After a successful install, \verb{~/.local/bin} is added to \code{PATH} for the
-current R session if it is not already present.
+After a successful install, the install directory is added to \code{PATH} for
+the current R session if it is not already present.
 }
 \examples{
 \dontrun{
 ghqc_install()
+ghqc_install(version = "v0.7.0")
 }
 
 }

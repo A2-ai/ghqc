@@ -28,12 +28,20 @@ The ghqc R package is a wrapper around the `ghqctoolkit` binary. Install it with
 ghqc::ghqc_install()
 ```
 
-This downloads the appropriate binary for your platform (Linux or macOS) to
-`~/.local/bin` and adds it to your `PATH` for the current R session.
+This downloads the appropriate binary for your platform and adds its install
+directory to your `PATH` for the current R session. On Linux and macOS the
+binary is installed to `~/.local/bin`; on Windows it is installed to
+`%LOCALAPPDATA%/Programs/ghqc`.
 
 If ghqc is already installed, `ghqc_install()` will compare your local version
 against the latest GitHub release and prompt you to upgrade if a newer version
 is available.
+
+You can also install a specific release:
+
+``` r
+ghqc::ghqc_install(version = "v0.4.1")
+```
 
 ### 2. Launch the ghqc UI
 

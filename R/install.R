@@ -1,46 +1,58 @@
 #' Install or upgrade the ghqc binary
 #'
-#' Downloads and installs the ghqc command-line binary to `~/.local/bin` using
-#' the bundled install script. Only supported on unix-like systems (Linux,
-#' macOS). On Windows a warning is printed and the function returns early.
+#' Downloads and installs the ghqc command-line binary using the bundled
+#' platform install script. On Linux and macOS, the binary is installed to
+#' `~/.local/bin`. On Windows, it is installed to
+#' `%LOCALAPPDATA%/Programs/ghqc`.
 #'
-#' If ghqc is already installed, the local version is compared to the latest
-#' GitHub release. When running interactively and a newer version is available,
-#' the user is prompted to confirm the upgrade before proceeding.
+#' If `version` is not supplied and ghqc is already installed, the local
+#' version is compared to the latest GitHub release. When running
+#' interactively and a newer version is available, the user is prompted to
+#' confirm the upgrade before proceeding. If `version` is supplied, that
+#' specific release is installed instead.
 #'
-#' After a successful install, `~/.local/bin` is added to `PATH` for the
-#' current R session if it is not already present.
+#' After a successful install, the install directory is added to `PATH` for
+#' the current R session if it is not already present.
+#'
+#' @param version Optional release tag to install, such as `"v0.4.1"`.
+#' If omitted, the latest available release is installed.
 #'
 #' @return `NULL` invisibly.
 #'
 #' @examples
 #' \dontrun{
 #' ghqc_install()
+#' ghqc_install(version = "v0.7.0")
 #' }
 #'
 #' @export
-ghqc_install <- function() {
-  remote_version <- ghqc_remote_version()
-  remote_known <- is.null(remote_version)
+ghqc_install <- function(version = NULL) {
+  requested_version <- .normalize_release_version(version)
+  target_version <- if (is.null(requested_version)) {
+    ghqc_remote_version()
+  } else {
+    requested_version |> .normalize_release_version()
+  }
+  target_unknown <- is.null(target_version)
 
   if (.is_installed()) {
-    version <- ghqc_version()
+    installed_version <- ghqc_version()
 
-    if (!remote_known) {
-      if (glue::glue("v{version}") == remote_version) {
-        cli::cli_alert_success("ghqc {version} is up to date!")
+    if (!target_unknown) {
+      if (glue::glue("v{installed_version}") == target_version) {
+        cli::cli_alert_success("ghqc {installed_version} is up to date!")
         return(invisible())
       }
     }
 
-    if (rlang::is_interactive()) {
-      if (remote_known) {
+    if (is.null(requested_version) && rlang::is_interactive()) {
+      if (target_unknown) {
         cli::cli_alert_warning(
-          "ghqc {version} is installed with an unknown latest version"
+          "ghqc {installed_version} is installed with an unknown latest version"
         )
       } else {
         cli::cli_alert_warning(
-          "ghqc {version} is installed but does not match the latest available {remote_version}"
+          "ghqc {installed_version} is installed but does not match the latest available {target_version}"
         )
       }
 
@@ -61,38 +73,51 @@ ghqc_install <- function() {
       }
     }
 
-    upgrade_msg <- if (remote_known) {
-      glue::glue(" to {remote_version}")
-    } else {
+    upgrade_msg <- if (target_unknown) {
       ""
+    } else {
+      glue::glue(" to {target_version}")
     }
     cli::cli_inform("Upgrading ghqc{upgrade_msg}...")
   } else {
-    install_msg <- if (remote_known) {
-      glue::glue(" {remote_version}")
-    } else {
+    install_msg <- if (target_unknown) {
       ""
+    } else {
+      glue::glue(" {target_version}")
     }
     cli::cli_inform("Installing ghqc{install_msg}...")
   }
 
-  .install()
+  .install(target_version)
 }
 
-.install <- function() {
+.install <- function(version = NULL) {
   if (.is_windows()) {
-    cli::cli_alert_warning(
-      "Operation system detected as Windows. Install only available for unix-like systems"
+    install_res <- processx::run(
+      "powershell",
+      c(
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        system.file("install.ps1", package = "ghqc"),
+        if (!is.null(version)) c("-Version", version)
+      ),
+      stdout = "",
+      error_on_status = FALSE
     )
-    return(invisible())
+    bin_path <- file.path(Sys.getenv("LOCALAPPDATA"), "Programs", "ghqc")
+  } else {
+    install_res <- processx::run(
+      "bash",
+      c(
+        system.file("install.sh", package = "ghqc"),
+        if (!is.null(version)) version
+      ),
+      stdout = "",
+      error_on_status = FALSE
+    )
+    bin_path <- glue::glue("{Sys.getenv('HOME')}/.local/bin")
   }
-
-  install_res <- processx::run(
-    "bash",
-    system.file("install.sh", package = "ghqc"),
-    stdout = "",
-    error_on_status = FALSE
-  )
 
   if (install_res$status != 0) {
     stderr_msg <- if (install_res$stderr != "") {
@@ -105,15 +130,33 @@ ghqc_install <- function() {
   }
 
   path_env <- Sys.getenv("PATH")
-  bin_path <- glue::glue("{Sys.getenv('HOME')}/.local/bin")
-  if (!grepl(bin_path, path_env)) {
+  path_sep <- if (.is_windows()) ";" else ":"
+  path_entries <- strsplit(path_env, path_sep, fixed = TRUE)[[1]]
+  if (!(bin_path %in% path_entries)) {
     cli::cli_alert_info(
-      "~/.local/bin not found in your PATH. Adding for this R session..."
+      "{bin_path} not found in your PATH. Adding for this R session..."
     )
-    Sys.setenv("PATH" = glue::glue("{bin_path}:{path_env}"))
+    Sys.setenv("PATH" = paste(c(bin_path, path_entries), collapse = path_sep))
   }
 
   cli::cli_alert_success(
     "Successfully installed ghqc!"
   )
+}
+
+.normalize_release_version <- function(version = NULL) {
+  if (is.null(version)) {
+    return(NULL)
+  }
+
+  version <- trimws(version)
+  if (!nzchar(version)) {
+    return(NULL)
+  }
+
+  if (startsWith(version, "v")) {
+    version
+  } else {
+    paste0("v", version)
+  }
 }

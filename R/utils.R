@@ -13,7 +13,7 @@
 }
 
 .is_installed <- function() {
-  processx::run("which", "ghqc", error_on_status = FALSE)$status == 0
+  any(nzchar(Sys.which(unique(c("ghqc", .ghqc_exe())))))
 }
 
 .is_rstudio <- function() {
