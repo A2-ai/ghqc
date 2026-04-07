@@ -8,3 +8,7 @@
 ^pkgdown$
 ^\.github$
 ^README\.Rmd$
+^rv$
+^rproject.toml$
+^rv\.toml$
+^\.Rprofile$

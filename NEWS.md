@@ -1,3 +1,8 @@
+# ghqc 1.0.0
+
+- Remove all old content
+- A lightweight wrapper around the [ghqctoolkit CLI](https://github.com/a2-ai/ghqctoolkit), providing a few R-native hepers for status, reconnection, and diagnostics.
+
 # ghqc 0.7.2
 
 - add `tidyr` to `ghqc_depends` data for proper linking installation mode
