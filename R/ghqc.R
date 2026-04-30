@@ -117,7 +117,10 @@ ghqc <- function(
   .ghqc_env$log_file <- log_file
   .ghqc_env$log_position <- 0L
 
-  cli::cli_alert_success("ghqc server started successfully at {url}")
+  cli::cli_alert_success(
+    "ghqc server started successfully at {url}. Will stop when the R process ends"
+  )
+  # cli::cli_alert_info("server will stop when the R process ends")
 
   if (rstudioapi::isAvailable()) {
     rstudioapi::viewer(url)
