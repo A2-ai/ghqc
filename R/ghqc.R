@@ -120,11 +120,9 @@ ghqc <- function(
   cli::cli_alert_success(
     "ghqc server started successfully at {url}. Will stop when the R process ends"
   )
-  # cli::cli_alert_info("server will stop when the R process ends")
 
   if (rstudioapi::isAvailable()) {
     rstudioapi::viewer(url)
-    # utils::browseURL(url)
   } else {
     utils::browseURL(url)
   }
