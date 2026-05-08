@@ -1,6 +1,6 @@
 Package: ghqc
 Title: Manage QC through GitHub Issues
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: c(
     person("Wes", "Cummings", email = "wes@a2-ai.com", role = c("aut", "cre")),
     person("Jenna", "Johnson", email = "jenna@a2-ai.com", role = c("ctb")),

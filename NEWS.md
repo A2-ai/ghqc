@@ -1,3 +1,8 @@
+# ghqc 1.0.1
+
+- Improved messaging in start-up about process ending when R session ends
+- Fixed bug in `ghqc_sitrep()` that would error after a `ghqc` process would end using `ghqc::ghqc_stop()`
+
 # ghqc 1.0.0
 
 - Remove all old content
