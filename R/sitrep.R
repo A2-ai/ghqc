@@ -78,7 +78,7 @@ ghqc_sitrep <- function(
     return(invisible(NULL))
   }
   proc <- .ghqc_env$proc
-  if (proc$is_alive()) {
+  if (!is.null(proc) && proc$is_alive()) {
     cli::cli_text("Status: Running at {url}")
   } else {
     cli::cli_text("Status: Stopped (was running at {url})")

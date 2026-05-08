@@ -17,5 +17,5 @@ repositories = [
     # {name = "dplyr", git = "https://github.com/tidyverse/dplyr.git", tag = "v1.1.4"},
 dependencies = [
     { name = "ghqc", path = ".", install_suggestions = true, dependencies_only = true },
-    # "devtools",
+    "devtools",
 ]
